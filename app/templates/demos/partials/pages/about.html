@@ -1,0 +1,50 @@
+{% set rich = demo_rich.about %}
+<section class="demo-page-section">
+    <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+    <h1>{{ demo_page_content.title }}</h1>
+    <p class="demo-lead">{{ demo_page_content.lead }}</p>
+
+    <div class="two-col" style="margin-top:2rem;">
+        <div class="story-block">
+            {% for paragraph in rich.story %}
+            <p>{{ paragraph }}</p>
+            {% endfor %}
+            <div class="values-list">
+                {% for principle in rich.principles %}
+                <span class="value-pill">{{ principle }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h2 style="margin:0 0 0.5rem;font-size:1.1rem;">Milestones</h2>
+            <ul class="timeline">
+                {% for item in rich.timeline %}
+                <li>
+                    <span class="timeline-year">{{ item.year }}</span>
+                    <strong style="display:block;margin-top:0.2rem;">{{ item.title }}</strong>
+                    <span style="color:var(--text-muted);font-size:0.9rem;">{{ item.body }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h2 style="margin:2.5rem 0 0;font-size:1.25rem;">Our team</h2>
+    <div class="team-grid">
+        {% for member in rich.team %}
+        <article class="team-card">
+            <strong>{{ member.name }}</strong>
+            <span>{{ member.role }}</span>
+            <p>{{ member.bio }}</p>
+        </article>
+        {% endfor %}
+    </div>
+
+    {% if demo_rich.testimonials %}
+    <div class="testimonials-row">
+        {% for t in demo_rich.testimonials %}
+        <blockquote class="quote-card">"{{ t.quote }}"<cite>{{ t.author }} — {{ t.role }}</cite></blockquote>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>

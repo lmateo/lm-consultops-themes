@@ -1,0 +1,71 @@
+<style>
+    :root {
+        --accent-start: {{ preview_customizer.accent_start }};
+        --accent-end: {{ preview_customizer.accent_end }};
+        --surface-bg: {{ preview_customizer.surface_bg }};
+        --text-main: {{ preview_customizer.text_color }};
+        --text-muted: #64748b;
+        --radius: {{ preview_customizer.radius }}px;
+        --font-stack: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: var(--surface-bg);
+        color: var(--text-main);
+        font-family: var(--font-stack);
+        line-height: 1.55;
+    }
+    body[data-typography="classic"] { --font-stack: "Merriweather", Georgia, serif; }
+    body[data-typography="geometric"] { --font-stack: "Poppins", "Avenir Next", "Segoe UI", sans-serif; }
+    body[data-density="compact"] { --section-pad: 3rem; }
+    body[data-density="comfortable"] { --section-pad: 4.5rem; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+    .demo-btn {
+        display: inline-block;
+        border: 0;
+        border-radius: calc(var(--radius) * 0.65);
+        padding: 0.7rem 1.1rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent-start), var(--accent-end));
+        color: #fff;
+    }
+    .demo-btn-outline {
+        background: transparent;
+        border: 1px solid currentColor;
+        color: inherit;
+    }
+</style>
+<script>
+    const defaultCustomizer = {{ preview_customizer|tojson }};
+    const typographyMap = {
+        modern: 'Inter, "Segoe UI", system-ui, -apple-system, sans-serif',
+        classic: '"Merriweather", Georgia, serif',
+        geometric: '"Poppins", "Avenir Next", "Segoe UI", sans-serif',
+    };
+    const root = document.documentElement;
+    const body = document.body;
+    let currentCustomizer = { ...defaultCustomizer };
+    function applyCustomizer(settings) {
+        if (!settings || typeof settings !== "object") return;
+        currentCustomizer = { ...currentCustomizer, ...settings };
+        root.style.setProperty("--accent-start", currentCustomizer.accent_start);
+        root.style.setProperty("--accent-end", currentCustomizer.accent_end);
+        root.style.setProperty("--surface-bg", currentCustomizer.surface_bg);
+        root.style.setProperty("--text-main", currentCustomizer.text_color);
+        root.style.setProperty("--radius", `${Number.parseInt(currentCustomizer.radius, 10) || 18}px`);
+        root.style.setProperty("--font-stack", typographyMap[currentCustomizer.typography] || typographyMap.modern);
+        body.dataset.density = currentCustomizer.density || "comfortable";
+        body.dataset.typography = currentCustomizer.typography || "modern";
+        body.dataset.topology = currentCustomizer.topology || "cards";
+    }
+    window.addEventListener("message", (event) => {
+        if (event.origin !== window.location.origin) return;
+        if (event.data?.type === "preview-customizer:update") applyCustomizer(event.data.settings);
+    });
+    applyCustomizer(defaultCustomizer);
+    window.parent.postMessage({ type: "preview-customizer:ready" }, window.location.origin);
+</script>

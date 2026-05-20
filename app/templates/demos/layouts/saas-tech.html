@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+        .sidebar { background: #0b1220; color: #cbd5e1; padding: 1.5rem 1rem; border-right: 1px solid #1e293b; }
+        .sidebar .brand { color: #fff; font-weight: 800; margin-bottom: 1.5rem; display: block; }
+        .demo-nav { display: flex; flex-direction: column; gap: 0.35rem; }
+        .demo-nav-link { text-decoration: none; color: #94a3b8; padding: 0.55rem 0.75rem; border-radius: 0.5rem; font-size: 0.9rem; font-weight: 600; }
+        .demo-nav-link.is-active, .demo-nav-link:hover { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .main-tech { background: var(--surface-bg); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #e2e8f0; background: #fff; }
+        .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1.5rem 2rem; }
+        .metric-card { background: #fff; border: 1px solid #e2e8f0; border-radius: var(--radius); padding: 1rem; }
+        .metric-card strong { font-size: 1.5rem; display: block; color: var(--accent-start); }
+        .feature-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: 0 2rem 2rem; }
+        .feature-cell { background: #fff; border-radius: var(--radius); padding: 1.1rem; border: 1px solid #e2e8f0; }
+        .hero-tech { padding: 2rem; display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: center; }
+        .hero-tech h1 { margin: 0.4rem 0; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+        .demo-eyebrow { color: var(--accent-start); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+        .demo-page-section { padding: 2rem; }
+        @media (max-width: 960px) { .shell { grid-template-columns: 1fr; } .sidebar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; } .demo-nav { flex-direction: row; flex-wrap: wrap; } .metrics, .feature-matrix, .hero-tech { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    <div class="shell">
+        <aside class="sidebar">
+            <span class="brand">{{ template_item.title }}</span>
+            {% include "demos/partials/nav.html" %}
+            <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact" style="margin-top:1.5rem;width:100%;text-align:center;">Book Assessment</a>
+        </aside>
+        <div class="main-tech">
+            {% if demo.page == "home" %}
+            <div class="topbar"><span>Managed IT Console</span><span style="color:#22c55e;font-weight:700;">● All systems operational</span></div>
+            <section class="hero-tech">
+                <div>
+                    <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+                    <h1>{{ demo_page_content.title }}</h1>
+                    <p style="color:var(--text-muted);max-width:50ch;">{{ demo_page_content.lead }}</p>
+                </div>
+                <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="" style="border-radius:var(--radius);box-shadow:0 20px 50px rgba(15,23,42,0.12);" onerror="this.style.minHeight='220px';this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))'" />
+            </section>
+            <div class="metrics">
+                {% for stat in demo.stats %}<div class="metric-card"><strong>{{ stat.value }}</strong><span style="color:var(--text-muted);font-size:0.85rem;">{{ stat.label }}</span></div>{% endfor %}
+                <div class="metric-card"><strong>99.9%</strong><span style="color:var(--text-muted);font-size:0.85rem;">Uptime SLA</span></div>
+            </div>
+            <div class="feature-matrix">
+                {% for card in demo.service_cards %}<article class="feature-cell"><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.9rem;">{{ card.body }}</p></article>{% endfor %}
+            </div>
+            {% else %}
+            {% include "demos/partials/inner_page.html" %}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

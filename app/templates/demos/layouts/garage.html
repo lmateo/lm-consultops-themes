@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(1120px, 92%); margin: 0 auto; }
+        .garage-header { background: #111827; color: #f8fafc; padding: 0.9rem 0; }
+        .garage-header-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .demo-nav-link { color: #94a3b8; text-decoration: none; font-weight: 600; margin-right: 1rem; }
+        .demo-nav-link.is-active { color: #fbbf24; }
+        .garage-hero { display: grid; grid-template-columns: 1fr 1fr; background: repeating-linear-gradient(-45deg, #1f2937, #1f2937 12px, #111827 12px, #111827 24px); color: #fff; }
+        .garage-hero .copy { padding: 3rem 2rem; }
+        .garage-hero .visual img { width: 100%; height: 100%; min-height: 340px; object-fit: cover; }
+        .pricing-table { width: 100%; border-collapse: collapse; margin: var(--section-pad) 0; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 30px rgba(15,23,42,0.06); }
+        .pricing-table th, .pricing-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .pricing-table th { background: #f8fafc; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+        .pricing-table tr:last-child td { border-bottom: 0; }
+        .price-tag { font-weight: 800; color: var(--accent-start); }
+        .bay-status { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .bay { background: rgba(255,255,255,0.08); padding: 0.6rem; border-radius: 0.5rem; font-size: 0.8rem; text-align: center; }
+        .bay.open { border: 1px solid #22c55e; color: #86efac; }
+        .demo-page-section { padding: var(--section-pad) 0; }
+        .demo-eyebrow { color: #fbbf24; font-weight: 800; text-transform: uppercase; font-size: 0.72rem; }
+        @media (max-width: 860px) { .garage-hero { grid-template-columns: 1fr; } .bay-status { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    <header class="garage-header"><div class="wrap garage-header-inner">
+        <strong>{{ template_item.title }}</strong>
+        {% include "demos/partials/nav.html" %}
+        <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact">Schedule</a>
+    </div></header>
+
+    {% if demo.page == "home" %}
+    <section class="garage-hero">
+        <div class="copy">
+            <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+            <h1 style="margin:0.4rem 0;font-size:clamp(1.9rem,4vw,2.8rem);">{{ demo_page_content.title }}</h1>
+            <p style="opacity:0.9;">{{ demo_page_content.lead }}</p>
+            <div class="bay-status">
+                <div class="bay open">Bay 1 · Open</div><div class="bay open">Bay 2 · Open</div><div class="bay">Bay 3 · 2:30p</div><div class="bay">Bay 4 · Closed</div>
+            </div>
+        </div>
+        <div class="visual"><img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="" onerror="this.style.display='none'" /></div>
+    </section>
+    <div class="wrap">
+        <table class="pricing-table">
+            <thead><tr><th>Service</th><th>Details</th><th>From</th></tr></thead>
+            <tbody>
+                {% for card in demo.service_cards %}
+                <tr><td><strong>{{ card.title }}</strong></td><td style="color:#64748b;">{{ card.body }}</td><td class="price-tag">${{ 49 + loop.index * 25 }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% if demo.page == "services" %}
+    <div class="wrap" style="padding-bottom:var(--section-pad);">
+        <table class="pricing-table" aria-label="Quick price reference">
+            <thead><tr><th>Package</th><th>Includes</th><th>Price</th></tr></thead>
+            <tbody>
+                {% for item in demo_rich.services.offerings %}
+                <tr><td><strong>{{ item.title }}</strong></td><td style="color:#64748b;">{{ item.description }}</td><td class="price-tag">{{ item.price }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% endif %}
+</body>
+</html>

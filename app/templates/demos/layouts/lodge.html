@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(1160px, 92%); margin: 0 auto; }
+        .lodge-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; color: #fff; position: absolute; left: 4%; right: 4%; z-index: 2; }
+        .lodge-nav .demo-nav-link { color: rgba(255,255,255,0.92); text-decoration: none; margin-left: 1.2rem; font-weight: 600; }
+        .lodge-nav .demo-nav-link.is-active { border-bottom: 2px solid #fff; }
+        .cinematic { position: relative; min-height: 78vh; display: flex; align-items: flex-end; color: #fff; padding-bottom: 3rem; }
+        .cinematic::before { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15,23,42,0.85), transparent 55%), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/cover; }
+        .cinematic .wrap { position: relative; z-index: 1; }
+        .booking-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; background: rgba(255,255,255,0.12); padding: 0.75rem; border-radius: var(--radius); backdrop-filter: blur(8px); margin-top: 1.2rem; max-width: 520px; }
+        .booking-bar input, .booking-bar select { flex: 1; min-width: 120px; border: 0; border-radius: calc(var(--radius)*0.5); padding: 0.6rem; }
+        .rooms-scroll { display: flex; gap: 1rem; overflow-x: auto; padding: var(--section-pad) 4%; scroll-snap-type: x mandatory; }
+        .room-card { flex: 0 0 280px; scroll-snap-align: start; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px rgba(15,23,42,0.1); }
+        .room-card img { height: 180px; width: 100%; object-fit: cover; }
+        .room-card div { padding: 1rem; }
+        .amenity-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; padding: 2rem 0; text-align: center; }
+        .amenity { background: #fff; border-radius: var(--radius); padding: 1rem; border: 1px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; }
+        .demo-page-section { padding: var(--section-pad) 0; }
+        .demo-eyebrow { letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.72rem; opacity: 0.85; }
+        @media (max-width: 800px) { .amenity-row { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    {% if demo.page == "home" %}
+    <nav class="lodge-nav"><strong>{{ template_item.title }}</strong>{% include "demos/partials/nav.html" %}</nav>
+    <section class="cinematic">
+        <div class="wrap">
+            <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+            <h1 style="margin:0.4rem 0;font-size:clamp(2rem,5vw,3.2rem);">{{ demo_page_content.title }}</h1>
+            <p style="max-width:48ch;opacity:0.92;">{{ demo_page_content.lead }}</p>
+            <form class="booking-bar" onsubmit="return false;">
+                <input type="text" placeholder="Check-in" aria-label="Check-in" />
+                <input type="text" placeholder="Check-out" aria-label="Check-out" />
+                <select aria-label="Guests"><option>2 Guests</option></select>
+                <button type="button" class="demo-btn">Check Availability</button>
+            </form>
+        </div>
+    </section>
+    <div class="wrap amenity-row">
+        <div class="amenity">Ski-in Access</div><div class="amenity">Spa</div><div class="amenity">Fireplace Suites</div><div class="amenity">Guided Hikes</div><div class="amenity">Local Dining</div>
+    </div>
+    <section class="rooms-scroll">
+        {% for card in demo.service_cards %}
+        <article class="room-card">
+            {% if loop.index <= 3 %}<img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="" onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='180px'" />{% endif %}
+            <div><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.88rem;">{{ card.body }}</p></div>
+        </article>
+        {% endfor %}
+    </section>
+    {% else %}
+    <header class="wrap" style="padding:1.2rem 0;display:flex;justify-content:space-between;align-items:center;">
+        <strong>{{ template_item.title }}</strong>{% include "demos/partials/nav.html" %}
+    </header>
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% endif %}
+</body>
+</html>

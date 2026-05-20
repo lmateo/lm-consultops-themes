@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="bg-gradient-to-br from-emerald-50 via-white to-white">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-24">
+        <div>
+            <p class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-brand-dark">Premium Marketplace</p>
+            <h1 class="mt-5 text-4xl font-bold leading-tight md:text-5xl">Launch your business website faster with conversion-ready templates.</h1>
+            <p class="mt-5 max-w-xl text-lg text-brand-muted">Mateo ConsultOps Themes helps farms, contractors, local businesses, and nonprofits ship modern websites in days, not months.</p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="/marketplace" class="rounded-lg bg-brand-emerald px-5 py-3 font-semibold text-white hover:bg-brand-dark">Browse Templates</a>
+                <a href="/contact" class="rounded-lg border border-brand-border px-5 py-3 font-semibold hover:bg-white">Request Customization</a>
+                <a href="/services/setup" class="rounded-lg border border-brand-border px-5 py-3 font-semibold hover:bg-white">Start Your Website</a>
+                <a href="/services/hosting" class="rounded-lg border border-brand-border px-5 py-3 font-semibold hover:bg-white">Get Hosting</a>
+            </div>
+        </div>
+        <div class="rounded-3xl border border-brand-border bg-white p-6 shadow-soft">
+            <h2 class="text-lg font-semibold">Marketplace Search</h2>
+            <form action="/marketplace" method="get" class="mt-4 grid gap-3">
+                <label class="text-sm font-medium" for="q">Search templates</label>
+                <input id="q" name="q" placeholder="Farm, HVAC, nonprofit, real estate..." class="rounded-lg border border-brand-border px-3 py-2 focus:border-brand-emerald focus:outline-none focus:ring-2 focus:ring-emerald-200" />
+                <button type="submit" class="rounded-lg bg-brand-ink px-4 py-2 font-semibold text-white hover:bg-black">Find Templates</button>
+            </form>
+            <p class="mt-4 text-sm text-brand-muted">Filter by industry, category, and pricing.</p>
+        </div>
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <div class="flex items-end justify-between">
+        <h2 class="text-2xl font-bold">Featured Templates</h2>
+        <a href="/marketplace" class="text-sm font-semibold text-brand-dark hover:text-brand-emerald">View all</a>
+    </div>
+    <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {% for item in featured_templates %}
+            {% include "components/template_card.html" %}
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="grid gap-6 lg:grid-cols-2">
+        <div>
+            <h2 class="text-2xl font-bold">Featured Picks</h2>
+            <div class="mt-6 grid gap-6 md:grid-cols-2">
+                {% for item in best_sellers[:4] %}
+                    {% include "components/template_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h2 class="text-2xl font-bold">New Templates</h2>
+            <div class="mt-6 grid gap-6 md:grid-cols-2">
+                {% for item in new_templates[:4] %}
+                    {% include "components/template_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold">Browse by Category</h2>
+    <div class="mt-6 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {% for category in categories %}
+            <a href="/categories/{{ category.slug }}" class="rounded-xl border border-brand-border bg-white px-4 py-3 text-sm font-semibold hover:border-brand-emerald hover:text-brand-dark">
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <h2 class="text-2xl font-bold">Industry Showcase</h2>
+    <div class="mt-6 flex flex-wrap gap-3">
+        {% for industry in industries %}
+            <a href="/industries/{{ industry.slug }}" class="rounded-full border border-brand-border px-4 py-2 text-sm hover:border-brand-emerald hover:text-brand-dark">{{ industry.name }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="bg-white">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:grid-cols-3 lg:px-8">
+        <div class="rounded-2xl border border-brand-border p-6">
+            <h3 class="text-lg font-semibold">Why Choose Mateo</h3>
+            <p class="mt-2 text-sm text-brand-muted">Industry-fit templates, strategic consulting, and launch support from one team.</p>
+        </div>
+        <div class="rounded-2xl border border-brand-border p-6">
+            <h3 class="text-lg font-semibold">Hosting + Maintenance</h3>
+            <p class="mt-2 text-sm text-brand-muted">Reliable managed hosting and ongoing updates for growing businesses.</p>
+        </div>
+        <div class="rounded-2xl border border-brand-border p-6">
+            <h3 class="text-lg font-semibold">Testimonials</h3>
+            <p class="mt-2 text-sm text-brand-muted">“We launched in a week and doubled inquiries.” — Local tourism client</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

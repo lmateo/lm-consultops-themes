@@ -1,0 +1,12 @@
+{% set base = "/static/images/templates/" ~ item.slug %}
+<img
+    src="{{ base }}/thumbnail.webp"
+    srcset="{{ base }}/thumbnail.webp 800w, {{ base }}/preview.webp 1440w"
+    sizes="{{ sizes | default('(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw') }}"
+    alt="{{ item.title }} thumbnail"
+    width="800"
+    height="480"
+    loading="lazy"
+    decoding="async"
+    class="{{ image_class | default('h-48 w-full object-cover') }}"
+/>

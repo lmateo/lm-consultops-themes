@@ -1,0 +1,50 @@
+{% set rich = demo_rich.contact %}
+<section class="demo-page-section">
+    <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+    <h1>{{ demo_page_content.title }}</h1>
+    <p class="demo-lead">{{ demo_page_content.lead }}</p>
+
+    <div class="contact-layout" style="margin-top:2rem;">
+        <div class="contact-card">
+            <h2 style="margin:0 0 1rem;font-size:1.1rem;">Visit & reach us</h2>
+            <dl>
+                <dt>Address</dt>
+                <dd>{{ rich.address }}</dd>
+                <dt>Phone</dt>
+                <dd><a href="tel:{{ rich.phone|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '') }}">{{ rich.phone }}</a></dd>
+                <dt>Email</dt>
+                <dd><a href="mailto:{{ rich.email }}">{{ rich.email }}</a></dd>
+            </dl>
+            <table class="hours-table" aria-label="Hours">
+                {% for row in rich.hours %}
+                <tr><td>{{ row.days }}</td><td>{{ row.time }}</td></tr>
+                {% endfor %}
+            </table>
+            <ul style="margin:1.25rem 0 0;padding-left:1.1rem;color:var(--text-muted);font-size:0.9rem;">
+                {% for point in demo_page_content.highlights %}
+                <li>{{ point }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <form class="contact-card demo-form" onsubmit="return false;">
+            <h2 style="margin:0 0 0.5rem;font-size:1.1rem;">Send a message</h2>
+            <p style="margin:0 0 1rem;color:var(--text-muted);font-size:0.9rem;">{{ rich.form_note }}</p>
+            <label>Full name<input type="text" placeholder="Your name" autocomplete="name" /></label>
+            <label>Email<input type="email" placeholder="you@email.com" autocomplete="email" /></label>
+            <label>Phone<input type="tel" placeholder="(555) 555-0100" autocomplete="tel" /></label>
+            <label>How can we help?<textarea placeholder="Tell us about your project, visit, or appointment needs…"></textarea></label>
+            <button type="button" class="demo-btn">Submit inquiry</button>
+        </form>
+    </div>
+
+    <h2 style="margin:2.5rem 0 0.75rem;font-size:1.15rem;">Common questions</h2>
+    <div class="faq-list">
+        {% for faq in rich.faqs %}
+        <div class="faq-item">
+            <strong>{{ faq.q }}</strong>
+            <p>{{ faq.a }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>

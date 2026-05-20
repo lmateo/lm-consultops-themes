@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-10 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            {% with slug=template_item.slug, alt=template_item.title ~ " hero preview" %}
+                {% include "components/responsive_hero_image.html" %}
+            {% endwith %}
+            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                {% for img in template_item.images[:3] %}
+                    {% with slug=template_item.slug, image_url=img.image_url, alt_text=img.alt_text %}
+                        {% include "components/responsive_gallery_image.html" %}
+                    {% endwith %}
+                {% endfor %}
+            </div>
+            <h1 class="mt-8 text-3xl font-bold">{{ template_item.title }}</h1>
+            <p class="mt-4 text-brand-muted">{{ template_item.description }}</p>
+
+            <div class="mt-6 flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-emerald-100 px-3 py-1 font-semibold text-brand-dark">SEO Ready</span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-brand-ink">Responsive</span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-brand-ink">Browser Support: Chrome, Safari, Edge</span>
+                <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-brand-ink">Tech: {{ template_item.tech_stack }}</span>
+            </div>
+
+            <h2 class="mt-10 text-xl font-bold">Features</h2>
+            <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+                {% for feature in template_item.features %}
+                    <li class="rounded-lg border border-brand-border bg-white px-3 py-2 text-sm">{{ feature.label }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2 class="mt-10 text-xl font-bold">Related Templates</h2>
+            <div class="mt-5 grid gap-6 md:grid-cols-2">
+                {% for item in related_templates %}
+                    {% include "components/template_card.html" %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <aside class="h-fit rounded-2xl border border-brand-border bg-white p-6 shadow-soft">
+            <p class="text-sm text-brand-muted">License starts at</p>
+            <p class="mt-1 text-3xl font-bold">${{ "%.2f"|format(template_item.price) }}</p>
+            <p class="mt-2 text-sm text-brand-muted">Includes full downloadable website source after payment.</p>
+            <div class="mt-4 text-sm text-brand-muted">
+                <p>Version: <span class="font-semibold text-brand-ink">{{ template_item.version }}</span></p>
+                <p>Updated: <span class="font-semibold text-brand-ink">{{ template_item.last_updated.strftime("%b %d, %Y") }}</span></p>
+            </div>
+            <div class="mt-6 grid gap-3">
+                <a href="/purchase/{{ template_item.slug }}" class="rounded-lg bg-brand-emerald px-4 py-3 text-center font-semibold text-white hover:bg-brand-dark">Purchase and Download Theme</a>
+                <a href="/preview/{{ template_item.slug }}" class="rounded-lg border border-brand-border px-4 py-3 text-center font-semibold hover:bg-slate-50">Live Preview</a>
+            </div>
+            <div class="mt-4 rounded-lg border border-brand-border bg-slate-50 p-4">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-brand-muted">Active demo pages</h3>
+                <ul class="mt-2 flex flex-wrap gap-2 text-sm">
+                    <li><a href="/preview-site/{{ template_item.slug }}" class="font-medium text-brand-dark hover:underline">Home</a></li>
+                    <li><a href="/preview-site/{{ template_item.slug }}/about" class="font-medium text-brand-dark hover:underline">About</a></li>
+                    <li><a href="/preview-site/{{ template_item.slug }}/services" class="font-medium text-brand-dark hover:underline">Services</a></li>
+                    <li><a href="/preview-site/{{ template_item.slug }}/contact" class="font-medium text-brand-dark hover:underline">Contact</a></li>
+                </ul>
+            </div>
+            <div class="mt-6 border-t border-brand-border pt-6">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-brand-muted">Upsell Services</h3>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li>Setup service</li>
+                    <li>Managed hosting</li>
+                    <li>Maintenance plan</li>
+                    <li>SEO optimization</li>
+                    <li>Cloud consulting</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

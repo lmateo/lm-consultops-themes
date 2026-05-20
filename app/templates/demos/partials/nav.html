@@ -1,0 +1,9 @@
+<nav class="demo-nav" aria-label="Demo pages">
+    {% for item in demo.nav_items %}
+    <a
+        href="/preview-site/{{ template_item.slug }}{% if item.page != 'home' %}/{{ item.page }}{% endif %}"
+        {% if demo.page == item.page %}aria-current="page"{% endif %}
+        class="demo-nav-link{% if demo.page == item.page %} is-active{% endif %}"
+    >{{ item.label }}</a>
+    {% endfor %}
+</nav>

@@ -1,0 +1,11 @@
+{% set page = demo_page_content %}
+<section class="demo-page-section">
+    <p class="demo-eyebrow">{{ page.eyebrow }}</p>
+    <h1>{{ page.title }}</h1>
+    <p class="demo-lead">{{ page.lead }}</p>
+    <ul class="demo-highlights">
+        {% for point in page.highlights %}
+        <li>{{ point }}</li>
+        {% endfor %}
+    </ul>
+</section>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(1080px, 92%); margin: 0 auto; }
+        .rest-header { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 4%; color: #fff; }
+        .rest-header .demo-nav-link { color: rgba(255,255,255,0.9); margin-left: 1rem; text-decoration: none; font-weight: 600; }
+        .rest-header .demo-nav-link.is-active { border-bottom: 2px solid #fff; }
+        .rest-hero { position: relative; min-height: 72vh; display: grid; place-items: center; text-align: center; color: #fff; }
+        .rest-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35)), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/cover; }
+        .rest-hero-inner { position: relative; z-index: 1; padding: 2rem; max-width: 640px; }
+        .menu-strip { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; padding: 1rem 0; background: #1c1917; }
+        .menu-pill { color: #fef3c7; border: 1px solid #57534e; border-radius: 999px; padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 600; }
+        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; padding: var(--section-pad) 0; }
+        .menu-item { text-align: center; background: #fff; border-radius: var(--radius); padding: 1.25rem; border: 1px solid #f5e6d3; }
+        .menu-item .price { color: var(--accent-start); font-weight: 800; font-size: 1.2rem; }
+        .hours-bar { background: var(--accent-start); color: #fff; text-align: center; padding: 0.85rem; font-weight: 600; }
+        .demo-page-section { padding: var(--section-pad) 0; }
+        .demo-eyebrow { color: var(--accent-start); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; }
+        @media (max-width: 800px) { .menu-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    {% if demo.page == "home" %}
+    <header class="rest-header">
+        <strong>{{ template_item.title }}</strong>
+        {% include "demos/partials/nav.html" %}
+    </header>
+    <section class="rest-hero">
+        <div class="rest-hero-inner">
+            <p class="demo-eyebrow" style="color:#fde68a;">{{ demo_page_content.eyebrow }}</p>
+            <h1 style="margin:0.5rem 0;font-size:clamp(2.2rem,5vw,3.4rem);">{{ demo_page_content.title }}</h1>
+            <p>{{ demo_page_content.lead }}</p>
+            <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact" style="margin-top:1.2rem;">Order Online</a>
+        </div>
+    </section>
+    <div class="menu-strip wrap" style="width:100%;max-width:none;">
+        <span class="menu-pill">Wood-Fired Pies</span><span class="menu-pill">Pastas</span><span class="menu-pill">Salads</span><span class="menu-pill">Desserts</span>
+    </div>
+    <section class="wrap menu-grid">
+        {% for card in demo.service_cards %}
+        <article class="menu-item"><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.9rem;">{{ card.body }}</p><p class="price">${{ 12 + loop.index * 3 }}.00</p></article>
+        {% endfor %}
+    </section>
+    <div class="hours-bar">Open today 11am – 10pm · Free parking behind the shop</div>
+    {% else %}
+    <header style="background:#1c1917;color:#fff;padding:1rem 4%;display:flex;justify-content:space-between;align-items:center;">
+        <strong>{{ template_item.title }}</strong>
+        {% include "demos/partials/nav.html" %}
+    </header>
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% endif %}
+</body>
+</html>

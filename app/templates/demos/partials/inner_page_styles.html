@@ -1,0 +1,46 @@
+<style>
+    .demo-page-section { padding: var(--section-pad, 4rem) 0; }
+    .demo-eyebrow { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; font-weight: 700; color: var(--accent-start); margin: 0 0 0.5rem; }
+    .demo-lead { color: var(--text-muted); max-width: 62ch; font-size: 1.05rem; margin: 0.75rem 0 0; }
+    .demo-page-section h1 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; }
+    .story-block p { color: var(--text-muted); margin: 0 0 1rem; line-height: 1.65; }
+    .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: start; }
+    .timeline { list-style: none; padding: 0; margin: 1.5rem 0 0; border-left: 2px solid rgba(148,163,184,0.35); }
+    .timeline li { padding: 0 0 1.25rem 1.25rem; position: relative; }
+    .timeline li::before { content: ""; position: absolute; left: -6px; top: 0.35rem; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-start); }
+    .timeline-year { font-weight: 800; color: var(--accent-start); font-size: 0.85rem; }
+    .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+    .team-card { background: #fff; border: 1px solid rgba(148,163,184,0.25); border-radius: var(--radius); padding: 1.15rem; }
+    .team-card strong { display: block; margin-bottom: 0.2rem; }
+    .team-card span { font-size: 0.82rem; color: var(--accent-start); font-weight: 700; }
+    .team-card p { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--text-muted); }
+    .values-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .value-pill { background: rgba(16,185,129,0.1); color: var(--accent-end); padding: 0.4rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+    .offerings-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1.5rem; }
+    .offering-card { background: #fff; border: 1px solid rgba(148,163,184,0.25); border-radius: var(--radius); padding: 1.25rem; }
+    .offering-meta { display: flex; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--accent-start); }
+    .offering-card ul { margin: 0.75rem 0 0; padding-left: 1.1rem; color: var(--text-muted); font-size: 0.9rem; }
+    .testimonials-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; }
+    .quote-card { background: #fff; border-radius: var(--radius); padding: 1.15rem; border: 1px solid rgba(148,163,184,0.2); font-style: italic; color: var(--text-muted); }
+    .quote-card cite { display: block; margin-top: 0.75rem; font-style: normal; font-weight: 700; color: var(--text-main); font-size: 0.88rem; }
+    .contact-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; }
+    .contact-card { background: #fff; border-radius: var(--radius); border: 1px solid rgba(148,163,184,0.25); padding: 1.25rem; }
+    .contact-card dl { margin: 0; }
+    .contact-card dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; margin-top: 1rem; }
+    .contact-card dt:first-child { margin-top: 0; }
+    .contact-card dd { margin: 0.25rem 0 0; font-weight: 600; }
+    .hours-table { width: 100%; margin-top: 0.75rem; font-size: 0.92rem; }
+    .hours-table td { padding: 0.35rem 0; border-bottom: 1px solid rgba(148,163,184,0.15); }
+    .hours-table td:last-child { text-align: right; color: var(--text-muted); }
+    .demo-form { display: grid; gap: 0.75rem; }
+    .demo-form label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .demo-form input, .demo-form select, .demo-form textarea { width: 100%; padding: 0.65rem 0.75rem; border-radius: calc(var(--radius) * 0.55); border: 1px solid rgba(148,163,184,0.4); font: inherit; }
+    .demo-form textarea { min-height: 100px; resize: vertical; }
+    .faq-list { margin-top: 1.5rem; }
+    .faq-item { border-bottom: 1px solid rgba(148,163,184,0.2); padding: 1rem 0; }
+    .faq-item strong { display: block; margin-bottom: 0.35rem; }
+    .faq-item p { margin: 0; color: var(--text-muted); font-size: 0.93rem; }
+    @media (max-width: 900px) {
+        .two-col, .team-grid, .offerings-grid, .testimonials-row, .contact-layout { grid-template-columns: 1fr; }
+    }
+</style>

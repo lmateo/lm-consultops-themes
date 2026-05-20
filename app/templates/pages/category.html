@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold">{{ category_slug.replace('-', ' ').title() }} Templates</h1>
+    <p class="mt-2 text-brand-muted">Curated options for this marketplace category.</p>
+    <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {% for item in pagination["items"] %}
+            {% include "components/template_card.html" %}
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

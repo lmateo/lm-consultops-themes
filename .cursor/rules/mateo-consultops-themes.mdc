@@ -1,0 +1,47 @@
+---
+description: Core build standards for Mateo ConsultOps Themes marketplace
+alwaysApply: true
+---
+
+# Mateo ConsultOps Themes Cursor Rules
+
+## Identity + Quality Bar
+- Build an original premium SaaS-style marketplace for Mateo ConsultOps Themes.
+- ThemeForest is pattern inspiration only; never copy branding, layouts, UI, text, or assets.
+- Final output must feel premium, modern, scalable, and production-ready.
+
+## Required Stack
+- Use FastAPI + Jinja2 + Tailwind CSS + Alpine.js/HTMX.
+- Use SQLAlchemy 2.x and Alembic with PostgreSQL-ready architecture (SQLite allowed for local dev).
+- Keep Docker-ready project structure.
+- Do not introduce React unless explicitly requested.
+
+## Design System
+- Brand colors: `#10B981`, `#047857`, `#FFFFFF`, `#111827`, `#6B7280`, `#E5E7EB`.
+- Design must stay clean, responsive, marketplace-focused, and SaaS-inspired.
+- Use reusable partials/components for cards, nav, footer, CTAs, filters, pricing, galleries, and dashboard UI.
+
+## Mandatory UX Features
+- Marketplace cards must include: thumbnail, title, category, industry, price, rating, sales count, last updated, Live Preview, and Details.
+- Template detail pages must include: hero, gallery, pricing, rating, sales count, version, features, related templates, purchase CTA, preview CTA, setup/hosting/maintenance upsells.
+- Live preview must include: desktop/tablet/mobile modes, sticky toolbar, back button, and purchase CTA.
+
+## Images
+- Use royalty-free assets only; no copyrighted stock usage.
+- Prefer AI-generated imagery, SVG overlays, procedural mockups, and gradients.
+- Store in `/app/static/images/templates/<slug>/` with:
+  - `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`
+  - `gallery-1.webp`, `gallery-2.webp`, `gallery-3.webp`
+
+## Accessibility + SEO + Performance
+- Accessibility: semantic HTML, keyboard navigation, ARIA labels, visible focus states, sufficient contrast.
+- SEO: title, meta description, Open Graph tags, semantic structure, clean URLs on all public pages.
+- Performance: optimize images/rendering/CSS/queries; use lazy loading, pagination, and responsive images.
+
+## Workflow Requirements
+- Before major UI layout work, use Figma MCP to improve hierarchy, spacing, responsiveness, card consistency, and typography.
+- Use installed Cursor plugins/MCP tools to improve architecture, quality, accessibility, docs, testing, and Tailwind consistency.
+
+## Code Quality
+- Keep code modular, maintainable, scalable, documented, and organized.
+- Avoid duplicated UI, repeated hardcoded layouts, and monolithic files.

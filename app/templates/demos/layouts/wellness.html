@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(1040px, 92%); margin: 0 auto; }
+        body { background: #fafaf9; }
+        .wellness-header { display: flex; justify-content: space-between; align-items: center; padding: 1.4rem 0; }
+        .brand { font-weight: 300; font-size: 1.6rem; letter-spacing: 0.08em; text-transform: uppercase; }
+        .demo-nav-link { text-decoration: none; color: #78716c; font-weight: 500; margin-left: 1.2rem; }
+        .demo-nav-link.is-active { color: var(--accent-start); border-bottom: 1px solid var(--accent-start); }
+        .calm-hero { text-align: center; padding: 4rem 1rem 3rem; }
+        .calm-hero h1 { font-weight: 300; font-size: clamp(2rem, 5vw, 3rem); margin: 0.6rem 0; letter-spacing: -0.02em; }
+        .pathways { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; padding: 0 0 var(--section-pad); }
+        .pathway { text-align: center; padding: 2rem 1.25rem; background: #fff; border-radius: var(--radius); border: 1px solid #e7e5e4; }
+        .pathway-num { width: 2.5rem; height: 2.5rem; border-radius: 50%; border: 1px solid var(--accent-start); color: var(--accent-start); display: grid; place-items: center; margin: 0 auto 1rem; font-weight: 600; }
+        .practitioners { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding-bottom: var(--section-pad); }
+        .practitioner { background: #fff; border-radius: var(--radius); padding: 1.25rem; border: 1px solid #e7e5e4; }
+        .insurance { text-align: center; padding: 1.5rem; background: #ecfdf5; border-radius: var(--radius); color: #065f46; font-weight: 600; margin-bottom: 2rem; }
+        .demo-eyebrow { color: var(--accent-start); letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.68rem; }
+        .demo-page-section { padding: var(--section-pad) 0; max-width: 640px; margin: 0 auto; text-align: center; }
+        @media (max-width: 800px) { .pathways, .practitioners { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    <header class="wrap wellness-header">
+        <div class="brand">{{ template_item.title }}</div>
+        {% include "demos/partials/nav.html" %}
+    </header>
+
+    {% if demo.page == "home" %}
+    <section class="wrap calm-hero">
+        <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+        <h1>{{ demo_page_content.title }}</h1>
+        <p style="color:#78716c;max-width:48ch;margin:0 auto;">{{ demo_page_content.lead }}</p>
+        <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact" style="margin-top:1.5rem;">Book a Visit</a>
+    </section>
+    <div class="wrap insurance">Insurance accepted · Telehealth available · Same-week new patients</div>
+    <section class="wrap pathways">
+        {% for card in demo.service_cards %}
+        <article class="pathway"><div class="pathway-num">{{ loop.index }}</div><h3 style="margin:0;font-weight:500;">{{ card.title }}</h3><p style="color:#78716c;font-size:0.92rem;">{{ card.body }}</p></article>
+        {% endfor %}
+    </section>
+    <section class="wrap practitioners">
+        <div class="practitioner"><strong>Dr. Rivera</strong><p style="color:#78716c;font-size:0.88rem;">Integrative medicine</p></div>
+        <div class="practitioner"><strong>Jamie Cho, PT</strong><p style="color:#78716c;font-size:0.88rem;">Movement & recovery</p></div>
+        <div class="practitioner"><strong>A. Morgan</strong><p style="color:#78716c;font-size:0.88rem;">Nutrition coaching</p></div>
+    </section>
+    {% else %}
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% endif %}
+</body>
+</html>

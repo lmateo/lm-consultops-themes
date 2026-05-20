@@ -1,0 +1,35 @@
+{% set rich = demo_rich.services %}
+<section class="demo-page-section">
+    <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
+    <h1>{{ demo_page_content.title }}</h1>
+    <p class="demo-lead">{{ demo_page_content.lead }}</p>
+    {% if rich.intro %}<p class="demo-lead" style="margin-top:0.5rem;">{{ rich.intro }}</p>{% endif %}
+
+    <div class="offerings-grid">
+        {% for item in rich.offerings %}
+        <article class="offering-card">
+            <h3 style="margin:0;">{{ item.title }}</h3>
+            <div class="offering-meta">
+                <span>{{ item.price }}</span>
+                <span>{{ item.duration }}</span>
+            </div>
+            <p style="margin:0.6rem 0 0;color:var(--text-muted);font-size:0.93rem;">{{ item.description }}</p>
+            <ul>
+                {% for bullet in item.bullets %}
+                <li>{{ bullet }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+        {% endfor %}
+    </div>
+
+    <ul class="demo-highlights" style="margin-top:2rem;padding-left:1.2rem;color:var(--text-muted);">
+        {% for point in demo_page_content.highlights %}
+        <li>{{ point }}</li>
+        {% endfor %}
+    </ul>
+
+    <p style="margin-top:2rem;">
+        <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact">{{ demo.cta_label|default('Get Started') }}</a>
+    </p>
+</section>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(720px, 92%); margin: 0 auto; }
+        .editorial-header { text-align: center; padding: 1.5rem 0 0.5rem; border-bottom: 1px solid #e2e8f0; }
+        .editorial-header .brand { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        .demo-nav { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .demo-nav-link { text-decoration: none; color: #64748b; font-weight: 600; }
+        .demo-nav-link.is-active { color: var(--accent-start); }
+        .impact-band { background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); color: #fff; padding: 2.5rem 1rem; text-align: center; }
+        .impact-stats { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin-top: 1rem; }
+        .impact-stats div strong { font-size: 2rem; display: block; }
+        .story { padding: var(--section-pad) 0; }
+        .story p { font-size: 1.08rem; color: #334155; }
+        .events-list { list-style: none; padding: 0; margin: 2rem 0 0; }
+        .events-list li { display: flex; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #e2e8f0; }
+        .donate-cta { text-align: center; padding: 2rem; background: #f8fafc; border-radius: var(--radius); margin: 2rem 0; }
+        .demo-eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent-start); }
+        .demo-page-section { padding: var(--section-pad) 0; }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    <header class="editorial-header wrap" style="width:92%;max-width:720px;">
+        <div class="brand">{{ template_item.title }}</div>
+        {% include "demos/partials/nav.html" %}
+    </header>
+
+    {% if demo.page == "home" %}
+    <section class="impact-band">
+        <p class="demo-eyebrow" style="color:rgba(255,255,255,0.85);">{{ demo_page_content.eyebrow }}</p>
+        <h1 style="margin:0.5rem 0;font-size:clamp(1.8rem,4vw,2.6rem);">{{ demo_page_content.title }}</h1>
+        <p style="max-width:52ch;margin:0 auto;opacity:0.95;">{{ demo_page_content.lead }}</p>
+        <div class="impact-stats">
+            <div><strong>12k+</strong><span>Meals served</span></div>
+            <div><strong>480</strong><span>Volunteers</span></div>
+            <div><strong>36</strong><span>Partner orgs</span></div>
+        </div>
+    </section>
+    <article class="wrap story">
+        <p>{{ demo_page_content.highlights[0] }}</p>
+        <p>{{ demo_page_content.highlights[1] }}</p>
+        <ul class="events-list">
+            {% for card in demo.service_cards %}
+            <li><span><strong>{{ card.title }}</strong><br><small style="color:#64748b;">{{ card.body }}</small></span><a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact">Join</a></li>
+            {% endfor %}
+        </ul>
+        <div class="donate-cta">
+            <h2 style="margin:0;">Fuel the next program cycle</h2>
+            <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact" style="margin-top:1rem;">Donate Today</a>
+        </div>
+    </article>
+    {% else %}
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% endif %}
+</body>
+</html>

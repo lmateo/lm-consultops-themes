@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ meta_title or "Mateo ConsultOps Themes" }}</title>
+    <meta name="description" content="{{ meta_description or 'Premium marketplace templates for local businesses.' }}" />
+    <meta property="og:title" content="{{ meta_title or 'Mateo ConsultOps Themes' }}" />
+    <meta property="og:description" content="{{ meta_description or 'Premium template marketplace for small businesses.' }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="icon" type="image/x-icon" href="/static/images/logos/favicon.ico" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                emerald: "#10B981",
+                dark: "#047857",
+                ink: "#111827",
+                muted: "#6B7280",
+                border: "#E5E7EB"
+              }
+            },
+            boxShadow: {
+              soft: "0 8px 30px rgba(17, 24, 39, 0.08)"
+            }
+          }
+        }
+      };
+    </script>
+    <script defer src="/static/js/app.js"></script>
+</head>
+<body class="bg-slate-50 text-brand-ink antialiased">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
+        Skip to content
+    </a>
+    <header class="sticky top-0 z-40 border-b border-brand-border bg-white/95 backdrop-blur">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <a href="/" class="flex items-center gap-2 text-lg font-bold tracking-tight">
+                <img
+                    src="/static/images/logos/logo_transparent.png"
+                    alt="Mateo Consulting Tech logo"
+                    class="h-8 w-auto"
+                    loading="eager"
+                    decoding="async"
+                />
+                Mateo ConsultOps Themes
+            </a>
+            <nav aria-label="Primary" class="hidden gap-6 text-sm font-medium md:flex">
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/marketplace">Marketplace</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/pricing">Pricing</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/downloads">My Downloads</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/services/setup">Setup</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/services/hosting">Hosting</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/about">About</a>
+                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/contact">Contact</a>
+            </nav>
+            <a href="/marketplace" class="rounded-lg bg-brand-emerald px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">
+                Browse Templates
+            </a>
+        </div>
+    </header>
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="mt-20 border-t border-brand-border bg-white">
+        <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
+            <div>
+                <h2 class="text-base font-semibold">Mateo ConsultOps Themes</h2>
+                <p class="mt-3 text-sm text-brand-muted">Premium templates, setup services, and hosting for growth-focused local businesses.</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-muted">Marketplace</h3>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="/marketplace" class="hover:text-brand-emerald">Browse Templates</a></li>
+                    <li><a href="/pricing" class="hover:text-brand-emerald">Licensing</a></li>
+                    <li><a href="/downloads" class="hover:text-brand-emerald">My Downloads</a></li>
+                    <li><a href="/faq" class="hover:text-brand-emerald">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-muted">Services</h3>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="/services/setup" class="hover:text-brand-emerald">Setup Service</a></li>
+                    <li><a href="/services/hosting" class="hover:text-brand-emerald">Managed Hosting</a></li>
+                    <li><a href="/contact" class="hover:text-brand-emerald">Customization Request</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold uppercase tracking-wider text-brand-muted">Company</h3>
+                <ul class="mt-3 space-y-2 text-sm">
+                    <li><a href="/about" class="hover:text-brand-emerald">About</a></li>
+                    <li><a href="/admin" class="hover:text-brand-emerald">Admin Dashboard</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% include "demos/partials/inner_page_styles.html" %}
+{% if demo.page == "about" %}
+    {% include "demos/partials/pages/about.html" %}
+{% elif demo.page == "services" %}
+    {% include "demos/partials/pages/services.html" %}
+{% elif demo.page == "contact" %}
+    {% include "demos/partials/pages/contact.html" %}
+{% else %}
+    {% include "demos/partials/page_body.html" %}
+{% endif %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ template_item.title }} — {{ demo.page|title }}</title>
+    {% include "demos/partials/customizer.html" %}
+    <style>
+        .wrap { width: min(1180px, 92%); margin: 0 auto; }
+        .realty-top { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; }
+        .demo-nav-link { text-decoration: none; font-weight: 600; color: #475569; margin-left: 1rem; }
+        .demo-nav-link.is-active { color: var(--accent-start); }
+        .search-hero { background: #0f172a; color: #fff; padding: 3rem 0; }
+        .search-box { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.5rem; background: #fff; padding: 0.5rem; border-radius: var(--radius); color: #0f172a; }
+        .search-box input, .search-box select { border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.7rem; }
+        .listings { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; padding: var(--section-pad) 0; }
+        .listing { background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid #e2e8f0; }
+        .listing img { height: 200px; width: 100%; object-fit: cover; }
+        .listing .body { padding: 1rem; }
+        .listing .price { color: var(--accent-start); font-weight: 800; font-size: 1.25rem; }
+        .agent-strip { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 2rem; }
+        .agent { flex: 0 0 200px; background: #f8fafc; border-radius: var(--radius); padding: 1rem; text-align: center; border: 1px solid #e2e8f0; }
+        .demo-page-section { padding: var(--section-pad) 0; }
+        .demo-eyebrow { color: var(--accent-start); font-weight: 700; text-transform: uppercase; font-size: 0.72rem; }
+        @media (max-width: 900px) { .search-box, .listings { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
+    <header class="wrap realty-top">
+        <strong style="font-size:1.2rem;">{{ template_item.title }}</strong>
+        {% include "demos/partials/nav.html" %}
+    </header>
+
+    {% if demo.page == "home" %}
+    <section class="search-hero">
+        <div class="wrap">
+            <p class="demo-eyebrow" style="color:#86efac;">{{ demo_page_content.eyebrow }}</p>
+            <h1 style="margin:0.4rem 0;">{{ demo_page_content.title }}</h1>
+            <p style="opacity:0.9;max-width:56ch;">{{ demo_page_content.lead }}</p>
+            <form class="search-box" style="margin-top:1.5rem;" onsubmit="return false;">
+                <input type="text" placeholder="City, neighborhood, or ZIP" aria-label="Location" />
+                <select aria-label="Property type"><option>Cabins</option><option>Homes</option><option>Land</option></select>
+                <select aria-label="Price"><option>Any price</option></select>
+                <button type="button" class="demo-btn">Search</button>
+            </form>
+        </div>
+    </section>
+    <section class="wrap listings">
+        {% for card in demo.service_cards %}
+        <article class="listing">
+            {% if loop.index <= 3 %}<img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="" onerror="this.style.background='#e2e8f0';this.style.minHeight='200px'" />{% endif %}
+            <div class="body"><p class="price">${{ 280 + loop.index * 45 }}k</p><h3 style="margin:0.3rem 0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.9rem;">{{ card.body }}</p></div>
+        </article>
+        {% endfor %}
+    </section>
+    <section class="wrap agent-strip">
+        <div class="agent"><strong>Agent Carter</strong><p style="font-size:0.85rem;color:#64748b;">Mountain listings</p></div>
+        <div class="agent"><strong>Agent Diaz</strong><p style="font-size:0.85rem;color:#64748b;">First-time buyers</p></div>
+        <div class="agent"><strong>Agent Kim</strong><p style="font-size:0.85rem;color:#64748b;">Commercial</p></div>
+    </section>
+    {% else %}
+    <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
+    {% endif %}
+</body>
+</html>
