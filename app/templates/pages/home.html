@@ -17,17 +17,17 @@
                 <a href="/contact" class="rounded-lg border border-brand-border px-5 py-3 font-semibold hover:bg-white">Request Customization</a>
             </div>
             <div class="mt-8 grid grid-cols-2 gap-3 sm:max-w-sm">
-                <div class="rounded-xl border border-brand-border bg-white/90 px-4 py-3">
+                <div class="mkt-stat-tile px-4 py-3">
                     <p class="text-xs font-medium text-brand-muted">Templates</p>
                     <p class="mt-1 text-xl font-bold">{{ featured_templates|length + best_sellers|length + new_templates|length }}+</p>
                 </div>
-                <div class="rounded-xl border border-brand-border bg-white/90 px-4 py-3">
+                <div class="mkt-stat-tile px-4 py-3">
                     <p class="text-xs font-medium text-brand-muted">Industries</p>
                     <p class="mt-1 text-xl font-bold">{{ industries|length }}</p>
                 </div>
             </div>
         </div>
-        <div class="rounded-3xl border border-brand-border bg-white p-6 shadow-soft">
+        <div class="mkt-hero-panel p-6">
             <h2 class="text-lg font-semibold">Template Search</h2>
             <form action="/popular" method="get" class="mt-4 grid gap-3">
                 <label class="text-sm font-medium" for="q">Search templates</label>

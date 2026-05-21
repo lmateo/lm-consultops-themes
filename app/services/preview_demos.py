@@ -5,21 +5,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from app.models import Template
-
-DEMO_PAGES = frozenset({"home", "about", "services", "contact"})
+from app.services.crafto_demos import (
+    CRAFTO_TEMPLATE_DEMOS,
+    DEMO_PAGES,
+    get_crafto_demo,
+    get_crafto_demo_or_default,
+)
 
 # slug -> layout template key (under app/templates/demos/layouts/)
 SLUG_LAYOUT_MAP: dict[str, str] = {
-    "greenfield-farm": "agrarian",
-    "tradepro-local": "contractor",
-    "pizza-local-eats": "restaurant",
-    "cloudcare-it": "saas-tech",
-    "mountain-lodge": "lodge",
-    "petcare-studio": "petcare",
-    "community-impact": "nonprofit",
-    "homebase-realty": "realty",
-    "autoworks-garage": "garage",
-    "wellness-local": "wellness",
+    slug: mapping.layout_key for slug, mapping in CRAFTO_TEMPLATE_DEMOS.items()
 }
 
 DEFAULT_LAYOUT = "agrarian"
@@ -365,7 +360,14 @@ def _content_pack(template: Template) -> dict[str, DemoPageContent]:
 
 
 def get_layout_key(slug: str) -> str:
+    crafto = get_crafto_demo(slug)
+    if crafto:
+        return crafto.layout_key
     return SLUG_LAYOUT_MAP.get(slug, DEFAULT_LAYOUT)
+
+
+def get_crafto_preview_url(slug: str, page: str = "home") -> str:
+    return get_crafto_demo_or_default(slug).page_url(page)
 
 
 def get_preview_demo(template: Template, page: str = "home") -> PreviewDemoContext:

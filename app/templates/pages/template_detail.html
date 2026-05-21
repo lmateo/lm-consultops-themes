@@ -16,7 +16,8 @@
             <h1 class="mt-8 text-3xl font-bold">{{ template_item.title }}</h1>
             <p class="mt-4 text-brand-muted">{{ template_item.description }}</p>
 
-            <div class="mt-6 flex flex-wrap gap-2 text-xs">
+            <div class="mt-6 flex flex-wrap items-center gap-2 text-xs">
+                <span class="mkt-crafto-badge">Crafto {{ crafto_demo.crafto_demo_label }}</span>
                 <span class="rounded-full bg-emerald-100 px-3 py-1 font-semibold text-brand-dark">SEO Ready</span>
                 <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-brand-ink">Responsive</span>
                 <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-brand-ink">Browser Support: Chrome, Safari, Edge</span>
@@ -52,12 +53,17 @@
                 <a href="/preview/{{ template_item.slug }}" class="rounded-lg border border-brand-border px-4 py-3 text-center font-semibold hover:bg-slate-50">Live Preview</a>
             </div>
             <div class="mt-4 rounded-lg border border-brand-border bg-slate-50 p-4">
-                <h3 class="text-xs font-semibold uppercase tracking-wide text-brand-muted">Active demo pages</h3>
-                <ul class="mt-2 flex flex-wrap gap-2 text-sm">
-                    <li><a href="/preview-site/{{ template_item.slug }}" class="font-medium text-brand-dark hover:underline">Home</a></li>
-                    <li><a href="/preview-site/{{ template_item.slug }}/about" class="font-medium text-brand-dark hover:underline">About</a></li>
-                    <li><a href="/preview-site/{{ template_item.slug }}/services" class="font-medium text-brand-dark hover:underline">Services</a></li>
-                    <li><a href="/preview-site/{{ template_item.slug }}/contact" class="font-medium text-brand-dark hover:underline">Contact</a></li>
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-brand-muted">Crafto demo pages</h3>
+                <p class="mt-1 text-xs text-brand-muted">Based on <strong>{{ crafto_demo.crafto_demo_label }}</strong> ({{ crafto_demo.crafto_demo_key }})</p>
+                <ul class="mt-2 space-y-1.5 text-sm">
+                    {% for page_key, crafto_file in crafto_demo.pages.items() %}
+                    <li>
+                        <a href="{{ crafto_demo.page_path(page_key) }}" target="_blank" rel="noopener" class="font-medium text-brand-dark hover:text-brand-emerald">
+                            {{ page_key|title }}
+                        </a>
+                        <span class="text-xs text-brand-muted"> — {{ crafto_file }}</span>
+                    </li>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="mt-6 border-t border-brand-border pt-6">

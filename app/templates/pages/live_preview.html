@@ -4,218 +4,80 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Live Preview - {{ template_item.title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/static/css/marketplace.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body
-    class="bg-slate-100 text-slate-900"
-    x-data="previewCustomizer()"
->
-    <header class="sticky top-0 z-50 border-b border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3">
-            <div class="flex items-center gap-2">
-                <a href="/templates/{{ template_item.slug }}" class="rounded border border-slate-200 px-3 py-1 text-sm hover:bg-slate-50">Back</a>
-                <p class="text-sm font-semibold">{{ template_item.title }} Preview</p>
-            </div>
+<body class="bg-slate-100 text-slate-900" x-data="craftoPreviewShell()">
+    <header class="mkt-preview-toolbar sticky top-0 z-50 border-b border-slate-200 bg-white">
+        <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
             <div class="flex flex-wrap items-center gap-2">
-                <button @click="mode='desktop'" :class="mode==='desktop' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm">Desktop</button>
-                <button @click="mode='tablet'" :class="mode==='tablet' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm">Tablet</button>
-                <button @click="mode='mobile'" :class="mode==='mobile' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm">Mobile</button>
-                <button @click="customizerOpen = !customizerOpen" class="rounded border border-slate-300 bg-white px-3 py-1 text-sm font-semibold hover:bg-slate-50">
-                    Theme Customizer
-                </button>
+                <a href="/templates/{{ template_item.slug }}" class="rounded border border-slate-200 px-3 py-1 text-sm font-semibold hover:bg-slate-50">Back</a>
+                <div>
+                    <p class="text-sm font-bold text-slate-900">{{ template_item.title }}</p>
+                    <p class="text-xs text-slate-500">
+                        Crafto demo: <span class="font-semibold text-emerald-700">{{ crafto_demo.crafto_demo_label }}</span>
+                    </p>
+                </div>
             </div>
-            <a href="/purchase/{{ template_item.slug }}" class="rounded bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600">Purchase</a>
-        </div>
-        <div x-show="customizerOpen" x-transition class="border-t border-slate-200 bg-slate-50">
-            <div class="mx-auto grid max-w-7xl gap-4 px-4 py-4 md:grid-cols-2 xl:grid-cols-4">
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Accent Start
-                    <input type="color" x-model="settings.accent_start" class="mt-2 h-10 w-full rounded border border-slate-300" />
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Accent End
-                    <input type="color" x-model="settings.accent_end" class="mt-2 h-10 w-full rounded border border-slate-300" />
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Surface
-                    <input type="color" x-model="settings.surface_bg" class="mt-2 h-10 w-full rounded border border-slate-300" />
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Text Color
-                    <input type="color" x-model="settings.text_color" class="mt-2 h-10 w-full rounded border border-slate-300" />
-                </label>
-
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Corner Radius
-                    <input type="range" min="8" max="30" step="1" x-model="settings.radius" class="mt-2 w-full" />
-                    <span class="mt-1 block text-[11px] font-medium normal-case text-slate-500" x-text="`${settings.radius}px`"></span>
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Density
-                    <select x-model="settings.density" class="mt-2 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm normal-case">
-                        <option value="comfortable">Comfortable</option>
-                        <option value="compact">Compact</option>
-                    </select>
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Typography
-                    <select x-model="settings.typography" class="mt-2 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm normal-case">
-                        <option value="modern">Modern Sans</option>
-                        <option value="classic">Classic Serif</option>
-                        <option value="geometric">Geometric Sans</option>
-                    </select>
-                </label>
-                <label class="text-xs font-semibold uppercase tracking-wide text-slate-600">
-                    Topology
-                    <select x-model="settings.topology" class="mt-2 w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm normal-case">
-                        <option value="cards">Cards</option>
-                        <option value="split">Split Grid</option>
-                        <option value="minimal">Minimal</option>
-                    </select>
-                </label>
-            </div>
-            <div class="mx-auto flex max-w-7xl justify-end px-4 pb-4">
-                <p
-                    x-show="saveNoticeVisible"
-                    x-transition
-                    class="mr-3 flex items-center text-xs font-semibold uppercase tracking-wide text-emerald-700"
-                    aria-live="polite"
+            <nav aria-label="Demo pages" class="flex flex-wrap items-center gap-1">
+                {% for page_key, crafto_file in crafto_preview_pages.items() %}
+                <button
+                    type="button"
+                    @click="setPage('{{ page_key }}', '{{ crafto_demo.page_path(page_key) }}')"
+                    :class="activePage === '{{ page_key }}' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-slate-700'"
+                    class="rounded border border-slate-200 px-3 py-1 text-xs font-semibold capitalize"
                 >
-                    Saved for this theme
-                </p>
-                <button @click="resetCustomizer" class="rounded border border-slate-300 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide hover:bg-slate-100">
-                    Reset Theme Preset
+                    {{ page_key }}
                 </button>
+                {% endfor %}
+            </nav>
+            <div class="flex flex-wrap items-center gap-2">
+                <button @click="mode='desktop'" :class="mode==='desktop' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm font-semibold">Desktop</button>
+                <button @click="mode='tablet'" :class="mode==='tablet' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm font-semibold">Tablet</button>
+                <button @click="mode='mobile'" :class="mode==='mobile' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm font-semibold">Mobile</button>
+                <a href="/purchase/{{ template_item.slug }}" class="rounded bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600">Purchase</a>
             </div>
+        </div>
+        <div class="border-t border-slate-100 bg-slate-50 px-4 py-2">
+            <p class="mx-auto max-w-7xl text-xs text-slate-500">
+                Full Crafto HTML preview —
+                {% for page_key, crafto_file in crafto_preview_pages.items() %}
+                <code class="rounded bg-white px-1 py-0.5 text-[10px]">{{ crafto_file }}</code>{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </p>
         </div>
     </header>
     <main class="mx-auto flex max-w-7xl justify-center p-6">
         <div
+            class="mkt-preview-frame-wrap transition-all"
             :class="{
                 'w-full': mode==='desktop',
                 'w-[820px]': mode==='tablet',
                 'w-[390px]': mode==='mobile'
             }"
-            class="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-xl transition-all"
         >
             <iframe
                 x-ref="previewFrame"
-                @load="syncCustomizer"
-                title="{{ template_item.title }} live preview"
-                src="/preview-site/{{ template_item.slug }}"
-                class="h-[78vh] w-full"
+                title="{{ template_item.title }} Crafto live preview"
+                :src="frameSrc"
+                class="h-[80vh] w-full border-0 bg-white"
                 loading="lazy"
             ></iframe>
         </div>
     </main>
     <script>
-        function previewCustomizer() {
-            const defaults = {{ preview_customizer|tojson }};
-            const templateSlug = "{{ template_item.slug }}";
-            const storageKey = `preview-customizer:${templateSlug}`;
+        function craftoPreviewShell() {
+            const initialSrc = "{{ crafto_demo.page_path('home') }}";
             return {
                 mode: "desktop",
-                settings: JSON.parse(JSON.stringify(defaults)),
-                defaults,
-                templateSlug,
-                storageKey,
-                customizerOpen: true,
-                syncTimer: null,
-                saveNoticeVisible: false,
-                saveNoticeTimer: null,
-                normalizeSettings(rawSettings = {}) {
-                    const merged = { ...this.defaults, ...rawSettings };
-                    return {
-                        accent_start: merged.accent_start,
-                        accent_end: merged.accent_end,
-                        surface_bg: merged.surface_bg,
-                        text_color: merged.text_color,
-                        radius: Number.parseInt(merged.radius, 10) || this.defaults.radius,
-                        density: merged.density || this.defaults.density,
-                        typography: merged.typography || this.defaults.typography,
-                        topology: merged.topology || this.defaults.topology,
-                    };
-                },
-                queueSyncCustomizer() {
-                    if (this.syncTimer) {
-                        window.clearTimeout(this.syncTimer);
-                    }
-                    this.syncTimer = window.setTimeout(() => {
-                        this.syncCustomizer();
-                    }, 20);
-                },
-                loadSavedSettings() {
-                    try {
-                        const rawValue = window.sessionStorage.getItem(this.storageKey);
-                        if (!rawValue) {
-                            return;
-                        }
-                        const parsed = JSON.parse(rawValue);
-                        this.settings = this.normalizeSettings(parsed);
-                    } catch (error) {
-                        this.settings = this.normalizeSettings(this.settings);
-                    }
-                },
-                saveSettings() {
-                    window.sessionStorage.setItem(this.storageKey, JSON.stringify(this.settings));
-                    this.flashSaveNotice();
-                },
-                flashSaveNotice() {
-                    this.saveNoticeVisible = true;
-                    if (this.saveNoticeTimer) {
-                        window.clearTimeout(this.saveNoticeTimer);
-                    }
-                    this.saveNoticeTimer = window.setTimeout(() => {
-                        this.saveNoticeVisible = false;
-                    }, 1200);
-                },
-                syncCustomizer() {
-                    const previewWindow = this.$refs.previewFrame?.contentWindow;
-                    if (!previewWindow) {
-                        return;
-                    }
-                    const serializableSettings = JSON.parse(
-                        JSON.stringify(this.normalizeSettings(this.settings)),
-                    );
-                    this.settings = serializableSettings;
-                    this.saveSettings();
-                    previewWindow.postMessage(
-                        {
-                            type: "preview-customizer:update",
-                            settings: serializableSettings,
-                        },
-                        window.location.origin,
-                    );
-                },
-                resetCustomizer() {
-                    this.settings = JSON.parse(JSON.stringify(this.defaults));
-                    window.sessionStorage.removeItem(this.storageKey);
-                    this.syncCustomizer();
-                },
-                init() {
-                    this.loadSavedSettings();
-                    const watchedSettingKeys = [
-                        "accent_start",
-                        "accent_end",
-                        "surface_bg",
-                        "text_color",
-                        "radius",
-                        "density",
-                        "typography",
-                        "topology",
-                    ];
-                    watchedSettingKeys.forEach((key) => {
-                        this.$watch(`settings.${key}`, () => this.queueSyncCustomizer());
-                    });
-                    window.addEventListener("message", (event) => {
-                        if (event.origin !== window.location.origin) {
-                            return;
-                        }
-                        if (event.data?.type === "preview-customizer:ready") {
-                            this.queueSyncCustomizer();
-                        }
-                    });
+                activePage: "home",
+                frameSrc: initialSrc,
+                setPage(page, src) {
+                    this.activePage = page;
+                    this.frameSrc = src;
                 },
             };
         }

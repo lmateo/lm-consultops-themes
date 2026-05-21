@@ -75,7 +75,7 @@ def seed():
                 preview_url=f"/preview-site/{slug}",
                 thumbnail_url=f"/static/images/templates/{slug}/thumbnail.webp",
                 demo_pages="Home, About, Services, Contact",
-                tech_stack="FastAPI, Jinja2, Tailwind CSS, Alpine.js",
+                tech_stack="HTML5, Crafto multipurpose base, Bootstrap 5, SCSS",
                 features_text=", ".join(DEFAULT_FEATURES),
                 setup_available=True,
                 hosting_available=False,

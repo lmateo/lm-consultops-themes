@@ -27,13 +27,8 @@ from app.services.marketplace import (
     paginate_templates,
 )
 from app.utils.query_params import build_page_urls
-from app.services.preview_demo_content import get_rich_demo_content
-from app.services.preview_demos import (
-    DEMO_PAGES,
-    get_page_content,
-    get_preview_demo,
-    list_template_search_hints,
-)
+from app.services.crafto_demos import DEMO_PAGES, get_crafto_demo_or_default
+from app.services.preview_demos import list_template_search_hints
 from app.services.theme_packages import build_theme_zip_bytes
 from app.utils.download_tokens import create_download_token, verify_download_token
 from app.utils.query_params import OptionalFloatQuery
@@ -299,12 +294,14 @@ def template_detail(request: Request, slug: str, db: Session = Depends(get_db)):
     template = get_template_by_slug(db, slug)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
+    crafto = get_crafto_demo_or_default(template.slug)
     return render(
         "pages/template_detail.html",
         request,
         {
             "template_item": template,
             "related_templates": get_related_templates(db, template),
+            "crafto_demo": crafto,
             "meta_title": f"{template.title} Template",
             "meta_description": template.description[:160],
         },
@@ -316,11 +313,14 @@ def live_preview(request: Request, slug: str, db: Session = Depends(get_db)):
     template = get_template_by_slug(db, slug)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
+    crafto = get_crafto_demo_or_default(template.slug)
     return render(
         "pages/live_preview.html",
         request,
         {
             "template_item": template,
+            "crafto_demo": crafto,
+            "crafto_preview_pages": crafto.pages,
             "preview_customizer": _build_preview_customizer_defaults(template),
             "meta_title": f"Preview {template.title}",
             "meta_description": "Live preview",
@@ -328,40 +328,27 @@ def live_preview(request: Request, slug: str, db: Session = Depends(get_db)):
     )
 
 
-def _render_preview_site(request: Request, template: Template, page: str = "home"):
-    demo = get_preview_demo(template, page)
-    return render(
-        f"demos/layouts/{demo.layout}.html",
-        request,
-        {
-            "template_item": template,
-            "demo": demo,
-            "demo_page_content": get_page_content(demo),
-            "demo_rich": get_rich_demo_content(template.slug),
-            "preview_customizer": _build_preview_customizer_defaults(template),
-            "preview_sections": _build_preview_sections(template),
-            "meta_title": f"{template.title} Demo — {page.title()}",
-            "meta_description": f"Live website preview for {template.title}.",
-        },
-    )
+def _crafto_preview_redirect(template: Template, page: str = "home") -> RedirectResponse:
+    crafto = get_crafto_demo_or_default(template.slug)
+    return RedirectResponse(url=crafto.page_url(page), status_code=302)
 
 
 @router.get("/preview-site/{slug}")
-def preview_site(request: Request, slug: str, db: Session = Depends(get_db)):
+def preview_site(slug: str, db: Session = Depends(get_db)):
     template = get_template_by_slug(db, slug)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
-    return _render_preview_site(request, template, "home")
+    return _crafto_preview_redirect(template, "home")
 
 
 @router.get("/preview-site/{slug}/{page}")
-def preview_site_page(request: Request, slug: str, page: str, db: Session = Depends(get_db)):
+def preview_site_page(slug: str, page: str, db: Session = Depends(get_db)):
     if page not in DEMO_PAGES or page == "home":
         raise HTTPException(status_code=404, detail="Demo page not found")
     template = get_template_by_slug(db, slug)
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
-    return _render_preview_site(request, template, page)
+    return _crafto_preview_redirect(template, page)
 
 
 @router.get("/pricing")

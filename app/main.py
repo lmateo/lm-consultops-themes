@@ -12,8 +12,13 @@ app = FastAPI(title=settings.app_name)
 
 Base.metadata.create_all(bind=engine)
 
+project_root = Path(__file__).resolve().parent.parent
 static_dir = Path(__file__).resolve().parent / "static"
+crafto_dir = project_root / "crafto-html-templates"
+
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+if crafto_dir.is_dir():
+    app.mount("/crafto", StaticFiles(directory=str(crafto_dir)), name="crafto")
 
 app.include_router(public.router)
 app.include_router(admin.router)

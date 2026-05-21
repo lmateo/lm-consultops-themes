@@ -10,6 +10,9 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ request.url }}" />
     <link rel="icon" type="image/x-icon" href="/static/images/logos/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/static/css/marketplace.css" />
     {% block extra_head %}{% endblock %}
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -39,15 +42,15 @@
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:bg-white focus:px-4 focus:py-2 focus:rounded">
         Skip to content
     </a>
-    <header x-data="{ openMobileNav: false }" class="sticky top-0 z-40 border-b border-brand-border bg-white/90 backdrop-blur-lg">
-        <div class="border-b border-brand-border/70 bg-gradient-to-r from-emerald-50 via-white to-white">
+    <header x-data="{ openMobileNav: false }" class="mkt-site-header sticky top-0 z-40 border-b border-brand-border bg-white/95 backdrop-blur-lg">
+        <div class="mkt-announcement border-b border-brand-border/70">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs font-medium text-brand-muted sm:px-6 lg:px-8">
                 <p>Premium business templates for faster launches.</p>
                 <a href="/contact" class="hidden text-brand-dark hover:text-brand-emerald sm:inline">Need a custom build?</a>
             </div>
         </div>
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <a href="/" class="flex items-center gap-2 text-base font-bold tracking-tight sm:text-lg">
+            <a href="/" class="mkt-brand-lockup flex items-center gap-2 text-base font-bold tracking-tight sm:text-lg">
                 <img
                     src="/static/images/logos/logo_transparent.png"
                     alt="Mateo Consulting Tech logo"
@@ -58,15 +61,15 @@
                 Mateo ConsultOps Themes
             </a>
             <nav aria-label="Primary" class="hidden gap-6 text-sm font-medium lg:flex">
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/popular">Browse Templates</a>
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/pricing">Pricing</a>
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/downloads">My Downloads</a>
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/services/setup">Setup</a>
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/about">About</a>
-                <a class="hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/contact">Contact</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/popular">Browse Templates</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/pricing">Pricing</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/downloads">My Downloads</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/services/setup">Setup</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/about">About</a>
+                <a class="mkt-nav-link hover:text-brand-emerald focus:outline-none focus:ring-2 focus:ring-brand-emerald" href="/contact">Contact</a>
             </nav>
             <div class="flex items-center gap-2">
-                <a href="/popular" class="hidden rounded-lg bg-brand-emerald px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark sm:inline-flex">
+                <a href="/popular" class="mkt-btn-primary hidden rounded-lg px-4 py-2 text-sm font-semibold text-white sm:inline-flex">
                     Browse Templates
                 </a>
                 <button
@@ -110,7 +113,7 @@
 
     <footer class="mt-20 border-t border-brand-border bg-white">
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-            <section class="mb-10 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-white p-6 sm:p-8">
+            <section class="mkt-footer-cta mb-10 rounded-2xl p-6 sm:p-8">
                 <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                         <h2 class="text-xl font-semibold">Launch faster with Mateo templates</h2>
