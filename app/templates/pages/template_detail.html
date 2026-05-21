@@ -53,15 +53,14 @@
                 <a href="/preview/{{ template_item.slug }}" class="rounded-lg border border-brand-border px-4 py-3 text-center font-semibold hover:bg-slate-50">Live Preview</a>
             </div>
             <div class="mt-4 rounded-lg border border-brand-border bg-slate-50 p-4">
-                <h3 class="text-xs font-semibold uppercase tracking-wide text-brand-muted">Crafto demo pages</h3>
-                <p class="mt-1 text-xs text-brand-muted">Based on <strong>{{ crafto_demo.crafto_demo_label }}</strong> ({{ crafto_demo.crafto_demo_key }})</p>
-                <ul class="mt-2 space-y-1.5 text-sm">
-                    {% for page_key, crafto_file in crafto_demo.pages.items() %}
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-brand-muted">Demo pages</h3>
+                <p class="mt-1 text-xs text-brand-muted">Based on <strong>{{ crafto_demo.crafto_demo_label }}</strong></p>
+                <ul class="mt-2 flex flex-wrap gap-2 text-sm">
+                    {% for page_key in crafto_demo.pages.keys() %}
                     <li>
-                        <a href="{{ crafto_demo.page_path(page_key) }}" target="_blank" rel="noopener" class="font-medium text-brand-dark hover:text-brand-emerald">
+                        <a href="/preview-site/{{ template_item.slug }}{% if page_key != 'home' %}/{{ page_key }}{% endif %}" class="font-medium text-brand-dark hover:text-brand-emerald">
                             {{ page_key|title }}
                         </a>
-                        <span class="text-xs text-brand-muted"> — {{ crafto_file }}</span>
                     </li>
                     {% endfor %}
                 </ul>

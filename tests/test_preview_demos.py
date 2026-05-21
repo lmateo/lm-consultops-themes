@@ -58,4 +58,4 @@ def test_live_preview_page_lists_crafto_demo():
     response = client.get("/preview/cloudcare-it")
     assert response.status_code == 200
     assert "IT Business" in response.text
-    assert "demo-it-business.html" in response.text
+    assert "Full Crafto HTML preview" not in response.text

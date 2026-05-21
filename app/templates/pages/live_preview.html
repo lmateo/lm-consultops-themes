@@ -23,7 +23,7 @@
                 </div>
             </div>
             <nav aria-label="Demo pages" class="flex flex-wrap items-center gap-1">
-                {% for page_key, crafto_file in crafto_preview_pages.items() %}
+                {% for page_key in crafto_demo.pages.keys() %}
                 <button
                     type="button"
                     @click="setPage('{{ page_key }}', '{{ crafto_demo.page_path(page_key) }}')"
@@ -40,14 +40,6 @@
                 <button @click="mode='mobile'" :class="mode==='mobile' ? 'bg-emerald-500 text-white' : 'bg-white'" class="rounded border px-3 py-1 text-sm font-semibold">Mobile</button>
                 <a href="/purchase/{{ template_item.slug }}" class="rounded bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600">Purchase</a>
             </div>
-        </div>
-        <div class="border-t border-slate-100 bg-slate-50 px-4 py-2">
-            <p class="mx-auto max-w-7xl text-xs text-slate-500">
-                Full Crafto HTML preview —
-                {% for page_key, crafto_file in crafto_preview_pages.items() %}
-                <code class="rounded bg-white px-1 py-0.5 text-[10px]">{{ crafto_file }}</code>{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            </p>
         </div>
     </header>
     <main class="mx-auto flex max-w-7xl justify-center p-6">

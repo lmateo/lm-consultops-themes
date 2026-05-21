@@ -320,7 +320,6 @@ def live_preview(request: Request, slug: str, db: Session = Depends(get_db)):
         {
             "template_item": template,
             "crafto_demo": crafto,
-            "crafto_preview_pages": crafto.pages,
             "preview_customizer": _build_preview_customizer_defaults(template),
             "meta_title": f"Preview {template.title}",
             "meta_description": "Live preview",
