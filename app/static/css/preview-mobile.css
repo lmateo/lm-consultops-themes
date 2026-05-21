@@ -173,3 +173,89 @@ html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar .navbar-nav .nav-li
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas .dropdown-menu {
   max-width: calc(100vw - 2rem);
 }
+
+/* Force Bootstrap-like mobile behavior on desktop browsers */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-sm-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-md-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-lg-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-xl-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-xxl-"] {
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="offset-"] {
+  margin-left: 0 !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-sm-none,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-md-none,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-lg-none,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xl-none,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xxl-none {
+  display: none !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-sm-block,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-md-block,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-lg-block,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xl-block,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xxl-block {
+  display: block !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-sm-flex,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-md-flex,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-lg-flex,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xl-flex,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .d-xxl-flex {
+  display: flex !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-sm-start,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-md-start,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-lg-start,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-xl-start {
+  text-align: left !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-sm-center,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-md-center,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-lg-center,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .text-xl-center {
+  text-align: center !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-lg .navbar-toggler,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-md .navbar-toggler,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-sm .navbar-toggler {
+  display: block !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-lg .navbar-collapse:not(.show),
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-md .navbar-collapse:not(.show),
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-sm .navbar-collapse:not(.show) {
+  display: none !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-lg .navbar-nav,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-md .navbar-nav,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-sm .navbar-nav {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-lg .navbar-nav .nav-link,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-md .navbar-nav .nav-link,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar-expand-sm .navbar-nav .nav-link {
+  width: 100%;
+}
+
+/* Tablet mode should avoid desktop-wide utility behavior too */
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas [class*="col-xl-"],
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas [class*="col-xxl-"] {
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
