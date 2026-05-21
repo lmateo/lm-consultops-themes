@@ -45,6 +45,7 @@ def test_wrapped_preview_renders_without_iframe():
     assert "mkt-preview-chrome" in response.text
     assert "<iframe" not in response.text.lower()
     assert 'base href="/crafto/"' in response.text
+    assert 'id="mkt-preview-viewport"' in response.text
 
 
 def test_wrapped_preview_uses_template_photos_not_placeholders():

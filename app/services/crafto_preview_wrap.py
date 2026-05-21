@@ -69,6 +69,28 @@ def _preview_image_pool(page: str) -> tuple[str, ...]:
     return _PAGE_IMAGE_POOL.get(page, _PAGE_IMAGE_POOL["home"])
 
 
+def normalize_preview_viewport_meta(html: str) -> str:
+    """Ensure a single viewport meta the preview chrome can retarget for device simulation."""
+    tag = '<meta name="viewport" id="mkt-preview-viewport" content="width=device-width, initial-scale=1.0" />'
+    if re.search(r'<meta[^>]+name=["\']viewport["\']', html, flags=re.IGNORECASE):
+        return re.sub(
+            r'<meta[^>]+name=["\']viewport["\'][^>]*>',
+            tag,
+            html,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+    if re.search(r"<head[^>]*>", html, flags=re.IGNORECASE):
+        return re.sub(
+            r"(<head[^>]*>)",
+            r"\1\n" + tag,
+            html,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+    return tag + "\n" + html
+
+
 def inject_template_preview_images(html: str, slug: str, page: str) -> str:
     """Replace Crafto placeholders and stock photos with per-template WebP assets."""
     pool = _preview_image_pool(page)
@@ -168,6 +190,7 @@ def load_wrapped_crafto_preview(template: Template, page: str = "home") -> str:
     crafto = get_crafto_demo_or_default(template.slug)
     filename = crafto.pages.get(normalized, crafto.pages["home"])
     raw_html = _crafto_file_path(filename).read_text(encoding="utf-8-sig", errors="replace")
+    raw_html = normalize_preview_viewport_meta(raw_html)
     raw_html = inject_template_preview_images(raw_html, template.slug, normalized)
     return wrap_crafto_html(
         raw_html,
