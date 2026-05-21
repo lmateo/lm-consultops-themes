@@ -1,1 +1,1 @@
-# Marketplace service layer package.
+# Template catalog service layer package.

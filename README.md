@@ -1,10 +1,10 @@
 # Mateo ConsultOps Themes
 
-Premium SaaS-style website template marketplace built with FastAPI, Jinja2, Tailwind CSS, Alpine.js, and SQLAlchemy 2.x.
+Premium SaaS-style website template store built with FastAPI, Jinja2, Tailwind CSS, Alpine.js, and SQLAlchemy 2.x.
 
 ## Features
 
-- Marketplace homepage with featured, best-selling, and new templates
+- Homepage with featured, best-selling, and new templates; browse at `/popular`
 - ThemeForest-inspired browse and filter UX (original implementation)
 - Category and industry landing pages
 - Template detail pages with gallery, features, and upsells
@@ -15,8 +15,8 @@ Premium SaaS-style website template marketplace built with FastAPI, Jinja2, Tail
 - My Downloads self-service page by purchase email
 - Stripe webhook event log for auditability and idempotency
 - Retry-safe fulfillment email workflow after successful payment
-- Services pages (hosting, setup, customization)
-- Admin dashboard overview for marketplace operations
+- Services pages (setup and customization)
+- Admin dashboard overview for store operations
 - SEO-ready page metadata and semantic HTML
 
 ## Stack
@@ -92,8 +92,15 @@ Raw Compose still works: `docker compose up -d` and `docker compose down`.
 
 ## Template Images
 
-Template visuals are stored locally under `app/static/images/templates/<slug>/`.
-To regenerate WebP sets from AI source PNGs in `assets/ai-sources/`:
+Template visuals are stored locally under `app/static/images/templates/<slug>/` with **distinct images per page** (hero, about, services, contact, galleries, thumbnail).
+
+Regenerate royalty-free procedural WebP sets:
+
+```bash
+python assets/scripts/generate_template_images.py
+```
+
+Optional: regenerate from AI source PNGs in `assets/ai-sources/`:
 
 ```bash
 python assets/scripts/process_ai_template_images.py

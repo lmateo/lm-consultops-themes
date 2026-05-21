@@ -7,3 +7,4 @@ pydantic-settings
 python-multipart
 stripe
 httpx
+Pillow>=10.0

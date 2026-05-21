@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import re
 
-from sqlalchemy import select
+from sqlalchemy import delete, select, update
 
 from app.core.database import Base, SessionLocal, engine
 from app.models import Category, Feature, Industry, ServiceAddon, Template, TemplateImage, TemplateVersion
@@ -13,12 +13,33 @@ def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", lowered).strip("-")
 
 
+def _cleanup_hosting_data(db) -> tuple[int, int]:
+    templates_to_update = db.scalars(
+        select(Template.id).where(Template.hosting_available.is_(True))
+    ).all()
+    template_updates = len(templates_to_update)
+    if template_updates:
+        db.execute(update(Template).values(hosting_available=False))
+
+    addon_delete_result = db.execute(
+        delete(ServiceAddon).where(ServiceAddon.slug == "managed-hosting")
+    )
+    deleted_addons = addon_delete_result.rowcount or 0
+    return template_updates, deleted_addons
+
+
 def seed():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
         existing = db.scalar(select(Template.id).limit(1))
         if existing:
+            template_updates, deleted_addons = _cleanup_hosting_data(db)
+            db.commit()
+            print(
+                "Seed skipped (existing templates). "
+                f"Hosting cleanup applied: {template_updates} templates updated, {deleted_addons} add-ons removed."
+            )
             return
 
         categories = {}
@@ -57,7 +78,7 @@ def seed():
                 tech_stack="FastAPI, Jinja2, Tailwind CSS, Alpine.js",
                 features_text=", ".join(DEFAULT_FEATURES),
                 setup_available=True,
-                hosting_available=True,
+                hosting_available=False,
                 maintenance_available=True,
             )
             db.add(template)
@@ -84,7 +105,6 @@ def seed():
 
         addons = [
             ("Setup Service", "setup-service", "Professional website setup and launch support", 249),
-            ("Managed Hosting", "managed-hosting", "Secure, monitored hosting plan", 49),
             ("Maintenance Plan", "maintenance-plan", "Monthly updates and issue resolution", 79),
             ("SEO Optimization", "seo-optimization", "Search-ready local SEO package", 199),
             ("Cloud Consulting", "cloud-consulting", "Architecture and optimization advisory", 299),
@@ -92,7 +112,12 @@ def seed():
         for name, slug, desc, price in addons:
             db.add(ServiceAddon(name=name, slug=slug, description=desc, price=price))
 
+        template_updates, deleted_addons = _cleanup_hosting_data(db)
         db.commit()
+        print(
+            "Seed completed. "
+            f"Hosting cleanup applied: {template_updates} templates updated, {deleted_addons} add-ons removed."
+        )
     finally:
         db.close()
 

@@ -1,12 +1,57 @@
 {% extends "base.html" %}
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/browse.css" />
+{% endblock %}
 {% block content %}
-<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold">{{ category_slug.replace('-', ' ').title() }} Templates</h1>
-    <p class="mt-2 text-brand-muted">Curated options for this marketplace category.</p>
-    <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {% for item in pagination["items"] %}
-            {% include "components/template_card.html" %}
-        {% endfor %}
+<section class="border-b border-brand-border bg-white">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {% set breadcrumbs = [
+            {"label": "Home", "url": "/"},
+            {"label": "Popular", "url": "/popular"},
+            {"label": category.name, "url": none}
+        ] %}
+        {% include "components/breadcrumbs.html" %}
+
+        <h1 class="mt-4 text-2xl font-bold leading-tight text-brand-ink md:text-3xl">{{ category.name }} Templates</h1>
+        <p class="mt-2 text-sm text-brand-muted">{{ category.description or "Curated website templates for this category, updated weekly." }}</p>
+
+        {% set base_path = "/popular" %}
+        {% set link_style = "query" %}
+        {% set show_all_link = true %}
+        {% set active_slug = category.slug %}
+        {% set scope_label = category.name ~ " templates" %}
+        {% set sort_query = "" %}
+        {% include "components/subcategory_pills.html" %}
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mkt-toolbar flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm font-semibold text-brand-ink">
+            <span class="text-brand-emerald">{{ pagination.total_items }}</span>
+            templates
+        </p>
+        <form method="get" action="/categories/{{ category.slug }}" class="flex items-center gap-2">
+            <label for="sort" class="sr-only">Sort templates</label>
+            <select id="sort" name="sort" class="rounded-lg border border-brand-border bg-white px-3 py-2 text-sm font-medium" onchange="this.form.submit()">
+                <option value="bestselling" {% if sort == "bestselling" %}selected{% endif %}>Featured</option>
+                <option value="newest" {% if sort == "newest" %}selected{% endif %}>Recently updated</option>
+                <option value="price_low_high" {% if sort == "price_low_high" %}selected{% endif %}>Price: low to high</option>
+                <option value="price_high_low" {% if sort == "price_high_low" %}selected{% endif %}>Price: high to low</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="mt-4 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div>
+            <div class="rounded-xl border border-brand-border bg-white px-4 sm:px-6">
+                {% for item in pagination["items"] %}
+                    {% include "components/template_list_row.html" %}
+                {% endfor %}
+            </div>
+            {% include "components/pagination.html" %}
+        </div>
+        {% include "components/browse_sidebar.html" %}
     </div>
 </section>
 {% endblock %}

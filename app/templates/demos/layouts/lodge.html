@@ -10,20 +10,23 @@
         .lodge-nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; color: #fff; position: absolute; left: 4%; right: 4%; z-index: 2; }
         .lodge-nav .demo-nav-link { color: rgba(255,255,255,0.92); text-decoration: none; margin-left: 1.2rem; font-weight: 600; }
         .lodge-nav .demo-nav-link.is-active { border-bottom: 2px solid #fff; }
-        .cinematic { position: relative; min-height: 78vh; display: flex; align-items: flex-end; color: #fff; padding-bottom: 3rem; }
-        .cinematic::before { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15,23,42,0.85), transparent 55%), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/cover; }
+        .cinematic { position: relative; min-height: clamp(380px, 66vh, 680px); display: flex; align-items: flex-end; color: #fff; padding-bottom: 3rem; }
+        .cinematic::before { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15,23,42,0.85), transparent 55%), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/contain no-repeat, #0f172a; }
         .cinematic .wrap { position: relative; z-index: 1; }
         .booking-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; background: rgba(255,255,255,0.12); padding: 0.75rem; border-radius: var(--radius); backdrop-filter: blur(8px); margin-top: 1.2rem; max-width: 520px; }
         .booking-bar input, .booking-bar select { flex: 1; min-width: 120px; border: 0; border-radius: calc(var(--radius)*0.5); padding: 0.6rem; }
         .rooms-scroll { display: flex; gap: 1rem; overflow-x: auto; padding: var(--section-pad) 4%; scroll-snap-type: x mandatory; }
         .room-card { flex: 0 0 280px; scroll-snap-align: start; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: 0 16px 40px rgba(15,23,42,0.1); }
-        .room-card img { height: 180px; width: 100%; object-fit: cover; }
+        .room-card img { height: 180px; width: 100%; object-fit: contain; background: #f8fafc; }
         .room-card div { padding: 1rem; }
         .amenity-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; padding: 2rem 0; text-align: center; }
         .amenity { background: #fff; border-radius: var(--radius); padding: 1rem; border: 1px solid #e2e8f0; font-size: 0.85rem; font-weight: 600; }
         .demo-page-section { padding: var(--section-pad) 0; }
         .demo-eyebrow { letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.72rem; opacity: 0.85; }
-        @media (max-width: 800px) { .amenity-row { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 800px) {
+            .cinematic { min-height: 380px; padding-bottom: 1.5rem; }
+            .amenity-row { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -48,11 +51,12 @@
     <section class="rooms-scroll">
         {% for card in demo.service_cards %}
         <article class="room-card">
-            {% if loop.index <= 3 %}<img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="" onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='180px'" />{% endif %}
+            {% if loop.index <= 3 %}<img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="{{ template_item.title }} room gallery {{ loop.index }}" onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='180px'" />{% endif %}
             <div><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.88rem;">{{ card.body }}</p></div>
         </article>
         {% endfor %}
     </section>
+    {% include "demos/partials/premium_home_sections.html" %}
     {% else %}
     <header class="wrap" style="padding:1.2rem 0;display:flex;justify-content:space-between;align-items:center;">
         <strong>{{ template_item.title }}</strong>{% include "demos/partials/nav.html" %}

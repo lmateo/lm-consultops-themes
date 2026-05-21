@@ -1,12 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold">{{ industry_slug.replace('-', ' ').title() }} Templates</h1>
-    <p class="mt-2 text-brand-muted">Industry-focused templates built for faster launches.</p>
-    <div class="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold">{{ industry.name }} Templates</h1>
+            <p class="mt-2 max-w-2xl text-brand-muted">{{ industry.description or "Industry-focused templates built for faster launches." }}</p>
+        </div>
+        <form method="get" action="/industries/{{ industry.slug }}" class="flex items-center gap-2">
+            <label for="sort" class="text-sm font-medium text-brand-muted">Sort</label>
+            <select id="sort" name="sort" class="rounded-lg border border-brand-border px-3 py-2 text-sm" onchange="this.form.submit()">
+                <option value="bestselling" {% if sort == "bestselling" %}selected{% endif %}>Featured</option>
+                <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest</option>
+                <option value="price_low_high" {% if sort == "price_low_high" %}selected{% endif %}>Price low to high</option>
+                <option value="price_high_low" {% if sort == "price_high_low" %}selected{% endif %}>Price high to low</option>
+            </select>
+        </form>
+    </div>
+
+    <p class="mt-6 text-sm text-brand-muted">{{ pagination.total_items }} template{{ "s" if pagination.total_items != 1 else "" }}</p>
+    <div class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {% for item in pagination["items"] %}
             {% include "components/template_card.html" %}
         {% endfor %}
     </div>
+    {% include "components/pagination.html" %}
 </section>
 {% endblock %}

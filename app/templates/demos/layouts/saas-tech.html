@@ -21,9 +21,17 @@
         .feature-cell { background: #fff; border-radius: var(--radius); padding: 1.1rem; border: 1px solid #e2e8f0; }
         .hero-tech { padding: 2rem; display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.5rem; align-items: center; }
         .hero-tech h1 { margin: 0.4rem 0; font-size: clamp(1.8rem, 3vw, 2.6rem); }
+        .hero-tech-image { width: 100%; height: 100%; min-height: 320px; object-fit: contain; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius); box-shadow: 0 20px 50px rgba(15,23,42,0.12); }
         .demo-eyebrow { color: var(--accent-start); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
         .demo-page-section { padding: 2rem; }
-        @media (max-width: 960px) { .shell { grid-template-columns: 1fr; } .sidebar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; } .demo-nav { flex-direction: row; flex-wrap: wrap; } .metrics, .feature-matrix, .hero-tech { grid-template-columns: 1fr; } }
+        @media (max-width: 960px) {
+            .shell { grid-template-columns: 1fr; }
+            .sidebar { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+            .demo-nav { flex-direction: row; flex-wrap: wrap; }
+            .metrics, .feature-matrix, .hero-tech { grid-template-columns: 1fr; }
+            .hero-tech { padding: 1.25rem 1rem; }
+            .hero-tech-image { min-height: 280px; }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -42,7 +50,7 @@
                     <h1>{{ demo_page_content.title }}</h1>
                     <p style="color:var(--text-muted);max-width:50ch;">{{ demo_page_content.lead }}</p>
                 </div>
-                <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="" style="border-radius:var(--radius);box-shadow:0 20px 50px rgba(15,23,42,0.12);" onerror="this.style.minHeight='220px';this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))'" />
+                <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="{{ template_item.title }} platform preview" class="hero-tech-image" onerror="this.style.minHeight='220px';this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))'" />
             </section>
             <div class="metrics">
                 {% for stat in demo.stats %}<div class="metric-card"><strong>{{ stat.value }}</strong><span style="color:var(--text-muted);font-size:0.85rem;">{{ stat.label }}</span></div>{% endfor %}
@@ -51,6 +59,7 @@
             <div class="feature-matrix">
                 {% for card in demo.service_cards %}<article class="feature-cell"><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);font-size:0.9rem;">{{ card.body }}</p></article>{% endfor %}
             </div>
+            {% include "demos/partials/premium_home_sections.html" %}
             {% else %}
             {% include "demos/partials/inner_page.html" %}
             {% endif %}

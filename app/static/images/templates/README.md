@@ -1,16 +1,19 @@
 # Template Image Structure
 
-Create the following folder and file pattern for each template slug:
+Each template slug has **page-specific** royalty-free photorealistic procedural imagery (generated locally, no stock licensing).
 
 ```text
 app/static/images/templates/<template-slug>/
-├── hero.webp
-├── hero-mobile.webp
-├── thumbnail.webp
-├── preview.webp
-├── gallery-1.webp
-├── gallery-2.webp
-└── gallery-3.webp
+├── hero.webp           # Home — wide hero scene
+├── hero-mobile.webp    # Home — portrait hero crop
+├── thumbnail.webp      # Marketplace cards & list rows
+├── preview.webp        # Detail page & live preview frame
+├── about.webp          # About page banner
+├── services.webp       # Services page banner
+├── contact.webp        # Contact page banner
+├── gallery-1.webp      # Home gallery / services scene
+├── gallery-2.webp      # Home gallery / about scene
+└── gallery-3.webp      # Home gallery / contact scene
 ```
 
 Expected slugs:
@@ -26,15 +29,21 @@ Expected slugs:
 - `autoworks-garage`
 - `wellness-local`
 
-Use royalty-free AI generations based on prompt files in `assets/prompts/`.
+## Regenerate from AI sources (recommended)
 
-## Regenerate from AI sources
-
-1. Place or generate source PNGs in `assets/ai-sources/` as `<slug>-ai.png`.
+1. Generate or place source PNGs in `assets/ai-sources/` as `<slug>-ai.png` (prompts in `assets/prompts/<slug>.txt`).
 2. Run:
 
 ```bash
 python assets/scripts/process_ai_template_images.py
 ```
 
-This overwrites all required WebP files for every template slug.
+Exports hero, thumbnail, preview, page banners, and gallery WebPs from each source.
+
+## Regenerate procedural sets (fallback)
+
+```bash
+python assets/scripts/generate_template_images.py
+```
+
+Creates industry-specific photographic-style scenes per page when AI sources are unavailable.

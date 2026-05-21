@@ -10,8 +10,8 @@
         .rest-header { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 4%; color: #fff; }
         .rest-header .demo-nav-link { color: rgba(255,255,255,0.9); margin-left: 1rem; text-decoration: none; font-weight: 600; }
         .rest-header .demo-nav-link.is-active { border-bottom: 2px solid #fff; }
-        .rest-hero { position: relative; min-height: 72vh; display: grid; place-items: center; text-align: center; color: #fff; }
-        .rest-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35)), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/cover; }
+        .rest-hero { position: relative; min-height: clamp(360px, 62vh, 620px); display: grid; place-items: center; text-align: center; color: #fff; }
+        .rest-hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35)), url('/static/images/templates/{{ template_item.slug }}/hero.webp') center/contain no-repeat, #111827; }
         .rest-hero-inner { position: relative; z-index: 1; padding: 2rem; max-width: 640px; }
         .menu-strip { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; padding: 1rem 0; background: #1c1917; }
         .menu-pill { color: #fef3c7; border: 1px solid #57534e; border-radius: 999px; padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 600; }
@@ -21,7 +21,11 @@
         .hours-bar { background: var(--accent-start); color: #fff; text-align: center; padding: 0.85rem; font-weight: 600; }
         .demo-page-section { padding: var(--section-pad) 0; }
         .demo-eyebrow { color: var(--accent-start); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; }
-        @media (max-width: 800px) { .menu-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 800px) {
+            .rest-hero { min-height: 360px; }
+            .rest-hero-inner { padding: 1.25rem 1rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -47,6 +51,7 @@
         {% endfor %}
     </section>
     <div class="hours-bar">Open today 11am – 10pm · Free parking behind the shop</div>
+    {% include "demos/partials/premium_home_sections.html" %}
     {% else %}
     <header style="background:#1c1917;color:#fff;padding:1rem 4%;display:flex;justify-content:space-between;align-items:center;">
         <strong>{{ template_item.title }}</strong>

@@ -1,5 +1,6 @@
 {% set rich = demo_rich.about %}
-<section class="demo-page-section">
+{% include "demos/partials/page_banner.html" %}
+<section class="demo-page-section wrap" style="width:min(1140px,92%);margin:0 auto;">
     <p class="demo-eyebrow">{{ demo_page_content.eyebrow }}</p>
     <h1>{{ demo_page_content.title }}</h1>
     <p class="demo-lead">{{ demo_page_content.lead }}</p>

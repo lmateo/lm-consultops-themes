@@ -1,0 +1,16 @@
+{# Page-specific banner — uses about.webp, services.webp, or contact.webp #}
+{% if demo.page in ['about', 'services', 'contact'] %}
+<figure class="demo-page-banner">
+    <img
+        src="/static/images/templates/{{ template_item.slug }}/{{ demo.page }}.webp"
+        alt="{{ template_item.title }} — {{ demo.page|title }} page"
+        loading="eager"
+        width="1280"
+        height="720"
+    />
+    <figcaption class="demo-page-banner-caption">
+        <span class="demo-eyebrow">{{ demo_page_content.eyebrow }}</span>
+        <span>{{ template_item.industry.name }}</span>
+    </figcaption>
+</figure>
+{% endif %}

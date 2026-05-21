@@ -1,0 +1,16 @@
+<nav class="mkt-breadcrumb text-sm text-brand-muted" aria-label="Breadcrumb">
+    <ol class="flex flex-wrap items-center gap-2">
+        {% for crumb in breadcrumbs %}
+            <li class="flex items-center gap-2">
+                {% if not loop.first %}
+                    <span aria-hidden="true" class="text-brand-border">/</span>
+                {% endif %}
+                {% if crumb.url and not loop.last %}
+                    <a href="{{ crumb.url }}" class="font-medium hover:text-brand-dark">{{ crumb.label }}</a>
+                {% else %}
+                    <span class="font-semibold text-brand-ink" {% if loop.last %}aria-current="page"{% endif %}>{{ crumb.label }}</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>

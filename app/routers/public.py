@@ -1,6 +1,7 @@
 import json
 import random
 import re
+from datetime import datetime
 
 import httpx
 import stripe
@@ -14,15 +15,27 @@ from app.core.database import get_db
 from app.models import Customer, Purchase, StripeWebhookEvent, Template
 from app.services.fulfillment import send_purchase_fulfillment_email
 from app.services.marketplace import (
+    TEMPLATE_SORTS,
     filtered_template_query,
+    get_categories_with_counts,
+    get_category_by_slug,
+    get_industry_by_slug,
+    get_featured_studios,
+    get_popular_by_category_sections,
     get_related_templates,
     get_template_by_slug,
     list_categories,
     list_industries,
     paginate_templates,
 )
+from app.utils.query_params import build_page_urls
 from app.services.preview_demo_content import get_rich_demo_content
-from app.services.preview_demos import DEMO_PAGES, get_page_content, get_preview_demo
+from app.services.preview_demos import (
+    DEMO_PAGES,
+    get_page_content,
+    get_preview_demo,
+    list_template_search_hints,
+)
 from app.services.theme_packages import build_theme_zip_bytes
 from app.utils.download_tokens import create_download_token, verify_download_token
 from app.utils.query_params import OptionalFloatQuery
@@ -117,9 +130,27 @@ def _build_preview_customizer_defaults(template: Template) -> dict[str, str | in
 
 @router.get("/")
 def homepage(request: Request, db: Session = Depends(get_db)):
-    featured = db.scalars(select(Template).where(Template.is_featured.is_(True)).limit(6)).all()
-    best_sellers = db.scalars(select(Template).where(Template.is_best_seller.is_(True)).limit(6)).all()
-    new_templates = db.scalars(select(Template).where(Template.is_new.is_(True)).limit(6)).all()
+    featured = db.scalars(
+        select(Template)
+        .options(joinedload(Template.category), joinedload(Template.industry))
+        .where(Template.is_featured.is_(True))
+        .order_by(Template.sales_count.desc())
+        .limit(6)
+    ).all()
+    best_sellers = db.scalars(
+        select(Template)
+        .options(joinedload(Template.category), joinedload(Template.industry))
+        .order_by(Template.sales_count.desc())
+        .limit(6)
+    ).all()
+    new_templates = db.scalars(
+        select(Template)
+        .options(joinedload(Template.category), joinedload(Template.industry))
+        .where(Template.is_new.is_(True))
+        .order_by(Template.last_updated.desc())
+        .limit(6)
+    ).all()
+    popular_sections = get_popular_by_category_sections(db, per_category=4, sort="bestselling")
     return render(
         "pages/home.html",
         request,
@@ -127,84 +158,142 @@ def homepage(request: Request, db: Session = Depends(get_db)):
             "featured_templates": featured,
             "best_sellers": best_sellers,
             "new_templates": new_templates,
+            "popular_sections": popular_sections,
             "categories": list_categories(db),
             "industries": list_industries(db),
+            "template_search_hints": list_template_search_hints(),
             "meta_title": "Premium Website Templates for Local Businesses",
-            "meta_description": "Launch faster with premium marketplace templates, setup services, and hosting.",
+            "meta_description": "Launch faster with premium website templates and setup services.",
         },
     )
 
 
-MARKETPLACE_SORTS = frozenset({"newest", "price_low_high", "price_high_low"})
+@router.get("/popular")
+def popular_by_category(
+    request: Request,
+    db: Session = Depends(get_db),
+    category: str | None = Query(default=None),
+    industry: str | None = Query(default=None),
+    q: str | None = Query(default=None),
+    min_price: OptionalFloatQuery = None,
+    max_price: OptionalFloatQuery = None,
+    sort: str = Query(default="bestselling"),
+    page: int = Query(default=1),
+):
+    if sort not in TEMPLATE_SORTS:
+        sort = "bestselling"
+
+    active_category = get_category_by_slug(db, category) if category else None
+    query = filtered_template_query(category, industry, q, min_price, max_price, sort)
+    pagination = paginate_templates(db, query, page=page, per_page=30)
+    filter_params = {
+        "q": q or "",
+        "category": category or "",
+        "industry": industry or "",
+        "min_price": min_price if min_price is not None else "",
+        "max_price": max_price if max_price is not None else "",
+        "sort": sort,
+    }
+    page_urls = build_page_urls("/popular", pagination["page_count"], pagination["page"], **filter_params)
+
+    current_year = datetime.now().year
+    if active_category:
+        page_title = f"{current_year}'s Featured {active_category.name} Templates — updated weekly"
+        meta_title = f"Featured {active_category.name} Website Templates"
+    else:
+        page_title = "Featured Website Templates"
+        meta_title = "Featured Website Templates by Category"
+
+    return render(
+        "pages/popular.html",
+        request,
+        {
+            "active_category": active_category,
+            "pagination": pagination,
+            "page_urls": page_urls,
+            "filters": filter_params,
+            "categories": list_categories(db),
+            "categories_with_counts": get_categories_with_counts(db),
+            "industries": list_industries(db),
+            "featured_studios": get_featured_studios(db),
+            "sort": sort,
+            "current_year": current_year,
+            "page_title": page_title,
+            "meta_title": meta_title,
+            "meta_description": "Browse featured website templates with live previews, updated weekly.",
+        },
+    )
 
 
 @router.get("/marketplace")
-def marketplace(
-    request: Request,
-    db: Session = Depends(get_db),
-    q: str | None = Query(default=None),
-    category: str | None = Query(default=None),
-    industry: str | None = Query(default=None),
-    min_price: OptionalFloatQuery = None,
-    max_price: OptionalFloatQuery = None,
-    sort: str = Query(default="newest"),
-    page: int = Query(default=1),
-):
-    if sort not in MARKETPLACE_SORTS:
-        sort = "newest"
-    query = filtered_template_query(category, industry, q, min_price, max_price, sort)
-    pagination = paginate_templates(db, query, page=page, per_page=9)
-    return render(
-        "pages/marketplace.html",
-        request,
-        {
-            "pagination": pagination,
-            "filters": {
-                "q": q or "",
-                "category": category or "",
-                "industry": industry or "",
-                "min_price": min_price if min_price is not None else "",
-                "max_price": max_price if max_price is not None else "",
-                "sort": sort,
-            },
-            "categories": list_categories(db),
-            "industries": list_industries(db),
-            "meta_title": "Browse Marketplace Templates",
-            "meta_description": "Filter by category, industry, and pricing to find your perfect site template.",
-        },
-    )
+def marketplace_redirect(request: Request):
+    query = request.url.query
+    target = f"/popular?{query}" if query else "/popular"
+    return RedirectResponse(url=target, status_code=301)
 
 
 @router.get("/categories/{slug}")
-def category_page(request: Request, slug: str, db: Session = Depends(get_db), page: int = 1):
-    pagination = paginate_templates(db, filtered_template_query(category_slug=slug), page=page, per_page=9)
+def category_page(
+    request: Request,
+    slug: str,
+    db: Session = Depends(get_db),
+    page: int = 1,
+    sort: str = Query(default="bestselling"),
+):
+    category = get_category_by_slug(db, slug)
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    if sort not in TEMPLATE_SORTS:
+        sort = "bestselling"
+
+    pagination = paginate_templates(
+        db, filtered_template_query(category_slug=slug, sort=sort), page=page, per_page=30
+    )
+    page_urls = build_page_urls(f"/categories/{slug}", pagination["page_count"], pagination["page"], sort=sort)
     return render(
         "pages/category.html",
         request,
         {
             "pagination": pagination,
-            "category_slug": slug,
-            "categories": list_categories(db),
-            "industries": list_industries(db),
-            "meta_title": f"{slug.replace('-', ' ').title()} Templates",
-            "meta_description": "Browse templates by category.",
+            "page_urls": page_urls,
+            "category": category,
+            "sort": sort,
+            "categories_with_counts": get_categories_with_counts(db),
+            "featured_studios": get_featured_studios(db),
+            "meta_title": f"{category.name} Templates",
+            "meta_description": category.description or f"Browse popular {category.name.lower()} website templates.",
         },
     )
 
 
 @router.get("/industries/{slug}")
-def industry_page(request: Request, slug: str, db: Session = Depends(get_db), page: int = 1):
-    pagination = paginate_templates(db, filtered_template_query(industry_slug=slug), page=page, per_page=9)
+def industry_page(
+    request: Request,
+    slug: str,
+    db: Session = Depends(get_db),
+    page: int = 1,
+    sort: str = Query(default="bestselling"),
+):
+    industry = get_industry_by_slug(db, slug)
+    if not industry:
+        raise HTTPException(status_code=404, detail="Industry not found")
+    if sort not in TEMPLATE_SORTS:
+        sort = "bestselling"
+
+    pagination = paginate_templates(
+        db, filtered_template_query(industry_slug=slug, sort=sort), page=page, per_page=9
+    )
+    page_urls = build_page_urls(f"/industries/{slug}", pagination["page_count"], pagination["page"], sort=sort)
     return render(
         "pages/industry.html",
         request,
         {
             "pagination": pagination,
-            "industry_slug": slug,
-            "categories": list_categories(db),
-            "industries": list_industries(db),
-            "meta_title": f"{slug.replace('-', ' ').title()} Website Templates",
-            "meta_description": "Explore website templates by industry.",
+            "page_urls": page_urls,
+            "industry": industry,
+            "sort": sort,
+            "meta_title": f"{industry.name} Website Templates",
+            "meta_description": industry.description or f"Explore website templates for {industry.name.lower()}.",
         },
     )
 
@@ -297,15 +386,6 @@ def setup_services(request: Request):
         "pages/services_setup.html",
         request,
         {"meta_title": "Website Setup Services", "meta_description": "Fast-launch website setup services."},
-    )
-
-
-@router.get("/services/hosting")
-def hosting_services(request: Request):
-    return render(
-        "pages/services_hosting.html",
-        request,
-        {"meta_title": "Managed Hosting Services", "meta_description": "Managed hosting for local businesses."},
     )
 
 
@@ -406,7 +486,7 @@ def about_page(request: Request):
     return render(
         "pages/about.html",
         request,
-        {"meta_title": "About Mateo ConsultOps Themes", "meta_description": "Marketplace mission and business focus."},
+        {"meta_title": "About Mateo ConsultOps Themes", "meta_description": "Our mission and business focus."},
     )
 
 

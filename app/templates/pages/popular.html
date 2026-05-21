@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<link rel="stylesheet" href="/static/css/browse.css" />
+{% endblock %}
+{% block content %}
+<section class="border-b border-brand-border bg-white" x-data="{openFilters: false}">
+    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {% set breadcrumbs = [
+            {"label": "Home", "url": "/"},
+            {"label": active_category.name if active_category else "Browse Templates", "url": none}
+        ] %}
+        {% include "components/breadcrumbs.html" %}
+
+        <h1 class="mt-4 text-2xl font-bold leading-tight text-brand-ink md:text-3xl">{{ page_title }}</h1>
+        <p class="mt-2 text-sm text-brand-muted">Price is in US dollars. Explore templates by freshness and pricing.</p>
+
+        {% set base_path = "/popular" %}
+        {% set link_style = "query" %}
+        {% set show_all_link = true %}
+        {% set active_slug = filters.category or none %}
+        {% set scope_label = active_category.name ~ " templates" if active_category else "templates" %}
+        {% set sort_query = "&sort=" ~ sort %}
+        {% include "components/subcategory_pills.html" %}
+    </div>
+</section>
+
+<section class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mkt-toolbar flex flex-wrap items-center justify-between gap-3">
+        <p class="text-sm font-semibold text-brand-ink">
+            <span class="text-brand-emerald">{{ pagination.total_items }}</span>
+            template{{ "s" if pagination.total_items != 1 else "" }} found
+        </p>
+        <div class="flex items-center gap-2">
+            <button type="button" @click="openFilters=!openFilters" class="rounded-lg border border-brand-border px-3 py-2 text-sm font-semibold lg:hidden">Filters</button>
+            <form method="get" action="/popular" class="flex flex-wrap items-center gap-2">
+                {% if filters.q %}<input type="hidden" name="q" value="{{ filters.q }}" />{% endif %}
+                {% if filters.category %}<input type="hidden" name="category" value="{{ filters.category }}" />{% endif %}
+                {% if filters.industry %}<input type="hidden" name="industry" value="{{ filters.industry }}" />{% endif %}
+                {% if filters.min_price %}<input type="hidden" name="min_price" value="{{ filters.min_price }}" />{% endif %}
+                {% if filters.max_price %}<input type="hidden" name="max_price" value="{{ filters.max_price }}" />{% endif %}
+                <label for="sort" class="sr-only">Sort templates</label>
+                <select id="sort" name="sort" class="rounded-lg border border-brand-border bg-white px-3 py-2 text-sm font-medium" onchange="this.form.submit()">
+                    <option value="bestselling" {% if sort == "bestselling" %}selected{% endif %}>Featured</option>
+                    <option value="newest" {% if sort == "newest" %}selected{% endif %}>Recently updated</option>
+                    <option value="price_low_high" {% if sort == "price_low_high" %}selected{% endif %}>Price: low to high</option>
+                    <option value="price_high_low" {% if sort == "price_high_low" %}selected{% endif %}>Price: high to low</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div>
+            {% if pagination["items"] %}
+                <div class="rounded-xl border border-brand-border bg-white px-4 sm:px-6">
+                    {% for item in pagination["items"] %}
+                        {% include "components/template_list_row.html" %}
+                    {% endfor %}
+                </div>
+                {% include "components/pagination.html" %}
+            {% else %}
+                <p class="rounded-xl border border-dashed border-brand-border bg-white p-10 text-center text-brand-muted">
+                    No templates match your filters.
+                    <a href="/popular" class="font-semibold text-brand-dark hover:text-brand-emerald">Clear filters</a>.
+                </p>
+            {% endif %}
+        </div>
+
+        <div :class="{'hidden': !openFilters, 'block': openFilters}" class="lg:block">
+            {% include "components/browse_sidebar.html" %}
+        </div>
+    </div>
+</section>
+{% endblock %}

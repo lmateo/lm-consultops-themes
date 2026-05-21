@@ -12,23 +12,28 @@
         .demo-nav { display: flex; gap: 1rem; flex-wrap: wrap; }
         .demo-nav-link { text-decoration: none; color: #6b5344; font-weight: 600; font-size: 0.9rem; }
         .demo-nav-link.is-active { color: var(--accent-start); border-bottom: 2px solid var(--accent-start); }
-        .hero-farm { display: grid; grid-template-columns: 1fr 1.1fr; min-height: 420px; }
+        .hero-farm { display: grid; grid-template-columns: 1fr 1.1fr; min-height: 360px; }
         .hero-copy { padding: 3rem 2rem; background: linear-gradient(160deg, #f5efe6, #fff); display: flex; flex-direction: column; justify-content: center; }
         .hero-visual { position: relative; }
-        .hero-visual img { width: 100%; height: 100%; min-height: 420px; object-fit: cover; }
+        .hero-visual img { width: 100%; height: 100%; min-height: 360px; object-fit: contain; background: #f8fafc; }
         .hero-visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(74, 52, 33, 0.25)); }
         .season-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; padding: 2rem 0; background: #3d2914; color: #fef3c7; }
         .season-card { text-align: center; padding: 1rem; border-right: 1px solid rgba(255,255,255,0.15); }
         .season-card:last-child { border-right: 0; }
         .produce-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; padding: var(--section-pad) 0; }
         .produce-card { border-radius: var(--radius); overflow: hidden; border: 1px solid #e7d5c4; background: #fff; }
-        .produce-card img { height: 160px; width: 100%; object-fit: cover; }
+        .produce-card img { height: 160px; width: 100%; object-fit: contain; background: #f8fafc; }
         .produce-card div { padding: 1rem; }
         .demo-eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent-start); margin: 0 0 0.5rem; }
         .demo-page-section { padding: var(--section-pad) 0; }
         .demo-highlights { margin: 1.2rem 0 0; padding-left: 1.2rem; color: var(--text-muted); }
         .footer-farm { background: #3d2914; color: #fef3c7; padding: 2rem 0; text-align: center; font-size: 0.9rem; }
-        @media (max-width: 860px) { .hero-farm, .produce-grid, .season-row { grid-template-columns: 1fr; } .season-card { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.15); } }
+        @media (max-width: 860px) {
+            .hero-farm, .produce-grid, .season-row { grid-template-columns: 1fr; }
+            .season-card { border-right: 0; border-bottom: 1px solid rgba(255,255,255,0.15); }
+            .hero-copy { padding: 1.75rem 1rem; }
+            .hero-farm, .hero-visual img { min-height: 300px; }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -49,7 +54,7 @@
             </div>
         </div>
         <div class="hero-visual">
-            <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="{{ template_item.title }}" loading="eager" onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='420px'" />
+            <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="{{ template_item.title }}" loading="eager" onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='360px'" />
         </div>
     </section>
     <div class="season-row wrap" style="width:100%;max-width:none;">
@@ -62,12 +67,13 @@
         {% for card in demo.service_cards %}
         <article class="produce-card">
             {% if loop.index <= 3 %}
-            <img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="" loading="lazy" onerror="this.style.display='none'" />
+            <img src="/static/images/templates/{{ template_item.slug }}/gallery-{{ loop.index }}.webp" alt="{{ template_item.title }} gallery image {{ loop.index }}" loading="lazy" onerror="this.style.display='none'" />
             {% endif %}
             <div><h3 style="margin:0;">{{ card.title }}</h3><p style="margin:0.4rem 0 0;color:var(--text-muted);font-size:0.92rem;">{{ card.body }}</p></div>
         </article>
         {% endfor %}
     </section>
+    {% include "demos/partials/premium_home_sections.html" %}
     {% else %}
     <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
     {% endif %}

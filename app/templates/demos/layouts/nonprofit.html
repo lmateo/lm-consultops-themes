@@ -13,6 +13,8 @@
         .demo-nav-link { text-decoration: none; color: #64748b; font-weight: 600; }
         .demo-nav-link.is-active { color: var(--accent-start); }
         .impact-band { background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); color: #fff; padding: 2.5rem 1rem; text-align: center; }
+        .impact-hero-image { width: min(980px, 92%); margin: 1.25rem auto 0; border-radius: var(--radius); overflow: hidden; border: 1px solid #dbeafe; background: #f8fafc; box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12); }
+        .impact-hero-image img { width: 100%; height: 320px; object-fit: contain; background: #f8fafc; display: block; }
         .impact-stats { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin-top: 1rem; }
         .impact-stats div strong { font-size: 2rem; display: block; }
         .story { padding: var(--section-pad) 0; }
@@ -22,6 +24,10 @@
         .donate-cta { text-align: center; padding: 2rem; background: #f8fafc; border-radius: var(--radius); margin: 2rem 0; }
         .demo-eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.72rem; font-weight: 700; color: var(--accent-start); }
         .demo-page-section { padding: var(--section-pad) 0; }
+        @media (max-width: 800px) {
+            .impact-band { padding: 1.6rem 1rem; }
+            .impact-hero-image img { height: 280px; }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -40,6 +46,9 @@
             <div><strong>480</strong><span>Volunteers</span></div>
             <div><strong>36</strong><span>Partner orgs</span></div>
         </div>
+        <figure class="impact-hero-image">
+            <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="{{ template_item.title }} community impact scene" loading="eager" onerror="this.style.display='none'" />
+        </figure>
     </section>
     <article class="wrap story">
         <p>{{ demo_page_content.highlights[0] }}</p>
@@ -54,6 +63,7 @@
             <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact" style="margin-top:1rem;">Donate Today</a>
         </div>
     </article>
+    {% include "demos/partials/premium_home_sections.html" %}
     {% else %}
     <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
     {% endif %}

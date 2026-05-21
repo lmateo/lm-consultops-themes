@@ -1,0 +1,101 @@
+{# Crafto-inspired multipurpose sections — original copy and Mateo branding #}
+<link rel="stylesheet" href="/static/css/demo-premium.css" />
+
+<section class="premium-trust" aria-label="Trusted by local teams">
+    <div class="wrap">
+        <span>Trusted</span>
+        <span>Featured</span>
+        <span>Verified</span>
+        <span>Local-first</span>
+        <span>Premium</span>
+    </div>
+</section>
+
+<section class="wrap premium-icon-grid" aria-labelledby="premium-features-{{ template_item.slug }}">
+    <div class="premium-section-head">
+        <p class="demo-eyebrow">Built for growth</p>
+        <h2 id="premium-features-{{ template_item.slug }}">Everything you need to launch</h2>
+        <p style="color:var(--text-muted);margin:0.75rem auto 0;">Section patterns inspired by premium multipurpose layouts — tailored for {{ template_item.industry.name|lower }}.</p>
+    </div>
+    {% for card in demo.service_cards %}
+    <article class="premium-icon-card">
+        <div class="premium-icon-mark" aria-hidden="true">{{ loop.index }}</div>
+        <h3 style="margin:0;font-size:1.05rem;">{{ card.title }}</h3>
+        <p style="margin:0.5rem 0 0;color:var(--text-muted);font-size:0.9rem;">{{ card.body }}</p>
+    </article>
+    {% endfor %}
+</section>
+
+<section class="wrap premium-split">
+    <div>
+        <p class="demo-eyebrow">Why {{ template_item.title }}</p>
+        <h2 style="margin:0.35rem 0;font-size:clamp(1.6rem,3vw,2.2rem);">Designed for {{ template_item.industry.name|lower }} buyers</h2>
+        <p style="color:var(--text-muted);margin-top:0.75rem;">{{ demo_page_content.lead }}</p>
+        <ul style="margin:1.25rem 0 0;padding-left:1.2rem;color:var(--text-muted);">
+            {% for point in demo_page_content.highlights[:3] %}
+            <li style="margin-bottom:0.35rem;">{{ point }}</li>
+            {% endfor %}
+        </ul>
+        <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/about" style="margin-top:1.25rem;">Explore our story</a>
+    </div>
+    <img
+        src="/static/images/templates/{{ template_item.slug }}/services.webp"
+        alt="{{ template_item.title }} services showcase"
+        loading="lazy"
+        onerror="this.style.background='linear-gradient(135deg,var(--accent-start),var(--accent-end))';this.style.minHeight='280px'"
+    />
+</section>
+
+<div class="premium-stats wrap" style="width:100%;max-width:none;padding-left:4%;padding-right:4%;">
+    {% for stat in demo.stats %}
+    <div class="premium-stat">
+        <strong>{{ stat.value }}</strong>
+        <span>{{ stat.label }}</span>
+    </div>
+    {% endfor %}
+    <div class="premium-stat">
+        <strong>24/7</strong>
+        <span>Launch support</span>
+    </div>
+</div>
+
+{% set testimonials = demo_rich.testimonials if demo_rich and demo_rich.testimonials else [] %}
+{% if testimonials %}
+<section class="premium-testimonials">
+    <div class="wrap">
+        <div class="premium-section-head">
+            <p class="demo-eyebrow">Client stories</p>
+            <h2>Trusted by local teams</h2>
+        </div>
+        <div class="grid">
+            {% for item in testimonials[:2] %}
+            <blockquote class="premium-quote">
+                “{{ item.quote }}”
+                <cite>{{ item.author }} — {{ item.role }}</cite>
+            </blockquote>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="wrap premium-process" aria-labelledby="premium-process-{{ template_item.slug }}">
+    <div class="premium-section-head">
+        <p class="demo-eyebrow">How it works</p>
+        <h2 id="premium-process-{{ template_item.slug }}">From preview to launch</h2>
+    </div>
+    <div class="premium-steps">
+        <article class="premium-step"><span class="premium-step-num">1</span><strong>Pick your layout</strong><p style="margin:0.35rem 0 0;color:var(--text-muted);font-size:0.88rem;">Start from the industry homepage and inner pages.</p></article>
+        <article class="premium-step"><span class="premium-step-num">2</span><strong>Customize brand</strong><p style="margin:0.35rem 0 0;color:var(--text-muted);font-size:0.88rem;">Tune colors, typography, and density in live preview.</p></article>
+        <article class="premium-step"><span class="premium-step-num">3</span><strong>Add your content</strong><p style="margin:0.35rem 0 0;color:var(--text-muted);font-size:0.88rem;">Swap copy, imagery, and offers for your market.</p></article>
+        <article class="premium-step"><span class="premium-step-num">4</span><strong>Go live</strong><p style="margin:0.35rem 0 0;color:var(--text-muted);font-size:0.88rem;">Download source, deploy, or request Mateo setup.</p></article>
+    </div>
+</section>
+
+<section class="premium-cta" aria-label="Get started">
+    <p class="demo-eyebrow" style="color:rgba(255,255,255,0.9);">Ready when you are</p>
+    <h2>Launch {{ template_item.title }} this week</h2>
+    <p style="max-width:48ch;margin:0.75rem auto 0;opacity:0.95;">Conversion-ready pages, mobile performance, and SEO structure included.</p>
+    <a class="demo-btn" href="/preview-site/{{ template_item.slug }}/contact">{{ demo.cta_label|default('Get Started') }}</a>
+    <a class="demo-btn demo-btn-outline" href="/templates/{{ template_item.slug }}">View on marketplace</a>
+</section>

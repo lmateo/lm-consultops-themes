@@ -16,14 +16,20 @@
         .split-hero { display: grid; grid-template-columns: 1.15fr 0.85fr; background: #0f172a; color: #fff; }
         .split-hero .copy { padding: 3.5rem 2rem 3.5rem 0; margin-left: max(4vw, calc((100vw - 1120px) / 2)); }
         .split-hero .visual { background: linear-gradient(135deg, var(--accent-start), var(--accent-end)); padding: 2rem; display: grid; place-items: center; }
-        .split-hero .visual img { border-radius: var(--radius); max-height: 360px; object-fit: cover; width: 100%; }
+        .split-hero .visual img { border-radius: var(--radius); max-height: 360px; object-fit: contain; background: #f8fafc; width: 100%; }
         .trade-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; padding: var(--section-pad) 0; }
         .trade-card { background: #fff; border-left: 5px solid var(--accent-start); padding: 1.25rem; box-shadow: 0 12px 30px rgba(15,23,42,0.08); }
         .badge-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
         .badge { background: #e2e8f0; padding: 0.35rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
         .demo-page-section { padding: var(--section-pad) 0; }
         .demo-eyebrow { color: var(--accent-start); font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
-        @media (max-width: 900px) { .split-hero { grid-template-columns: 1fr; } .split-hero .copy { margin-left: 0; padding: 2rem 1rem; } .trade-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) {
+            .split-hero { grid-template-columns: 1fr; }
+            .split-hero .copy { margin-left: 0; padding: 1.75rem 1rem; }
+            .split-hero .visual { padding: 1rem; }
+            .split-hero .visual img { max-height: 300px; }
+            .trade-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body data-density="{{ preview_customizer.density }}" data-typography="{{ preview_customizer.typography }}" data-topology="{{ preview_customizer.topology }}">
@@ -45,7 +51,7 @@
             <div class="badge-row">{% for point in demo_page_content.highlights %}<span class="badge">{{ point }}</span>{% endfor %}</div>
         </div>
         <div class="visual">
-            <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="" onerror="this.style.display='none'" />
+            <img src="/static/images/templates/{{ template_item.slug }}/hero.webp" alt="{{ template_item.title }} contractor service scene" onerror="this.style.display='none'" />
         </div>
     </section>
     <section class="wrap trade-grid">
@@ -53,6 +59,7 @@
         <article class="trade-card"><h3 style="margin:0;">{{ card.title }}</h3><p style="color:var(--text-muted);margin:0.5rem 0 0;">{{ card.body }}</p></article>
         {% endfor %}
     </section>
+    {% include "demos/partials/premium_home_sections.html" %}
     {% else %}
     <main class="wrap">{% include "demos/partials/inner_page.html" %}</main>
     {% endif %}

@@ -1,0 +1,22 @@
+<div class="mt-5">
+    <p class="text-sm font-semibold text-brand-ink">
+        More featured
+        <span class="text-brand-dark">{{ scope_label }}</span>:
+    </p>
+    <div class="mt-3 flex flex-wrap gap-2">
+        {% if show_all_link %}
+            <a href="{{ base_path }}" class="mkt-pill {{ 'is-active' if not active_slug else '' }}">All</a>
+        {% endif %}
+        {% for row in categories_with_counts %}
+            {% if link_style == "query" %}
+                {% set category_href = base_path ~ "?category=" ~ row.category.slug ~ (sort_query if sort_query else "") %}
+            {% else %}
+                {% set category_href = "/categories/" ~ row.category.slug %}
+            {% endif %}
+            <a href="{{ category_href }}"
+               class="mkt-pill {{ 'is-active' if active_slug == row.category.slug else '' }}">
+                {{ row.category.name }}
+            </a>
+        {% endfor %}
+    </div>
+</div>

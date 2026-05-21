@@ -78,7 +78,7 @@ def _stats_for_template(template: Template) -> tuple[dict[str, str], ...]:
     return (
         {"value": template.version, "label": "Theme version"},
         {"value": template.last_updated.strftime("%b %Y"), "label": "Last updated"},
-        {"value": f"{template.sales_count:,}+", "label": "Teams launched"},
+        {"value": "Pre-launch", "label": "Availability"},
     )
 
 
@@ -393,3 +393,11 @@ def get_preview_demo(template: Template, page: str = "home") -> PreviewDemoConte
 
 def get_page_content(demo: PreviewDemoContext) -> DemoPageContent:
     return getattr(demo, demo.page)
+
+
+def list_template_search_hints() -> list[dict[str, str]]:
+    """Homepage template search datalist: title and slug per demo template."""
+    return [
+        {"title": slug.replace("-", " ").title(), "slug": slug}
+        for slug in sorted(SLUG_LAYOUT_MAP.keys())
+    ]

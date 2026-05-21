@@ -1,0 +1,47 @@
+{% set base = "/static/images/templates/" ~ item.slug %}
+{% set gallery = item.images[:3] if item.images else [] %}
+
+<article class="mkt-list-row" x-data="{ activeImage: '{{ base }}/thumbnail.webp' }">
+    <div class="mkt-thumb-panel">
+        <a href="/templates/{{ item.slug }}" class="block h-full w-full">
+            <img :src="activeImage" src="{{ base }}/thumbnail.webp" alt="{{ item.title }} preview" loading="lazy" decoding="async" />
+        </a>
+        {% if gallery|length > 1 %}
+            <div class="mkt-thumb-stack" role="group" aria-label="Preview thumbnails for {{ item.title }}">
+                <button type="button" class="is-active" @click="activeImage='{{ base }}/thumbnail.webp'" aria-label="Main thumbnail">
+                    <img src="{{ base }}/thumbnail.webp" alt="" />
+                </button>
+                {% for img in gallery %}
+                    <button type="button" @click="activeImage='{{ img.image_url }}'" aria-label="Gallery image {{ loop.index }}">
+                        <img src="{{ img.image_url }}" alt="" />
+                    </button>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="min-w-0">
+        <h2 class="mkt-list-title">
+            <a href="/templates/{{ item.slug }}">{{ item.title }}</a>
+        </h2>
+        <p class="mkt-meta-line mt-1">
+            by
+            <a href="/industries/{{ item.industry.slug }}">{{ item.industry.name }}</a>
+            in
+            <a href="/categories/{{ item.category.slug }}">{{ item.category.name }}</a>
+        </p>
+
+        <div class="mkt-price-block">
+            <span class="mkt-price">${{ "%.2f"|format(item.price) }}</span>
+            <span class="mkt-status-pill">Pre-launch</span>
+            <span class="text-xs text-brand-muted">Updated {{ item.last_updated.strftime("%b %d, %Y") }}</span>
+        </div>
+
+        <p class="mt-2 line-clamp-2 text-sm text-brand-muted">{{ item.description }}</p>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="/preview/{{ item.slug }}" class="mkt-preview-btn">Live Preview</a>
+            <a href="/templates/{{ item.slug }}" class="text-sm font-semibold text-brand-dark hover:text-brand-emerald">View details</a>
+        </div>
+    </div>
+</article>

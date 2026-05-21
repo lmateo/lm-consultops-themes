@@ -1,0 +1,41 @@
+---
+title: Auto Push and Deploy
+description: Auto commit and push workflow after code changes
+alwaysApply: true
+---
+
+In this repository, after completing a requested code change:
+
+1. run relevant validation commands if they exist
+2. stage intended changes
+3. create a clear conventional commit message
+4. use the local auto-push script to commit and push the current branch
+
+Git shell requirement for push operations:
+
+- always use Git Bash at `C:\Program Files\Git\git-bash.exe`
+  when pushing to Git or GitHub
+- run push-related commands from Git Bash
+  (including `git push`, `./scripts/autopush.sh`, and `gh` commands)
+
+Preferred validation commands:
+
+```bash
+py -m compileall .
+py -m pytest || true
+./scripts/autopush.sh "chore: automated Cursor update"
+```
+
+Rules:
+
+- do not push if secrets were added
+- do not push intentionally broken code
+- do not overwrite unrelated user changes
+- prefer feature branches unless the user explicitly wants direct pushes to main
+- if the repository has tests or validations available,
+  run them before push when reasonable
+- use conventional commit style messages such as:
+  - feat: add client CRUD endpoints
+  - fix: correct Railway postgres URL handling
+  - docs: update README deployment notes
+  - build: update Railway deployment workflow
