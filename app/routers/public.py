@@ -1,8 +1,6 @@
 import json
 import random
 import re
-from datetime import datetime
-
 import httpx
 import stripe
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
@@ -196,9 +194,8 @@ def popular_by_category(
     }
     page_urls = build_page_urls("/popular", pagination["page_count"], pagination["page"], **filter_params)
 
-    current_year = datetime.now().year
     if active_category:
-        page_title = f"{current_year}'s Featured {active_category.name} Templates — updated weekly"
+        page_title = f"Featured {active_category.name} Templates"
         meta_title = f"Featured {active_category.name} Website Templates"
     else:
         page_title = "Featured Website Templates"
@@ -217,10 +214,9 @@ def popular_by_category(
             "industries": list_industries(db),
             "featured_studios": get_featured_studios(db),
             "sort": sort,
-            "current_year": current_year,
             "page_title": page_title,
             "meta_title": meta_title,
-            "meta_description": "Browse featured website templates with live previews, updated weekly.",
+            "meta_description": "Browse featured website templates with live previews.",
         },
     )
 

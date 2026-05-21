@@ -13,7 +13,7 @@
         {% include "components/breadcrumbs.html" %}
 
         <h1 class="mt-4 text-2xl font-bold leading-tight text-brand-ink md:text-3xl">{{ category.name }} Templates</h1>
-        <p class="mt-2 text-sm text-brand-muted">{{ category.description or "Curated website templates for this category, updated weekly." }}</p>
+        <p class="mt-2 text-sm text-brand-muted">{{ category.description or "Curated website templates for this category." }}</p>
 
         {% set base_path = "/popular" %}
         {% set link_style = "query" %}
