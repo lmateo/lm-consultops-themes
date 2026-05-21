@@ -30,6 +30,26 @@ _CRAFTO_PHOTO_RE = re.compile(
 )
 _CRAFTO_PHOTO_SKIP = re.compile(r"logo|separator|favicon|apple-touch|highlight-separator", re.IGNORECASE)
 
+_HREF_RE = re.compile(r"""href=(["'])([^"']*)\1""", re.IGNORECASE)
+_CRAFTO_VENDOR_RE = re.compile(
+    r"^(?:https?://)?(?:www\.)?"
+    r"(?:craftohtml\.themezaa\.com|themezaa\.com|themeforest\.net|1\.envato\.market)",
+    re.IGNORECASE,
+)
+_SKIP_HREF_PREFIXES = ("#", "mailto:", "tel:", "javascript:", "data:")
+_KEEP_HREF_PREFIXES = ("/static/", "/preview/", "/templates/", "/purchase/", "/crafto/")
+_PAGE_HINTS: tuple[tuple[re.Pattern[str], str], ...] = (
+    (re.compile(r"contact", re.IGNORECASE), "contact"),
+    (re.compile(r"about", re.IGNORECASE), "about"),
+    (
+        re.compile(
+            r"service|services|menu|treatment|treatments|room|rooms|cause|causes|sell|pricing|package",
+            re.IGNORECASE,
+        ),
+        "services",
+    ),
+)
+
 _STATIC_ROOT = Path(__file__).resolve().parent.parent / "static" / "images" / "templates"
 
 _TEMPLATE_IMAGE_SET: tuple[str, ...] = (
@@ -194,6 +214,78 @@ def _stable_index(value: str, modulo: int) -> int:
     return int(digest[:8], 16) % modulo
 
 
+def _crafto_demo_stem(crafto: CraftoDemoMapping) -> str:
+    home = crafto.pages["home"]
+    if home.startswith("demo-") and home.endswith(".html"):
+        return home[5:-5]
+    return Path(home).stem
+
+
+def _filename_to_page(filename: str, crafto: CraftoDemoMapping) -> str | None:
+    file_to_page = {value: key for key, value in crafto.pages.items()}
+    if filename in file_to_page:
+        return file_to_page[filename]
+    stem = _crafto_demo_stem(crafto)
+    if not filename.startswith(f"demo-{stem}"):
+        return None
+    for pattern, page in _PAGE_HINTS:
+        if pattern.search(filename):
+            return page
+    if filename == crafto.pages["home"]:
+        return "home"
+    return None
+
+
+def _preview_url(slug: str, page: str) -> str:
+    normalized = page if page in DEMO_PAGES else "home"
+    return f"/preview/{slug}/{normalized}"
+
+
+def _resolve_preview_href(raw_href: str, *, slug: str, crafto: CraftoDemoMapping) -> str:
+    href = raw_href.strip()
+    if not href:
+        return href
+
+    lowered = href.lower()
+    if lowered.startswith(_SKIP_HREF_PREFIXES):
+        return href
+    if any(lowered.startswith(prefix) for prefix in _KEEP_HREF_PREFIXES):
+        return href
+    if _CRAFTO_VENDOR_RE.match(href):
+        return "#"
+
+    if lowered.startswith(("http://", "https://", "//")):
+        return href
+
+    path = href.split("?", 1)[0].split("#", 1)[0]
+    filename = Path(path).name
+    if not filename:
+        return href
+
+    if filename in {"index.html", "index.htm"}:
+        return _preview_url(slug, "home")
+
+    page = _filename_to_page(filename, crafto)
+    if page:
+        return _preview_url(slug, page)
+
+    if filename.startswith("demo-") and filename.endswith(".html"):
+        return "#"
+
+    return href
+
+
+def rewrite_crafto_preview_links(html: str, *, slug: str, crafto: CraftoDemoMapping) -> str:
+    """Point in-demo anchors at Mateo preview routes; neutralize vendor/Crafto hub links."""
+
+    def _replace_href(match: re.Match[str]) -> str:
+        quote, value = match.group(1), match.group(2)
+        resolved = _resolve_preview_href(value, slug=slug, crafto=crafto)
+        return f"href={quote}{resolved}{quote}"
+
+    return _HREF_RE.sub(_replace_href, html)
+
+
 def normalize_preview_viewport_meta(html: str) -> str:
     """Ensure a single viewport meta the preview chrome can retarget for device simulation."""
     tag = '<meta name="viewport" id="mkt-preview-viewport" content="width=device-width, initial-scale=1.0" />'
@@ -353,6 +445,7 @@ def load_wrapped_crafto_preview(template: Template, page: str = "home") -> str:
     raw_html = _crafto_file_path(filename).read_text(encoding="utf-8-sig", errors="replace")
     raw_html = normalize_preview_viewport_meta(raw_html)
     raw_html = inject_template_preview_images(raw_html, template.slug, normalized)
+    raw_html = rewrite_crafto_preview_links(raw_html, slug=template.slug, crafto=crafto)
     return wrap_crafto_html(
         raw_html,
         template=template,

@@ -21,6 +21,21 @@ body.mkt-preview-active {
   background: #fff;
 }
 
+/* Crafto navbars are position:fixed at top:0 — sit them below Mateo preview chrome */
+body.mkt-preview-active .mkt-preview-canvas header,
+body.mkt-preview-active .mkt-preview-canvas header .navbar,
+body.mkt-preview-active .mkt-preview-canvas > header {
+  top: var(--mkt-chrome-height) !important;
+}
+
+body.mkt-preview-active .mkt-preview-canvas .header-top-bar {
+  top: var(--mkt-chrome-height) !important;
+}
+
+body.mkt-preview-active .mkt-preview-canvas .header-top-bar + .navbar {
+  top: calc(var(--mkt-chrome-height) + var(--mkt-header-top-bar-height, 0px)) !important;
+}
+
 html[data-mkt-viewport="desktop"] .mkt-preview-canvas {
   max-width: none;
   box-shadow: none;

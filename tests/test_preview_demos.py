@@ -3,7 +3,11 @@ import re
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services.crafto_preview_wrap import _preview_image_pool
+from app.services.crafto_preview_wrap import (
+    _preview_image_pool,
+    _resolve_preview_href,
+    rewrite_crafto_preview_links,
+)
 from app.services.crafto_demos import CRAFTO_TEMPLATE_DEMOS, get_crafto_demo_or_default
 from app.services.preview_demos import SLUG_LAYOUT_MAP, get_layout_key
 
@@ -51,6 +55,45 @@ def test_wrapped_preview_renders_without_iframe():
     assert 'id="mkt-preview-viewport"' in response.text
     assert 'id="mkt-preview-canvas"' in response.text
     assert "/static/css/preview-mobile.css" in response.text
+    assert "/static/css/preview-chrome.css" in response.text
+
+
+def test_wrapped_preview_nav_links_use_mateo_routes():
+    response = client.get("/preview/cloudcare-it/home")
+    assert response.status_code == 200
+    text = response.text
+    assert 'href="/preview/cloudcare-it/home"' in text
+    assert 'href="/preview/cloudcare-it/about"' in text
+    assert 'href="/preview/cloudcare-it/services"' in text
+    assert 'href="/preview/cloudcare-it/contact"' in text
+    assert 'href="demo-it-business.html"' not in text
+    assert 'href="index.html"' not in text
+    assert "themezaa.com" not in text
+
+
+def test_wrapped_preview_unmapped_demo_pages_use_hash():
+    response = client.get("/preview/cloudcare-it/home")
+    assert response.status_code == 200
+    assert 'href="demo-it-business-blog.html"' not in response.text
+    assert 'href="#"' in response.text
+
+
+def test_resolve_preview_href_maps_crafto_vendor_urls():
+    crafto = get_crafto_demo_or_default("cloudcare-it")
+    assert _resolve_preview_href("https://www.themezaa.com/", slug="cloudcare-it", crafto=crafto) == "#"
+    assert (
+        _resolve_preview_href("demo-it-business-about.html", slug="cloudcare-it", crafto=crafto)
+        == "/preview/cloudcare-it/about"
+    )
+
+
+def test_rewrite_crafto_preview_links_unit():
+    crafto = get_crafto_demo_or_default("cloudcare-it")
+    html = '<a href="demo-it-business-contact.html">Contact</a>'
+    assert (
+        rewrite_crafto_preview_links(html, slug="cloudcare-it", crafto=crafto)
+        == '<a href="/preview/cloudcare-it/contact">Contact</a>'
+    )
 
 
 def test_wrapped_preview_uses_template_photos_not_placeholders():
