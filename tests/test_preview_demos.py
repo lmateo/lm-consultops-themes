@@ -64,7 +64,14 @@ def test_wrapped_preview_uses_varied_template_images():
     response = client.get("/preview/greenfield-farm/home")
     assert response.status_code == 200
     images = re.findall(r"/static/images/templates/greenfield-farm/([\w-]+\.webp)", response.text)
-    assert len(set(images)) >= 4
+    assert len(set(images)) >= 8
+
+
+def test_template_image_discovery_includes_extended_gallery_set():
+    pool = _preview_image_pool("services", "pizza-local-eats")
+    assert "gallery-8.webp" in pool
+    assert "team.webp" in pool or "feature.webp" in pool
+    assert len(pool) >= 12
 
 
 def test_image_pool_applies_page_primary_and_slug_weighting():

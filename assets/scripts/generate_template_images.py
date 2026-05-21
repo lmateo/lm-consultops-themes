@@ -11,6 +11,8 @@ from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 
 OUTPUT_ROOT = Path("app/static/images/templates")
 SCENES = ("hero", "about", "services", "contact")
+GALLERY_SCENE_COUNT = 12
+INLINE_SCENE_NAMES = ("team", "blog", "feature", "showcase")
 
 
 @dataclass(frozen=True)
@@ -593,15 +595,22 @@ def generate_template_assets(theme: TemplateTheme):
     export_variant(services, target / "services.webp", (1280, 720), sharpen=1.1)
     export_variant(contact, target / "contact.webp", (1280, 720), sharpen=1.08)
 
-    export_variant(services, target / "gallery-1.webp", (1280, 720), sharpen=1.1)
-    export_variant(about, target / "gallery-2.webp", (1280, 720), sharpen=1.08)
-    export_variant(contact, target / "gallery-3.webp", (1280, 720), sharpen=1.1)
+    for index in range(1, GALLERY_SCENE_COUNT + 1):
+        gallery_scene = create_scene(theme, f"gallery-{index}")
+        export_variant(gallery_scene, target / f"gallery-{index}.webp", (1280, 720), sharpen=1.1)
+
+    for scene_name in INLINE_SCENE_NAMES:
+        inline_scene = create_scene(theme, scene_name)
+        export_variant(inline_scene, target / f"{scene_name}.webp", (1280, 720), sharpen=1.08)
 
 
 def main():
     for theme in THEMES:
         generate_template_assets(theme)
-        print(f"  {theme.slug}: photorealistic hero, pages, galleries, thumbnail")
+        print(
+            f"  {theme.slug}: hero, pages, {GALLERY_SCENE_COUNT} galleries, "
+            f"{len(INLINE_SCENE_NAMES)} inline scenes, thumbnail"
+        )
     print(f"Generated photorealistic assets for {len(THEMES)} templates in {OUTPUT_ROOT}")
 
 

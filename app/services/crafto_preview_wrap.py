@@ -30,17 +30,38 @@ _CRAFTO_PHOTO_RE = re.compile(
 )
 _CRAFTO_PHOTO_SKIP = re.compile(r"logo|separator|favicon|apple-touch|highlight-separator", re.IGNORECASE)
 
+_STATIC_ROOT = Path(__file__).resolve().parent.parent / "static" / "images" / "templates"
+
 _TEMPLATE_IMAGE_SET: tuple[str, ...] = (
     "hero.webp",
     "hero-mobile.webp",
     "thumbnail.webp",
     "preview.webp",
-    "gallery-1.webp",
-    "gallery-2.webp",
-    "gallery-3.webp",
     "about.webp",
     "services.webp",
     "contact.webp",
+    "team.webp",
+    "blog.webp",
+    "feature.webp",
+    "showcase.webp",
+    *(f"gallery-{index}.webp" for index in range(1, 13)),
+)
+
+_CRAFTO_PATH_IMAGE_HINTS: tuple[tuple[re.Pattern[str], str], ...] = (
+    (re.compile(r"about|our-story|who-we|mission", re.IGNORECASE), "about.webp"),
+    (re.compile(r"contact|get-in-touch|reach-us", re.IGNORECASE), "contact.webp"),
+    (
+        re.compile(
+            r"service|services|menu|treatment|treatments|room|rooms|cause|causes|sell|pricing|package",
+            re.IGNORECASE,
+        ),
+        "services.webp",
+    ),
+    (re.compile(r"team|staff|doctor|vet|crew", re.IGNORECASE), "team.webp"),
+    (re.compile(r"blog|news|article|post", re.IGNORECASE), "blog.webp"),
+    (re.compile(r"feature|benefit|why-us", re.IGNORECASE), "feature.webp"),
+    (re.compile(r"showcase|portfolio|project|case", re.IGNORECASE), "showcase.webp"),
+    (re.compile(r"home|index|landing|banner", re.IGNORECASE), "hero.webp"),
 )
 
 _PAGE_PRIMARY_IMAGE: dict[str, str] = {
@@ -58,35 +79,40 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
         "hero-mobile.webp",
         "gallery-1.webp",
         "gallery-2.webp",
-        "gallery-1.webp",
+        "gallery-3.webp",
+        "gallery-4.webp",
         "services.webp",
         "thumbnail.webp",
-        "gallery-3.webp",
+        "feature.webp",
+        "showcase.webp",
         "about.webp",
         "contact.webp",
     ),
     "about": (
         "about.webp",
+        "team.webp",
+        "gallery-5.webp",
         "gallery-2.webp",
-        "about.webp",
         "gallery-1.webp",
         "thumbnail.webp",
         "hero.webp",
         "preview.webp",
-        "gallery-3.webp",
+        "gallery-6.webp",
         "contact.webp",
         "services.webp",
         "hero-mobile.webp",
     ),
     "services": (
         "services.webp",
-        "services.webp",
+        "feature.webp",
         "preview.webp",
         "gallery-1.webp",
         "gallery-3.webp",
+        "gallery-4.webp",
+        "gallery-7.webp",
         "hero.webp",
         "gallery-2.webp",
-        "thumbnail.webp",
+        "showcase.webp",
         "contact.webp",
         "about.webp",
         "hero-mobile.webp",
@@ -94,10 +120,9 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
     "contact": (
         "contact.webp",
         "hero-mobile.webp",
-        "contact.webp",
         "thumbnail.webp",
         "about.webp",
-        "gallery-3.webp",
+        "gallery-8.webp",
         "hero.webp",
         "preview.webp",
         "gallery-1.webp",
@@ -120,6 +145,22 @@ _SLUG_IMAGE_WEIGHT_BOOSTS: dict[str, tuple[str, ...]] = {
 }
 
 
+def _discover_template_images(slug: str) -> tuple[str, ...]:
+    folder = _STATIC_ROOT / slug
+    if not folder.is_dir():
+        return _TEMPLATE_IMAGE_SET
+    discovered = tuple(
+        sorted(
+            {
+                path.name
+                for path in folder.iterdir()
+                if path.is_file() and path.suffix.lower() == ".webp"
+            }
+        )
+    )
+    return discovered or _TEMPLATE_IMAGE_SET
+
+
 def _preview_image_pool(page: str, slug: str) -> tuple[str, ...]:
     primary = _PAGE_PRIMARY_IMAGE.get(page, _PAGE_PRIMARY_IMAGE["home"])
     weighted = list(_PAGE_WEIGHTED_SEQUENCE.get(page, _PAGE_WEIGHTED_SEQUENCE["home"]))
@@ -128,9 +169,24 @@ def _preview_image_pool(page: str, slug: str) -> tuple[str, ...]:
     if weighted[0] != primary:
         weighted.insert(0, primary)
     weighted.extend(_SLUG_IMAGE_WEIGHT_BOOSTS.get(slug, ()))
-    # Keep resilient if new assets are added but not yet listed in weighted sequences.
-    remaining = [image for image in _TEMPLATE_IMAGE_SET if image not in weighted]
-    return tuple(weighted + remaining)
+    available = set(_discover_template_images(slug))
+    ordered = [image for image in weighted if image in available]
+    remaining = [image for image in sorted(available) if image not in ordered]
+    if not ordered:
+        return tuple(remaining) if remaining else _TEMPLATE_IMAGE_SET
+    return tuple(ordered + remaining)
+
+
+def _image_for_crafto_path(path: str, pool: tuple[str, ...]) -> str | None:
+    for pattern, preferred in _CRAFTO_PATH_IMAGE_HINTS:
+        if pattern.search(path) and preferred in pool:
+            return preferred
+    gallery_match = re.search(r"gallery[_-]?(\d+)", path, flags=re.IGNORECASE)
+    if gallery_match:
+        preferred = f"gallery-{gallery_match.group(1)}.webp"
+        if preferred in pool:
+            return preferred
+    return None
 
 
 def _stable_index(value: str, modulo: int) -> int:
@@ -163,22 +219,29 @@ def normalize_preview_viewport_meta(html: str) -> str:
 def inject_template_preview_images(html: str, slug: str, page: str) -> str:
     """Replace placeholders and stock photos with varied per-template WebP assets."""
     pool = _preview_image_pool(page, slug)
+    if not pool:
+        return html
     base = f"/static/images/templates/{slug}"
     assigned = 0
     primary_served = False
+    shape_offsets = {"landscape": 0, "square": 2, "portrait": 4}
 
-    def image_url_from_key(key: str) -> str:
+    def next_pool_image(*, key: str, forced: str | None = None) -> str:
         nonlocal assigned, primary_served
-        if not primary_served:
+        if forced and forced in pool:
+            filename = forced
+        elif not primary_served:
             primary_served = True
-            assigned += 1
-            return f"{base}/{pool[0]}"
-        # Keep mappings deterministic while spreading images across replacements.
-        idx = 1 + _stable_index(f"{slug}:{page}:{assigned}:{key}", len(pool) - 1)
+            filename = pool[0]
+        else:
+            width = max(len(pool) - 1, 1)
+            idx = 1 + _stable_index(f"{slug}:{page}:{assigned}:{key}", width)
+            filename = pool[idx]
         assigned += 1
-        return f"{base}/{pool[idx]}"
+        return f"{base}/{filename}"
 
     def _replace_placeholder(match: re.Match[str]) -> str:
+        nonlocal assigned
         width = int(match.group("width"))
         height = int(match.group("height"))
         if width >= height * 2:
@@ -187,8 +250,10 @@ def inject_template_preview_images(html: str, slug: str, page: str) -> str:
             shape_hint = "portrait"
         else:
             shape_hint = "square"
-        key = f"placeholder:{shape_hint}:{match.group(0)}"
-        return image_url_from_key(key)
+        offset = shape_offsets[shape_hint]
+        filename = pool[(assigned + offset) % len(pool)]
+        assigned += 1
+        return f"{base}/{filename}"
 
     html = _PLACEHOLDER_RE.sub(_replace_placeholder, html)
 
@@ -196,7 +261,8 @@ def inject_template_preview_images(html: str, slug: str, page: str) -> str:
         path = match.group("path")
         if _CRAFTO_PHOTO_SKIP.search(path):
             return path
-        return image_url_from_key(f"crafto-photo:{path}")
+        hinted = _image_for_crafto_path(path, pool)
+        return next_pool_image(key=f"crafto-photo:{path}", forced=hinted)
 
     return _CRAFTO_PHOTO_RE.sub(_replace_crafto_photo, html)
 

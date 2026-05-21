@@ -11,9 +11,11 @@ app/static/images/templates/<template-slug>/
 ├── about.webp          # About page banner
 ├── services.webp       # Services page banner
 ├── contact.webp        # Contact page banner
-├── gallery-1.webp      # Home gallery / services scene
-├── gallery-2.webp      # Home gallery / about scene
-└── gallery-3.webp      # Home gallery / contact scene
+├── gallery-1.webp … gallery-12.webp  # Unique section/gallery scenes
+├── team.webp           # Team/staff sections
+├── blog.webp           # Blog/news cards
+├── feature.webp        # Feature/benefit blocks
+└── showcase.webp       # Portfolio/showcase sections
 ```
 
 Expected slugs:
@@ -38,7 +40,7 @@ Expected slugs:
 python assets/scripts/process_ai_template_images.py
 ```
 
-Exports hero, thumbnail, preview, page banners, and gallery WebPs from each source.
+Exports hero, thumbnail, preview, page banners, 12 gallery scenes, and inline section WebPs from each source.
 
 ## Regenerate procedural sets (fallback)
 
@@ -46,4 +48,4 @@ Exports hero, thumbnail, preview, page banners, and gallery WebPs from each sour
 python assets/scripts/generate_template_images.py
 ```
 
-Creates industry-specific photographic-style scenes per page when AI sources are unavailable.
+Creates industry-specific photographic-style scenes per page plus 12 gallery variants and inline section images when AI sources are unavailable.
