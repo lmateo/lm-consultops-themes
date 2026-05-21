@@ -1,0 +1,175 @@
+/* Mobile/tablet live-preview fixes — scoped to .mkt-preview-canvas */
+
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas {
+  position: relative;
+  z-index: 1;
+  /* Contain position:fixed headers, menus, and modals inside the device frame */
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas {
+  width: 100%;
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: hidden;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas {
+  width: min(390px, 100%);
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: hidden;
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow:
+    0 0 0 1px rgba(15, 23, 42, 0.06),
+    0 24px 64px rgba(15, 23, 42, 0.14);
+}
+
+/* Prevent horizontal bleed from vw-based Crafto utilities */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas,
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas {
+  --mkt-canvas-width: 390px;
+}
+
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas {
+  --mkt-canvas-width: 820px;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas section,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas header,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas footer,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas nav,
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas section,
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas header,
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas footer {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas img,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas video,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas picture,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas svg:not(.svg-icon),
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas img,
+html[data-mkt-viewport="tablet"] .mkt-preview-canvas video {
+  max-width: 100%;
+  height: auto;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .container,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .container-fluid {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  max-width: 100%;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .row {
+  --bs-gutter-x: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="col-"] {
+  min-width: 0;
+}
+
+/* Hero / full-screen sections: avoid desktop-only fixed heights */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .full-screen,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .cover-background,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="md-h-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="sm-h-"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="lg-h-"] {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas section.cover-background,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas section.full-screen {
+  min-height: 70vh;
+  padding-top: 5rem;
+  padding-bottom: 3rem;
+}
+
+/* Decorative layers (pizza, travel, jewellery demos, etc.) */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="image-later"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="image-layer"],
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .object-layer,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .bottom-image-layer,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [id*="layer-"] {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  left: auto !important;
+  right: auto !important;
+  transform: none !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .swiper,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .swiper-wrapper,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .swiper-slide {
+  max-width: 100%;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .swiper {
+  overflow: hidden;
+}
+
+/* Typography */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas h1,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .fs-80,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .fs-70,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .fs-60 {
+  font-size: clamp(1.75rem, 8vw, 2.5rem) !important;
+  line-height: 1.15 !important;
+  overflow-wrap: break-word;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas h2,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .fs-50,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .fs-45 {
+  font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  line-height: 1.2 !important;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .btn.btn-extra-large,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .btn.btn-large {
+  padding: 0.75rem 1.25rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Tables and marquees */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .marquee,
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="marquee"] {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Navbar: keep header compact */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas header .navbar-brand img {
+  max-height: 28px;
+}
+
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar .navbar-nav .nav-link {
+  font-size: 1rem;
+  padding: 0.65rem 1rem;
+}
+
+/* Mega menus / dropdowns inside canvas */
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas .dropdown-menu {
+  max-width: calc(100vw - 2rem);
+}

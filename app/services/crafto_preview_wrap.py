@@ -13,8 +13,12 @@ CRAFTO_ROOT = Path(__file__).resolve().parent.parent.parent / "crafto-html-templ
 
 _HEAD_INJECT = """
 <link rel="stylesheet" href="/static/css/preview-chrome.css" />
+<link rel="stylesheet" href="/static/css/preview-mobile.css" />
 <base href="/crafto/" />
 """
+
+_CANVAS_OPEN = '<div id="mkt-preview-canvas" class="mkt-preview-canvas">'
+_CANVAS_CLOSE = "</div><!-- /mkt-preview-canvas -->"
 
 _BODY_SCRIPT = '<script defer src="/static/js/preview-chrome.js"></script>'
 
@@ -144,7 +148,8 @@ def wrap_crafto_html(
     active_page: str,
 ) -> str:
     chrome = _render_chrome(template, crafto, active_page)
-    body_inject = f'{chrome}\n{_BODY_SCRIPT}'
+    body_lead = f"\n{chrome}\n{_CANVAS_OPEN}\n"
+    body_tail = f"\n{_CANVAS_CLOSE}\n{_BODY_SCRIPT}\n"
 
     if re.search(r"<head[^>]*>", html, flags=re.IGNORECASE):
         html = re.sub(
@@ -156,17 +161,6 @@ def wrap_crafto_html(
         )
     else:
         html = _HEAD_INJECT + html
-
-    if re.search(r"</body>", html, flags=re.IGNORECASE):
-        html = re.sub(
-            r"</body>",
-            body_inject + "\n</body>",
-            html,
-            count=1,
-            flags=re.IGNORECASE,
-        )
-    else:
-        html = html + body_inject
 
     def _append_body_class(match: re.Match[str]) -> str:
         tag = match.group(0)
@@ -182,6 +176,24 @@ def wrap_crafto_html(
 
     if re.search(r"<body[^>]*>", html, flags=re.IGNORECASE):
         html = re.sub(r"<body[^>]*>", _append_body_class, html, count=1, flags=re.IGNORECASE)
+        html = re.sub(
+            r"(<body[^>]*>)",
+            r"\1" + body_lead,
+            html,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+
+    if re.search(r"</body>", html, flags=re.IGNORECASE):
+        html = re.sub(
+            r"</body>",
+            body_tail + "</body>",
+            html,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+    else:
+        html = html + body_tail
     return html
 
 

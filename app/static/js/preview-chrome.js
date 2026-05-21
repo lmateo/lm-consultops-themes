@@ -21,8 +21,25 @@
         : `width=${width}, initial-scale=1.0`;
   }
 
-  function notifyResize() {
+  function refreshEmbeddedLayout() {
     window.dispatchEvent(new Event("resize"));
+    window.dispatchEvent(new Event("orientationchange"));
+
+    if (typeof window.Swiper !== "undefined") {
+      document.querySelectorAll(".mkt-preview-canvas .swiper").forEach((el) => {
+        if (el.swiper && typeof el.swiper.update === "function") {
+          el.swiper.update();
+        }
+      });
+    }
+
+    if (typeof window.jQuery !== "undefined") {
+      try {
+        window.jQuery(window).trigger("resize");
+      } catch (_) {
+        /* ignore */
+      }
+    }
   }
 
   function applyViewport(mode) {
@@ -31,7 +48,12 @@
     buttons.forEach((btn) => {
       btn.classList.toggle("is-active", btn.dataset.viewport === mode);
     });
-    notifyResize();
+
+    requestAnimationFrame(() => {
+      refreshEmbeddedLayout();
+      requestAnimationFrame(refreshEmbeddedLayout);
+    });
+
     try {
       sessionStorage.setItem(storageKey, mode);
     } catch (_) {
@@ -47,7 +69,9 @@
     }
   })();
 
-  applyViewport(saved && ["desktop", "tablet", "mobile"].includes(saved) ? saved : "desktop");
+  applyViewport(
+    saved && ["desktop", "tablet", "mobile"].includes(saved) ? saved : "desktop"
+  );
 
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => applyViewport(btn.dataset.viewport));

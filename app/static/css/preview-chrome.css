@@ -8,81 +8,22 @@
   --mkt-chrome-accent-dark: #047857;
 }
 
-html[data-mkt-viewport="desktop"] {
-  --mkt-preview-max-width: none;
-}
-
-html[data-mkt-viewport="tablet"] {
-  --mkt-preview-max-width: 820px;
-}
-
-html[data-mkt-viewport="mobile"] {
-  --mkt-preview-max-width: 390px;
-}
-
 body.mkt-preview-active {
   padding-top: var(--mkt-chrome-height) !important;
+  margin: 0 !important;
   background: #e2e8f0 !important;
-  transition: background 0.25s ease, max-width 0.3s ease, box-shadow 0.3s ease;
   overflow-x: hidden;
 }
 
-html[data-mkt-viewport="tablet"] body.mkt-preview-active,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active {
-  max-width: var(--mkt-preview-max-width);
-  margin-left: auto !important;
-  margin-right: auto !important;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
-  overflow-x: hidden;
+.mkt-preview-canvas {
+  width: 100%;
+  min-height: calc(100dvh - var(--mkt-chrome-height));
+  background: #fff;
 }
 
-html[data-mkt-viewport="mobile"] body.mkt-preview-active {
-  border-radius: 1.25rem;
-}
-
-/* Crafto/Bootstrap responsive rules follow the simulated viewport width */
-html[data-mkt-viewport="mobile"] body.mkt-preview-active img,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active video,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active svg,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active iframe {
-  max-width: 100%;
-}
-
-html[data-mkt-viewport="mobile"] body.mkt-preview-active .container,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active .container-fluid {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-html[data-mkt-viewport="mobile"] body.mkt-preview-active .row {
-  --bs-gutter-x: 1rem;
-}
-
-html[data-mkt-viewport="mobile"] body.mkt-preview-active [class*="col-"] {
-  min-width: 0;
-}
-
-html[data-mkt-viewport="mobile"] body.mkt-preview-active h1,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active h2,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active .fs-1,
-html[data-mkt-viewport="mobile"] body.mkt-preview-active .fs-2 {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-}
-
-html[data-mkt-viewport="mobile"] body.mkt-preview-active table {
-  display: block;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-html[data-mkt-viewport="tablet"] body.mkt-preview-active {
-  overflow-x: hidden;
-}
-
-html[data-mkt-viewport="tablet"] body.mkt-preview-active img,
-html[data-mkt-viewport="tablet"] body.mkt-preview-active video {
-  max-width: 100%;
+html[data-mkt-viewport="desktop"] .mkt-preview-canvas {
+  max-width: none;
+  box-shadow: none;
 }
 
 .mkt-preview-chrome {
@@ -192,6 +133,7 @@ html[data-mkt-viewport="tablet"] body.mkt-preview-active video {
 
 .mkt-preview-chrome__viewport {
   display: flex;
+  flex-shrink: 0;
   gap: 0.2rem;
   padding: 0.2rem;
   border-radius: 0.6rem;
