@@ -43,17 +43,66 @@ _TEMPLATE_IMAGE_SET: tuple[str, ...] = (
     "contact.webp",
 )
 
-_PAGE_PRIMARY_IMAGE: dict[str, str] = {
-    "home": "hero.webp",
-    "about": "about.webp",
-    "services": "services.webp",
-    "contact": "contact.webp",
+_PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
+    "home": (
+        "hero.webp",
+        "preview.webp",
+        "hero-mobile.webp",
+        "gallery-1.webp",
+        "gallery-2.webp",
+        "services.webp",
+        "thumbnail.webp",
+        "gallery-3.webp",
+        "about.webp",
+        "contact.webp",
+    ),
+    "about": (
+        "about.webp",
+        "gallery-2.webp",
+        "gallery-1.webp",
+        "thumbnail.webp",
+        "hero.webp",
+        "preview.webp",
+        "gallery-3.webp",
+        "contact.webp",
+        "services.webp",
+        "hero-mobile.webp",
+    ),
+    "services": (
+        "services.webp",
+        "preview.webp",
+        "gallery-1.webp",
+        "gallery-3.webp",
+        "hero.webp",
+        "gallery-2.webp",
+        "thumbnail.webp",
+        "contact.webp",
+        "about.webp",
+        "hero-mobile.webp",
+    ),
+    "contact": (
+        "contact.webp",
+        "hero-mobile.webp",
+        "thumbnail.webp",
+        "about.webp",
+        "gallery-3.webp",
+        "hero.webp",
+        "preview.webp",
+        "gallery-1.webp",
+        "services.webp",
+        "gallery-2.webp",
+    ),
 }
 
 
 def _preview_image_pool(page: str) -> tuple[str, ...]:
-    primary = _PAGE_PRIMARY_IMAGE.get(page, _PAGE_PRIMARY_IMAGE["home"])
-    return (primary,) + tuple(image for image in _TEMPLATE_IMAGE_SET if image != primary)
+    weighted = _PAGE_WEIGHTED_SEQUENCE.get(page, _PAGE_WEIGHTED_SEQUENCE["home"])
+    unique = tuple(dict.fromkeys(weighted))
+    if len(unique) == len(_TEMPLATE_IMAGE_SET):
+        return unique
+    # Keep resilient if new assets are added but not yet listed in weighted sequences.
+    remaining = tuple(image for image in _TEMPLATE_IMAGE_SET if image not in unique)
+    return unique + remaining
 
 
 def _stable_index(value: str, modulo: int) -> int:

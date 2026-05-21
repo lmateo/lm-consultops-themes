@@ -72,6 +72,14 @@ def test_wrapped_preview_inner_pages_use_page_banners():
     assert "placehold.co" not in response.text
     assert "/static/images/templates/cloudcare-it/about.webp" in response.text
 
+    response = client.get("/preview/cloudcare-it/services")
+    assert response.status_code == 200
+    assert "/static/images/templates/cloudcare-it/services.webp" in response.text
+
+    response = client.get("/preview/cloudcare-it/contact")
+    assert response.status_code == 200
+    assert "/static/images/templates/cloudcare-it/contact.webp" in response.text
+
 
 def test_wrapped_preview_includes_crafto_assets():
     response = client.get("/preview/greenfield-farm/home")
