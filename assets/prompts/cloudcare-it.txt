@@ -1,7 +1,8 @@
-subject: Modern cloud consulting office with analysts reviewing cybersecurity dashboards.
-lighting: Bright diffused office lighting with cool highlights.
-mood: Professional, secure, forward-looking.
-composition: Team collaboration in foreground with large wall display dashboards.
-palette: Blue-cyan gradients, graphite, white, emerald accents.
-camera angle: Slightly wide office perspective.
-website usage context: IT consulting template hero and feature section backgrounds.
+crafto_preview: IT Business (demo-it-business)
+subject: IT services and cybersecurity firm — analysts at workstations with multi-monitor dashboards, modern tech office, cloud infrastructure visuals on screens.
+lighting: Bright contemporary office with cool blue screen glow.
+mood: Secure, innovative, enterprise-ready, digital transformation.
+composition: Wide hero with team and technology screens in foreground, sleek office depth.
+palette: Blue-cyan, graphite, white, emerald accent.
+camera angle: Slightly wide modern office perspective.
+website usage context: Live preview for it-business Crafto demo (services, case studies, cloud consulting).

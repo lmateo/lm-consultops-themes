@@ -77,26 +77,27 @@ SCENE_MODIFIERS: dict[str, str] = {
     "showcase": "portfolio showcase scene, wide composition, high-end marketing photo",
 }
 
+# Queries align with Crafto live-preview demos (see app/services/crafto_demos.py), not marketplace titles.
 PEXELS_QUERIES: dict[str, dict[str, str]] = {
     "greenfield-farm": {
-        "hero": "farm orchard horses countryside",
-        "about": "farm family agriculture workers",
-        "services": "farm market produce harvest",
-        "contact": "farm stand rural road",
-        "team": "farmers team outdoor",
-        "blog": "agriculture seasonal harvest",
-        "feature": "organic farm produce basket",
-        "showcase": "barn landscape sunset",
+        "hero": "solar panels rooftop renewable energy",
+        "about": "green energy team solar installation",
+        "services": "wind turbine renewable energy field",
+        "contact": "sustainable energy office modern",
+        "team": "solar technicians safety gear",
+        "blog": "solar farm aerial renewable",
+        "feature": "solar panel close up blue sky",
+        "showcase": "wind turbines sunset landscape",
     },
     "tradepro-local": {
-        "hero": "contractor home improvement van",
-        "about": "construction team house renovation",
-        "services": "hvac roofer contractor working",
-        "contact": "contractor handshake homeowner",
-        "team": "trades workers safety gear",
-        "blog": "home renovation before after",
-        "feature": "power tools construction",
-        "showcase": "finished renovated home exterior",
+        "hero": "business consulting office team meeting",
+        "about": "corporate professionals strategy meeting",
+        "services": "business analytics dashboard office",
+        "contact": "modern corporate office reception",
+        "team": "business executives office portrait",
+        "blog": "startup business growth office",
+        "feature": "laptop business presentation office",
+        "showcase": "skyscraper corporate city business",
     },
     "pizza-local-eats": {
         "hero": "pizza restaurant wood fired oven",
@@ -129,14 +130,14 @@ PEXELS_QUERIES: dict[str, dict[str, str]] = {
         "showcase": "resort aerial forest mountains",
     },
     "petcare-studio": {
-        "hero": "veterinary clinic pets dogs cats",
-        "about": "veterinarian with dog cat clinic",
-        "services": "pet grooming veterinary care",
-        "contact": "pet clinic reception",
-        "team": "vet team animals clinic",
-        "blog": "happy dog veterinary checkup",
-        "feature": "puppy kitten cute clinic",
-        "showcase": "modern pet hospital interior",
+        "hero": "doctor hospital healthcare professional",
+        "about": "medical team hospital doctors",
+        "services": "hospital examination room medical",
+        "contact": "hospital reception healthcare",
+        "team": "doctors medical staff hospital",
+        "blog": "healthcare patient doctor consultation",
+        "feature": "stethoscope doctor hands medical",
+        "showcase": "modern hospital building exterior",
     },
     "community-impact": {
         "hero": "community volunteers charity event",
@@ -159,24 +160,24 @@ PEXELS_QUERIES: dict[str, dict[str, str]] = {
         "showcase": "suburban house aerial view",
     },
     "autoworks-garage": {
-        "hero": "auto repair garage mechanics",
-        "about": "mechanics team auto shop",
-        "services": "car repair diagnostic garage",
-        "contact": "auto service desk garage",
-        "team": "mechanics workshop team",
-        "blog": "car maintenance tire change",
-        "feature": "car detailing shiny vehicle",
-        "showcase": "automotive garage bay cars",
+        "hero": "shipping logistics warehouse trucks",
+        "about": "logistics team warehouse operations",
+        "services": "cargo containers port freight",
+        "contact": "logistics office freight company",
+        "team": "warehouse workers logistics team",
+        "blog": "supply chain shipping delivery",
+        "feature": "semi truck highway freight",
+        "showcase": "distribution center aerial warehouse",
     },
     "wellness-local": {
-        "hero": "wellness spa clinic calm interior",
-        "about": "therapist client wellness consultation",
-        "services": "spa treatment massage therapy",
-        "contact": "wellness clinic reception serene",
-        "team": "wellness practitioners spa",
-        "blog": "meditation yoga wellness lifestyle",
-        "feature": "aromatherapy spa relaxation",
-        "showcase": "modern wellness center interior",
+        "hero": "luxury spa salon massage room",
+        "about": "spa salon team aestheticians",
+        "services": "spa facial massage treatment",
+        "contact": "spa salon reception elegant",
+        "team": "beauty salon staff spa",
+        "blog": "spa wellness relaxation lifestyle",
+        "feature": "spa candles towels relaxation",
+        "showcase": "luxury spa interior pool",
     },
 }
 
@@ -332,10 +333,11 @@ def fetch_scene_image(slug: str, scene: str, *, pexels_key: str | None) -> Image
         image = _fetch_from_pexels(pexels_key, slug, scene, width, height)
         if image is not None:
             return image
-    image = _fetch_from_picsum(slug, scene, width, height)
+    # Prompt-based generation before Picsum so live-preview subjects stay on-brand.
+    image = _fetch_from_pollinations(slug, scene, width, height)
     if image is not None:
         return image
-    image = _fetch_from_pollinations(slug, scene, width, height)
+    image = _fetch_from_picsum(slug, scene, width, height)
     if image is not None:
         return image
     raise RuntimeError(f"Unable to download photo for {slug}/{scene}")
@@ -406,7 +408,7 @@ def main() -> None:
     if pexels_key:
         print("Using Pexels API for primary photo source.")
     else:
-        print("PEXELS_API_KEY not set — using Picsum (Unsplash), then Pollinations fallback.")
+        print("PEXELS_API_KEY not set — using Pollinations (prompt-based), then Picsum fallback.")
 
     total = 0
     for slug in selected:

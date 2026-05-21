@@ -1,7 +1,8 @@
-subject: Diverse community volunteers at an outdoor nonprofit event.
-lighting: Bright daytime lighting with natural skin tones.
-mood: Hopeful, collaborative, uplifting.
-composition: Candid group activity with signage and community booths.
+crafto_preview: Charity (demo-charity)
+subject: Nonprofit charity organization — diverse volunteers distributing supplies, fundraising event, community support booths, hopeful outdoor gathering.
+lighting: Bright natural daylight, authentic and uplifting.
+mood: Compassionate, hopeful, community-driven, making impact.
+composition: Wide documentary-style hero with volunteers and activity as focal point.
 palette: Sky blue, leaf green, warm neutrals, white.
-camera angle: Documentary-style eye-level shot.
-website usage context: Nonprofit template hero and impact-story sections.
+camera angle: Eye-level candid community event photography.
+website usage context: Live preview for charity Crafto demo (causes, volunteer, stories, donate).

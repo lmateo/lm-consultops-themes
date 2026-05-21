@@ -1,7 +1,8 @@
-subject: Veterinarian and groomer team interacting with dogs and cats in a clean clinic.
-lighting: Bright soft interior daylight with natural tones.
-mood: Caring, clean, trustworthy.
-composition: Reception and exam area with happy pets and staff.
-palette: Teal, mint, warm gray, white.
-camera angle: Eye-level medium-wide clinical interior.
-website usage context: Pet service template hero, trust section, and gallery cards.
+crafto_preview: Medical (demo-medical)
+subject: Human healthcare clinic — trusted doctor in white coat with stethoscope, modern hospital reception and exam room, patient consultation scene.
+lighting: Bright clean clinical daylight, soft and reassuring.
+mood: Professional, caring, medical trust, health partner.
+composition: Wide hero with doctor/patient or clinic interior as focal point, clean medical environment.
+palette: Clinical white, soft blue, red accent, light gray.
+camera angle: Eye-level medium-wide healthcare interior photography.
+website usage context: Live preview for medical Crafto demo (doctors, treatments, appointments) — NOT veterinary pets or animal grooming.

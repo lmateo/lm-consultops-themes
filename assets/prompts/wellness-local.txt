@@ -1,7 +1,8 @@
-subject: Modern wellness clinic with therapist consultation and calm treatment environment.
-lighting: Soft natural window light with subtle highlights.
-mood: Calm, healing, reassuring.
-composition: Consultation scene foreground with clean wellness interior.
-palette: Sage green, soft blue, warm white, sand.
-camera angle: Eye-level gentle wide shot.
-website usage context: Healthcare and therapy template hero and trust-building sections.
+crafto_preview: Spa Salon (demo-spa-salon)
+subject: Luxury spa and beauty salon — serene treatment room with massage table, candles, towels, aesthetician performing facial or massage, elegant interior.
+lighting: Soft warm ambient spa lighting with gentle highlights.
+mood: Relaxing, pampering, luxurious self-care, tranquil.
+composition: Wide hero with treatment room or spa lounge as focal point, minimalist elegant decor.
+palette: Blush pink, cream, soft gold, sage green, warm white.
+camera angle: Eye-level gentle wide interior spa photography.
+website usage context: Live preview for spa-salon Crafto demo (treatments, packages, facility) — NOT hospital clinic or therapy office.

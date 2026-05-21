@@ -1,7 +1,8 @@
-subject: Professional contractor team with HVAC van and roofing gear at a residential site.
-lighting: Neutral daylight with crisp shadows.
-mood: Reliable, skilled, practical, efficient.
-composition: Split visual with crew action on left and branded service van on right.
-palette: Safety orange accents, steel gray, navy, white.
-camera angle: Street-level medium-wide shot.
-website usage context: Hero and preview image set for contractor and trades template.
+crafto_preview: Business (demo-business)
+subject: Corporate business consulting agency — diverse professionals in sleek modern office, strategy presentation on glass wall, laptops and charts.
+lighting: Dramatic office lighting with cool blue-gray tones and warm accent highlights.
+mood: Ambitious, premium, agency-for-growth, executive confidence.
+composition: Wide hero with team collaboration foreground and city skyline or office depth.
+palette: Deep navy, charcoal, white, subtle gold or blue accent.
+camera angle: Eye-level medium-wide corporate interior photography.
+website usage context: Live preview for business Crafto demo (planning, research, digital solutions) — NOT contractors, HVAC, or trades vans.

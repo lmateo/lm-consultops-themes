@@ -1,7 +1,8 @@
-subject: Automotive garage with mechanics, detailing bay, and diagnostic equipment.
-lighting: High-contrast industrial lighting with metallic reflections.
-mood: Skilled, high-performance, practical.
-composition: Front bay action with technician and vehicle center frame.
-palette: Charcoal, steel, red accents, white.
-camera angle: Dynamic low-to-mid angle workshop shot.
-website usage context: Automotive services template hero and services highlights.
+crafto_preview: Logistics (demo-logistics)
+subject: Global freight and logistics operation — cargo containers at port, semi-trucks at distribution warehouse, logistics coordinator with tablet near loading dock.
+lighting: Industrial daylight with crisp contrast, active operations mood.
+mood: Efficient, reliable, worldwide shipping, supply chain strength.
+composition: Wide hero with trucks/containers foreground and warehouse or port depth.
+palette: Orange accent, steel gray, white, deep blue.
+camera angle: Dynamic low-to-mid angle logistics yard or warehouse shot.
+website usage context: Live preview for logistics Crafto demo (air, road, ocean, train freight) — NOT auto repair garage or mechanics.

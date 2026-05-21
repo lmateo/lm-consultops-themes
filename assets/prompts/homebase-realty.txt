@@ -1,7 +1,8 @@
-subject: Luxury cabin real estate showcase with agent and panoramic home exterior views.
-lighting: Bright clear daylight for architectural clarity.
-mood: Premium, aspirational, trustworthy.
-composition: Signature property as focal point with landscape context.
-palette: Stone gray, pine green, warm beige, sky blue.
-camera angle: Slightly elevated architectural perspective.
-website usage context: Real estate listing template hero and property card visuals.
+crafto_preview: Real Estate (demo-real-estate)
+subject: Premium real estate agency — modern home exterior with for-sale presentation, professional agent with clients, luxury property facade and landscaped yard.
+lighting: Bright clear daylight for architectural detail and curb appeal.
+mood: Aspirational, trustworthy, premium listings, dream home.
+composition: Wide hero with signature property as focal point, clean street or neighborhood context.
+palette: Stone gray, white, green landscaping, sky blue.
+camera angle: Slightly elevated architectural real estate photography.
+website usage context: Live preview for real-estate Crafto demo (sell, rent, agents, property details).

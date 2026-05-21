@@ -31,9 +31,14 @@ Expected slugs:
 - `autoworks-garage`
 - `wellness-local`
 
+## Prompts must match live preview (Crafto)
+
+Marketplace titles (e.g. GreenField Farm) differ from Crafto preview demos (e.g. Green Energy).  
+Prompts in `assets/prompts/<slug>.txt` and `PEXELS_QUERIES` in `fetch_photoreal_template_images.py` are keyed by **slug** but describe the **Crafto preview subject** (see `app/services/crafto_demos.py`).
+
 ## Regenerate photorealistic photos (recommended)
 
-Downloads **real high-resolution photographs** (Unsplash via Picsum). Each scene is a unique image, then exported to all required WebP sizes.
+Downloads unique photorealistic scenes per template (Pexels when `PEXELS_API_KEY` is set, else prompt-based Pollinations, then Picsum fallback).
 
 ```bash
 python assets/scripts/fetch_photoreal_template_images.py

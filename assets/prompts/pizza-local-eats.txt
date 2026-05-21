@@ -1,7 +1,8 @@
-subject: Cozy pizza and local diner interior with wood-fired oven and plated dishes.
-lighting: Warm ambient evening lights with soft highlights.
-mood: Welcoming, handcrafted, neighborhood favorite.
-composition: Front seating area with kitchen and oven visible in background.
-palette: Tomato red, basil green, warm wood, charcoal.
-camera angle: Eye-level interior shot.
-website usage context: Restaurant template hero, gallery, and menu-section visual support.
+crafto_preview: Pizza Parlor (demo-pizza-parlor)
+subject: Artisan pizza restaurant — wood-fired oven with fresh pizza, rustic dining room, chef plating food, warm neighborhood pizzeria atmosphere.
+lighting: Warm evening restaurant glow with oven fire highlights.
+mood: Welcoming, handcrafted, local favorite, appetizing.
+composition: Wide hero with oven and dining area visible, food as focal point.
+palette: Tomato red, basil green, warm wood, charcoal brick.
+camera angle: Eye-level interior restaurant photography.
+website usage context: Live preview for pizza-parlor Crafto demo (menu, chefs, franchise).

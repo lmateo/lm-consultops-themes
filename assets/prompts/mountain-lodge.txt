@@ -1,7 +1,8 @@
-subject: Premium mountain lodge with cabins, evergreen forest, and snowy peaks.
-lighting: Golden hour sunlight on mountain ridges.
-mood: Relaxing, upscale, adventurous.
-composition: Lodge exterior foreground and layered mountain depth background.
-palette: Pine green, snow white, cedar brown, sunset amber.
-camera angle: Elevated scenic wide shot.
-website usage context: Tourism and lodge template hero and booking visuals.
+crafto_preview: Hotel & Resort (demo-hotel-and-resort)
+subject: Upscale hotel and mountain resort — elegant lobby, guest suite with panoramic window view, pool or terrace, concierge hospitality scene.
+lighting: Golden hour warm hospitality lighting or bright resort daylight.
+mood: Luxurious, relaxing getaway, premium hospitality.
+composition: Wide hero with resort exterior or suite view as focal point, scenic mountain or coastal backdrop optional.
+palette: Warm beige, cedar wood, white linens, soft gold accents.
+camera angle: Elevated or eye-level hospitality architectural photography.
+website usage context: Live preview for hotel-and-resort Crafto demo (rooms, amenities, bistro).

@@ -1,7 +1,8 @@
-subject: Rural New England farm with horses, orchard rows, and maple syrup operation.
-lighting: Soft golden morning light with gentle haze.
-mood: Trustworthy, grounded, family-owned, calm.
-composition: Wide hero composition with foreground fence and midground barn.
-palette: Forest green, warm wood browns, muted sky blue, cream.
-camera angle: Slightly elevated wide-angle perspective.
-website usage context: Homepage hero, template card thumbnail, and gallery scene for agricultural business template.
+crafto_preview: Green Energy (demo-green-energy)
+subject: Renewable green energy company — solar panel array on modern commercial rooftop, wind turbines on horizon, technicians in safety gear inspecting installation.
+lighting: Bright clear daylight with clean sky, optimistic sustainable mood.
+mood: Innovative, eco-forward, professional, trustworthy energy provider.
+composition: Wide hero with solar panels foreground and wind farm or green landscape depth.
+palette: Fresh green, sky blue, white, silver metallic panels.
+camera angle: Slightly elevated wide-angle architectural/industrial photo.
+website usage context: Live preview for green-energy Crafto demo (solar, wind, battery services) — NOT farms or agriculture.
