@@ -1,0 +1,195 @@
+/* Full-page live preview chrome — no iframe */
+
+:root {
+  --mkt-chrome-height: 3.5rem;
+  --mkt-chrome-bg: rgba(255, 255, 255, 0.92);
+  --mkt-chrome-border: #e5e7eb;
+  --mkt-chrome-accent: #10b981;
+  --mkt-chrome-accent-dark: #047857;
+}
+
+html[data-mkt-viewport="desktop"] {
+  --mkt-preview-max-width: none;
+}
+
+html[data-mkt-viewport="tablet"] {
+  --mkt-preview-max-width: 820px;
+}
+
+html[data-mkt-viewport="mobile"] {
+  --mkt-preview-max-width: 390px;
+}
+
+body.mkt-preview-active {
+  padding-top: var(--mkt-chrome-height) !important;
+  background: #e2e8f0 !important;
+  transition: background 0.25s ease, max-width 0.3s ease, box-shadow 0.3s ease;
+}
+
+html[data-mkt-viewport="tablet"] body.mkt-preview-active,
+html[data-mkt-viewport="mobile"] body.mkt-preview-active {
+  max-width: var(--mkt-preview-max-width);
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+}
+
+.mkt-preview-chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  height: var(--mkt-chrome-height);
+  border-bottom: 1px solid var(--mkt-chrome-border);
+  background: var(--mkt-chrome-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+}
+
+.mkt-preview-chrome__inner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.mkt-preview-chrome__back {
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+  text-decoration: none;
+  padding: 0.35rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--mkt-chrome-border);
+  background: #fff;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mkt-preview-chrome__back:hover {
+  border-color: var(--mkt-chrome-accent);
+  color: var(--mkt-chrome-accent-dark);
+}
+
+.mkt-preview-chrome__meta {
+  display: none;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+  .mkt-preview-chrome__meta {
+    display: flex;
+  }
+}
+
+.mkt-preview-chrome__title {
+  font-size: 0.8125rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mkt-preview-chrome__demo {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--mkt-chrome-accent-dark);
+}
+
+.mkt-preview-chrome__pages {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.mkt-preview-chrome__pages::-webkit-scrollbar {
+  display: none;
+}
+
+.mkt-preview-chrome__page {
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: none;
+  border-radius: 9999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mkt-preview-chrome__page:hover {
+  color: var(--mkt-chrome-accent-dark);
+  background: #ecfdf5;
+}
+
+.mkt-preview-chrome__page.is-active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--mkt-chrome-accent), var(--mkt-chrome-accent-dark));
+}
+
+.mkt-preview-chrome__viewport {
+  display: none;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--mkt-chrome-border);
+  background: #f8fafc;
+}
+
+@media (min-width: 900px) {
+  .mkt-preview-chrome__viewport {
+    display: flex;
+  }
+}
+
+.mkt-preview-chrome__vp {
+  border: none;
+  background: transparent;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #64748b;
+  border-radius: 0.45rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mkt-preview-chrome__vp:hover {
+  color: #0f172a;
+}
+
+.mkt-preview-chrome__vp.is-active {
+  background: #fff;
+  color: var(--mkt-chrome-accent-dark);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.mkt-preview-chrome__cta {
+  flex-shrink: 0;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--mkt-chrome-accent), var(--mkt-chrome-accent-dark));
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mkt-preview-chrome__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(4, 120, 87, 0.32);
+}

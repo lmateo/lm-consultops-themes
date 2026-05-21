@@ -116,8 +116,3 @@ h3,
   font-family: var(--mkt-font-display);
 }
 
-.mkt-preview-frame-wrap {
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
-}

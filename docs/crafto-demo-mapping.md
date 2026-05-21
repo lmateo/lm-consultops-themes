@@ -18,7 +18,7 @@ Mateo marketplace templates are linked to Crafto multipurpose HTML demos under `
 ## Runtime
 
 - Static assets: `/crafto/` → `crafto-html-templates/`
-- Live preview iframe: `/crafto/{demo-file}`
-- Legacy routes `/preview-site/{slug}` redirect to the mapped Crafto file
+- Live preview (no iframe): `/preview/{slug}/{page}` serves Crafto HTML with a fixed Mateo toolbar (`app/services/crafto_preview_wrap.py`)
+- `/preview/{slug}` and `/preview-site/{slug}` redirect to `/preview/{slug}/home`
 
 Source of truth: `app/services/crafto_demos.py`

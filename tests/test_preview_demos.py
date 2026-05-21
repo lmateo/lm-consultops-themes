@@ -7,7 +7,6 @@ from app.services.preview_demos import SLUG_LAYOUT_MAP, get_layout_key
 client = TestClient(app)
 
 ALL_SLUGS = list(SLUG_LAYOUT_MAP.keys())
-CRAFTO_PAGES = ["", "/about", "/services", "/contact"]
 
 
 def test_each_template_has_unique_layout_key():
@@ -15,17 +14,21 @@ def test_each_template_has_unique_layout_key():
     assert len(layouts) == len(ALL_SLUGS)
 
 
-def test_preview_site_redirects_to_crafto_for_all_templates():
+def test_preview_root_redirects_to_wrapped_home():
+    response = client.get("/preview/cloudcare-it", follow_redirects=False)
+    assert response.status_code == 302
+    assert response.headers["location"] == "/preview/cloudcare-it/home"
+
+
+def test_preview_site_redirects_to_wrapped_preview():
     for slug in ALL_SLUGS:
-        mapping = get_crafto_demo_or_default(slug)
         response = client.get(f"/preview-site/{slug}", follow_redirects=False)
         assert response.status_code == 302, slug
-        assert response.headers["location"] == mapping.page_path("home")
+        assert response.headers["location"] == f"/preview/{slug}/home"
 
 
-def test_preview_site_inner_pages_redirect_to_crafto():
+def test_preview_site_inner_pages_redirect_to_wrapped_preview():
     slug = "cloudcare-it"
-    mapping = get_crafto_demo_or_default(slug)
     for page, suffix in [
         ("about", "/about"),
         ("services", "/services"),
@@ -33,7 +36,21 @@ def test_preview_site_inner_pages_redirect_to_crafto():
     ]:
         response = client.get(f"/preview-site/{slug}{suffix}", follow_redirects=False)
         assert response.status_code == 302
-        assert response.headers["location"] == mapping.page_path(page)
+        assert response.headers["location"] == f"/preview/{slug}/{page}"
+
+
+def test_wrapped_preview_renders_without_iframe():
+    response = client.get("/preview/cloudcare-it/home")
+    assert response.status_code == 200
+    assert "mkt-preview-chrome" in response.text
+    assert "<iframe" not in response.text.lower()
+    assert 'base href="/crafto/"' in response.text
+
+
+def test_wrapped_preview_includes_crafto_assets():
+    response = client.get("/preview/greenfield-farm/home")
+    assert response.status_code == 200
+    assert "green-energy" in response.text or "demo-green-energy" in response.text
 
 
 def test_crafto_static_home_demo_renders():
@@ -43,19 +60,5 @@ def test_crafto_static_home_demo_renders():
     assert "demo-green-energy" in response.text or "green-energy" in response.text
 
 
-def test_crafto_pizza_menu_page_renders():
-    mapping = get_crafto_demo_or_default("pizza-local-eats")
-    response = client.get(mapping.page_path("services"))
-    assert response.status_code == 200
-    assert "pizza-parlor" in response.text
-
-
 def test_crafto_mappings_cover_all_marketplace_slugs():
     assert set(CRAFTO_TEMPLATE_DEMOS.keys()) == set(ALL_SLUGS)
-
-
-def test_live_preview_page_lists_crafto_demo():
-    response = client.get("/preview/cloudcare-it")
-    assert response.status_code == 200
-    assert "IT Business" in response.text
-    assert "Full Crafto HTML preview" not in response.text

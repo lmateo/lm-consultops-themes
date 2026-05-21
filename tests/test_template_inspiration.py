@@ -24,9 +24,9 @@ def test_template_detail_has_no_layout_reference_links():
     assert "Layout references" not in response.text
 
 
-def test_preview_home_includes_premium_sections():
-    response = client.get("/preview-site/cloudcare-it")
+def test_preview_home_uses_full_page_crafto_chrome():
+    response = client.get("/preview-site/cloudcare-it", follow_redirects=True)
     assert response.status_code == 200
-    assert "premium-icon-grid" in response.text
-    assert "premium-cta" in response.text
-    assert "demo-premium.css" in response.text
+    assert "mkt-preview-chrome" in response.text
+    assert "preview-chrome.css" in response.text
+    assert "<iframe" not in response.text.lower()

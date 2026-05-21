@@ -1,0 +1,23 @@
+<div id="mkt-preview-chrome" class="mkt-preview-chrome" role="banner" aria-label="Live preview controls">
+    <div class="mkt-preview-chrome__inner">
+        <a href="/templates/{{ template_slug }}" class="mkt-preview-chrome__back">Back</a>
+        <div class="mkt-preview-chrome__meta">
+            <strong class="mkt-preview-chrome__title">{{ template_title }}</strong>
+            <span class="mkt-preview-chrome__demo">{{ crafto_demo_label }}</span>
+        </div>
+        <nav class="mkt-preview-chrome__pages" aria-label="Demo pages">
+            {% for page_key in demo_pages %}
+            <a
+                href="/preview/{{ template_slug }}/{{ page_key }}"
+                class="mkt-preview-chrome__page{% if active_page == page_key %} is-active{% endif %}"
+            >{{ page_key|title }}</a>
+            {% endfor %}
+        </nav>
+        <div class="mkt-preview-chrome__viewport" role="group" aria-label="Viewport size">
+            <button type="button" class="mkt-preview-chrome__vp is-active" data-viewport="desktop">Desktop</button>
+            <button type="button" class="mkt-preview-chrome__vp" data-viewport="tablet">Tablet</button>
+            <button type="button" class="mkt-preview-chrome__vp" data-viewport="mobile">Mobile</button>
+        </div>
+        <a href="/purchase/{{ template_slug }}" class="mkt-preview-chrome__cta">Purchase</a>
+    </div>
+</div>
