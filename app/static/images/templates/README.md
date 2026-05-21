@@ -1,6 +1,6 @@
 # Template Image Structure
 
-Each template slug has **page-specific** royalty-free photorealistic procedural imagery (generated locally, no stock licensing).
+Each template slug has **page-specific** royalty-free photorealistic imagery.
 
 ```text
 app/static/images/templates/<template-slug>/
@@ -11,7 +11,7 @@ app/static/images/templates/<template-slug>/
 ├── about.webp          # About page banner
 ├── services.webp       # Services page banner
 ├── contact.webp        # Contact page banner
-├── gallery-1.webp … gallery-12.webp  # Unique section/gallery scenes
+├── gallery-1.webp … gallery-12.webp  # Unique gallery/section photos
 ├── team.webp           # Team/staff sections
 ├── blog.webp           # Blog/news cards
 ├── feature.webp        # Feature/benefit blocks
@@ -31,7 +31,25 @@ Expected slugs:
 - `autoworks-garage`
 - `wellness-local`
 
-## Regenerate from AI sources (recommended)
+## Regenerate photorealistic photos (recommended)
+
+Downloads **real high-resolution photographs** (Unsplash via Picsum). Each scene is a unique image, then exported to all required WebP sizes.
+
+```bash
+python assets/scripts/fetch_photoreal_template_images.py
+```
+
+One template:
+
+```bash
+python assets/scripts/fetch_photoreal_template_images.py cloudcare-it
+```
+
+### Industry-specific search (optional)
+
+Set `PEXELS_API_KEY` in `.env` to use the [Pexels API](https://www.pexels.com/api/) for industry-targeted stock photos instead of random Unsplash seeds.
+
+## Regenerate from AI source PNG (optional)
 
 1. Generate or place source PNGs in `assets/ai-sources/` as `<slug>-ai.png` (prompts in `assets/prompts/<slug>.txt`).
 2. Run:
@@ -40,24 +58,10 @@ Expected slugs:
 python assets/scripts/process_ai_template_images.py
 ```
 
-Exports hero, thumbnail, preview, page banners, 12 gallery scenes, and inline section WebPs from each source.
-
-## Regenerate procedural sets (fallback)
+## Procedural fallback (offline only)
 
 ```bash
 python assets/scripts/generate_template_images.py
 ```
 
-Creates industry-specific photographic-style scenes per page plus 12 gallery variants and inline section images when AI sources are unavailable. The generator applies film grain, bloom, atmospheric haze, vignette, and per-scene camera profiles so each WebP looks like a distinct photograph.
-
-Regenerate all templates:
-
-```bash
-python assets/scripts/generate_template_images.py
-```
-
-Regenerate one slug:
-
-```bash
-python assets/scripts/generate_template_images.py cloudcare-it
-```
+Use only when network downloads are unavailable. Output is illustrative, not photographic.
