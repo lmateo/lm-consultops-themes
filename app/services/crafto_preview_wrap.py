@@ -18,6 +18,79 @@ _HEAD_INJECT = """
 
 _BODY_SCRIPT = '<script defer src="/static/js/preview-chrome.js"></script>'
 
+_PLACEHOLDER_RE = re.compile(r"https://placehold\.co/\d+x\d+", re.IGNORECASE)
+_CRAFTO_PHOTO_RE = re.compile(
+    r"(?P<path>images/demo-(?!.*(?:logo|separator|favicon|apple-touch))[^\"')]+\.(?:jpe?g|png|webp))",
+    re.IGNORECASE,
+)
+_CRAFTO_PHOTO_SKIP = re.compile(r"logo|separator|favicon|apple-touch|highlight-separator", re.IGNORECASE)
+
+_PAGE_IMAGE_POOL: dict[str, tuple[str, ...]] = {
+    "home": (
+        "hero.webp",
+        "preview.webp",
+        "gallery-1.webp",
+        "gallery-2.webp",
+        "gallery-3.webp",
+        "services.webp",
+        "about.webp",
+        "contact.webp",
+    ),
+    "about": (
+        "about.webp",
+        "hero.webp",
+        "gallery-2.webp",
+        "gallery-1.webp",
+        "gallery-3.webp",
+        "preview.webp",
+        "services.webp",
+    ),
+    "services": (
+        "services.webp",
+        "gallery-1.webp",
+        "gallery-2.webp",
+        "gallery-3.webp",
+        "hero.webp",
+        "preview.webp",
+        "about.webp",
+    ),
+    "contact": (
+        "contact.webp",
+        "hero.webp",
+        "gallery-3.webp",
+        "gallery-1.webp",
+        "about.webp",
+        "preview.webp",
+    ),
+}
+
+
+def _preview_image_pool(page: str) -> tuple[str, ...]:
+    return _PAGE_IMAGE_POOL.get(page, _PAGE_IMAGE_POOL["home"])
+
+
+def inject_template_preview_images(html: str, slug: str, page: str) -> str:
+    """Replace Crafto placeholders and stock photos with per-template WebP assets."""
+    pool = _preview_image_pool(page)
+    base = f"/static/images/templates/{slug}"
+    counter = 0
+
+    def next_url() -> str:
+        nonlocal counter
+        url = f"{base}/{pool[counter % len(pool)]}"
+        counter += 1
+        return url
+
+    html = _PLACEHOLDER_RE.sub(lambda _: next_url(), html)
+
+    def _replace_crafto_photo(match: re.Match[str]) -> str:
+        path = match.group("path")
+        if _CRAFTO_PHOTO_SKIP.search(path):
+            return path
+        return next_url()
+
+    return _CRAFTO_PHOTO_RE.sub(_replace_crafto_photo, html)
+
 
 def _crafto_file_path(filename: str) -> Path:
     path = CRAFTO_ROOT / filename
@@ -95,6 +168,7 @@ def load_wrapped_crafto_preview(template: Template, page: str = "home") -> str:
     crafto = get_crafto_demo_or_default(template.slug)
     filename = crafto.pages.get(normalized, crafto.pages["home"])
     raw_html = _crafto_file_path(filename).read_text(encoding="utf-8-sig", errors="replace")
+    raw_html = inject_template_preview_images(raw_html, template.slug, normalized)
     return wrap_crafto_html(
         raw_html,
         template=template,

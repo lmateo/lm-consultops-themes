@@ -47,6 +47,20 @@ def test_wrapped_preview_renders_without_iframe():
     assert 'base href="/crafto/"' in response.text
 
 
+def test_wrapped_preview_uses_template_photos_not_placeholders():
+    response = client.get("/preview/greenfield-farm/home")
+    assert response.status_code == 200
+    assert "placehold.co" not in response.text
+    assert "/static/images/templates/greenfield-farm/hero.webp" in response.text
+
+
+def test_wrapped_preview_inner_pages_use_page_banners():
+    response = client.get("/preview/cloudcare-it/about")
+    assert response.status_code == 200
+    assert "placehold.co" not in response.text
+    assert "/static/images/templates/cloudcare-it/about.webp" in response.text
+
+
 def test_wrapped_preview_includes_crafto_assets():
     response = client.get("/preview/greenfield-farm/home")
     assert response.status_code == 200
