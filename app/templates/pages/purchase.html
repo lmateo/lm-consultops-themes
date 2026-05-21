@@ -1,75 +1,69 @@
 {% extends "base.html" %}
 {% block content %}
-{% with page_heading="Checkout", page_subtitle="Pay securely with Stripe to unlock the full downloadable website package." %}
-{% include "components/crafto/page_title.html" %}
-{% endwith %}
-<section class="pt-6 pb-8">
-    <div class="container">
-        {% if payment_verified and download_token %}
-        <div class="alert alert-success border-radius-8px mb-30px">
-            <p class="fw-600 mb-5px">Payment successful.</p>
-            <p class="mb-15px">Your license is active. Use the secure link below to download the full theme package.</p>
-            <a href="/downloads/theme/{{ template_item.slug }}?token={{ request.query_params.get('download_token') }}" class="btn btn-dark-gray btn-small btn-rounded">Download {{ template_item.title }} theme</a>
+<section class="mx-auto max-w-4xl px-4 py-14 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold">Checkout</h1>
+    <p class="mt-2 text-brand-muted">Pay securely with Stripe to unlock the full downloadable website package.</p>
+    {% if payment_verified and download_token %}
+    <div class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
+        <p class="font-semibold">Payment successful.</p>
+        <p class="mt-1 text-sm">Your license is active. Use the secure link below to download the full theme package.</p>
+        <div class="mt-3">
+            <a
+                href="/downloads/theme/{{ template_item.slug }}?token={{ request.query_params.get('download_token') }}"
+                class="inline-flex rounded-lg bg-brand-emerald px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
+            >
+                Download {{ template_item.title }} Theme
+            </a>
         </div>
-        {% endif %}
-        {% if payment_error %}
-        <div class="alert alert-danger border-radius-8px mb-30px">{{ payment_error }}</div>
-        {% endif %}
-        {% if canceled %}
-        <div class="alert alert-warning border-radius-8px mb-30px">Checkout canceled. No charge was made.</div>
-        {% endif %}
-
-        <div class="row">
-            <aside class="col-lg-4 md-mb-40px">
-                <div class="bg-white border-radius-10px box-shadow-medium p-30px">
-                    {% with item=template_item, image_class="border-radius-5px w-100", sizes="(max-width: 1024px) 100vw, 280px" %}
-                        {% include "components/responsive_card_image.html" %}
-                    {% endwith %}
-                    <h2 class="alt-font fw-700 text-dark-gray mt-20px mb-10px">{{ template_item.title }}</h2>
-                    <p class="text-medium-gray">{{ template_item.category.name }} · {{ template_item.industry.name }}</p>
-                    <p class="alt-font fs-35 fw-700 text-dark-gray mt-15px">${{ "%.2f"|format(template_item.price) }}</p>
-                    <a href="/preview/{{ template_item.slug }}" class="btn btn-transparent-light-gray btn-small btn-rounded w-100 mt-15px">Live preview</a>
-                </div>
-            </aside>
-            <div class="col-lg-8">
-                <form method="post" action="/purchase/{{ template_item.slug }}" class="contact-form-style-01 bg-white border-radius-10px box-shadow-medium p-40px">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label" for="first_name">First name</label>
-                            <input id="first_name" name="first_name" required class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="last_name">Last name</label>
-                            <input id="last_name" name="last_name" required class="form-control" />
-                        </div>
-                    </div>
-                    <div class="mt-20px">
-                        <label class="form-label" for="email">Email</label>
-                        <input id="email" name="email" type="email" required class="form-control" />
-                    </div>
-                    <div class="mt-20px">
-                        <label class="form-label" for="company">Company (optional)</label>
-                        <input id="company" name="company" class="form-control" />
-                    </div>
-                    <div class="mt-20px">
-                        <label class="form-label" for="license_type">License type</label>
-                        <select id="license_type" name="license_type" class="form-select">
-                            <option value="Standard">Standard</option>
-                            <option value="Business">Business</option>
-                            <option value="Agency">Agency</option>
-                        </select>
-                    </div>
-                    <div class="mt-20px p-20px bg-very-light-gray border-radius-8px text-medium-gray">
-                        Includes full source files, modern styling, and editable assets. You will be redirected to Stripe Checkout.
-                    </div>
-                    <label class="mt-20px d-flex align-items-start gap-2">
-                        <input name="agree_terms" value="yes" type="checkbox" required class="mt-5px" />
-                        <span class="text-medium-gray">I agree to the license terms and understand that download links expire for security.</span>
-                    </label>
-                    <button type="submit" class="btn btn-dark-gray btn-medium btn-rounded w-100 mt-30px">Continue to secure Stripe checkout</button>
-                </form>
+    </div>
+    {% endif %}
+    {% if payment_error %}
+    <div class="mt-6 rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-900">
+        <p class="font-semibold">Payment verification issue</p>
+        <p class="mt-1 text-sm">{{ payment_error }}</p>
+    </div>
+    {% endif %}
+    {% if canceled %}
+    <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+        <p class="font-semibold">Checkout canceled</p>
+        <p class="mt-1 text-sm">No charge was made. You can restart checkout anytime.</p>
+    </div>
+    {% endif %}
+    <div class="mt-8 grid gap-6 lg:grid-cols-3">
+        <aside class="rounded-2xl border border-brand-border bg-white p-5 lg:col-span-1">
+            {% with item=template_item, image_class="h-32 w-full rounded-lg bg-slate-50 object-contain", sizes="(max-width: 1024px) 100vw, 280px" %}
+                {% include "components/responsive_card_image.html" %}
+            {% endwith %}
+            <h2 class="mt-3 font-semibold">{{ template_item.title }}</h2>
+            <p class="mt-1 text-sm text-brand-muted">{{ template_item.category.name }} · {{ template_item.industry.name }}</p>
+            <p class="mt-3 text-2xl font-bold">${{ "%.2f"|format(template_item.price) }}</p>
+            <a href="/preview/{{ template_item.slug }}" class="mt-4 inline-flex w-full items-center justify-center rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold hover:bg-slate-50">
+                Live Preview
+            </a>
+        </aside>
+        <form method="post" action="/purchase/{{ template_item.slug }}" class="rounded-2xl border border-brand-border bg-white p-6 lg:col-span-2">
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div><label class="text-sm font-medium" for="first_name">First Name</label><input id="first_name" name="first_name" required class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
+                <div><label class="text-sm font-medium" for="last_name">Last Name</label><input id="last_name" name="last_name" required class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
             </div>
-        </div>
+            <div class="mt-4"><label class="text-sm font-medium" for="email">Email</label><input id="email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
+            <div class="mt-4"><label class="text-sm font-medium" for="company">Company (Optional)</label><input id="company" name="company" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
+            <div class="mt-4"><label class="text-sm font-medium" for="license_type">License Type</label>
+                <select id="license_type" name="license_type" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2">
+                    <option value="Standard">Standard</option>
+                    <option value="Business">Business</option>
+                    <option value="Agency">Agency</option>
+                </select>
+            </div>
+            <div class="mt-4 rounded-lg bg-slate-50 p-3 text-sm text-brand-muted">
+                Includes full source files (home, about, services, pricing, contact), modern styling, and editable assets. You will be redirected to Stripe Checkout.
+            </div>
+            <label class="mt-4 flex items-start gap-2 text-sm">
+                <input name="agree_terms" value="yes" type="checkbox" required class="mt-1" />
+                <span>I agree to the license terms and understand that download links expire for security.</span>
+            </label>
+            <button type="submit" class="mt-6 w-full rounded-lg bg-brand-emerald px-4 py-3 font-semibold text-white hover:bg-brand-dark">Continue to Secure Stripe Checkout</button>
+        </form>
     </div>
 </section>
 {% endblock %}

@@ -1,148 +1,175 @@
 {% extends "base.html" %}
 {% block content %}
-{% with page_heading="Admin Dashboard", page_subtitle="Overview of templates, customers, purchases, and store health." %}
-{% include "components/crafto/page_title.html" %}
-{% endwith %}
-<section class="pt-6 pb-8">
-    <div class="container">
-        <div class="row row-cols-2 row-cols-xl-5 g-3 mb-40px">
-            {% for key, value in stats.items() %}
-            <div class="col">
-                <article class="bg-white border-radius-10px box-shadow-medium p-25px h-100">
-                    <p class="fs-12 text-uppercase text-medium-gray mb-5px">{{ key.replace('_', ' ') }}</p>
-                    <p class="alt-font fs-30 fw-700 text-dark-gray mb-0">{{ value }}</p>
-                </article>
-            </div>
-            {% endfor %}
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+    <p class="mt-2 text-brand-muted">Overview of templates, customers, purchases, and store health.</p>
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        {% for key, value in stats.items() %}
+            <article class="rounded-xl border border-brand-border bg-white p-4">
+                <p class="text-xs uppercase tracking-wider text-brand-muted">{{ key.replace('_', ' ') }}</p>
+                <p class="mt-2 text-2xl font-bold">{{ value }}</p>
+            </article>
+        {% endfor %}
+    </div>
+    <div class="mt-10 rounded-2xl border border-brand-border bg-white p-6">
+        <h2 class="text-xl font-semibold">Recent Templates</h2>
+        <div class="mt-4 overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                    <tr class="border-b border-brand-border text-left text-brand-muted">
+                        <th class="py-2">Title</th>
+                        <th class="py-2">Price</th>
+                        <th class="py-2">Version</th>
+                        <th class="py-2">Preview</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent_templates %}
+                        <tr class="border-b border-brand-border/70">
+                            <td class="py-2">{{ item.title }}</td>
+                            <td class="py-2">${{ "%.2f"|format(item.price) }}</td>
+                            <td class="py-2">{{ item.version }}</td>
+                            <td class="py-2">
+                                <a href="/preview/{{ item.slug }}" class="rounded border border-brand-border px-2 py-1 text-xs font-semibold hover:bg-slate-50">
+                                    Live Preview
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="bg-white border-radius-10px box-shadow-medium p-35px mb-40px">
-            <h2 class="alt-font fw-700 text-dark-gray mb-25px">Recent templates</h2>
-            <div class="table-responsive">
-                <table class="table table-striped mb-0">
+    </div>
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+        <section class="rounded-2xl border border-brand-border bg-white p-6">
+            <h2 class="text-xl font-semibold">Webhook Exceptions</h2>
+            <p class="mt-1 text-sm text-brand-muted">Recent Stripe webhook events that did not process successfully.</p>
+            <form method="get" action="/admin" class="mt-4 grid gap-3 rounded-xl border border-brand-border/70 bg-slate-50 p-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="webhook_status">Status</label>
+                    <select id="webhook_status" name="webhook_status" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm">
+                        <option value="unresolved" {% if webhook_filters.status == "unresolved" %}selected{% endif %}>Unresolved</option>
+                        <option value="received" {% if webhook_filters.status == "received" %}selected{% endif %}>Received</option>
+                        <option value="ignored" {% if webhook_filters.status == "ignored" %}selected{% endif %}>Ignored</option>
+                        <option value="failed" {% if webhook_filters.status == "failed" %}selected{% endif %}>Failed</option>
+                        <option value="resolved" {% if webhook_filters.status == "resolved" %}selected{% endif %}>Resolved</option>
+                        <option value="processed" {% if webhook_filters.status == "processed" %}selected{% endif %}>Processed</option>
+                        <option value="all" {% if webhook_filters.status == "all" %}selected{% endif %}>All</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="webhook_start_date">From</label>
+                    <input id="webhook_start_date" type="date" name="start_date" value="{{ webhook_filters.start_date }}" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="webhook_end_date">To</label>
+                    <input id="webhook_end_date" type="date" name="end_date" value="{{ webhook_filters.end_date }}" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm" />
+                </div>
+                <div class="self-end">
+                    <input type="hidden" name="email_status" value="{{ email_filters.status }}" />
+                    <button type="submit" class="w-full rounded-lg bg-brand-emerald px-3 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Apply</button>
+                </div>
+            </form>
+            <div class="mt-4 overflow-x-auto">
+                <table class="min-w-full text-sm">
                     <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Price</th>
-                            <th>Version</th>
-                            <th>Preview</th>
+                        <tr class="border-b border-brand-border text-left text-brand-muted">
+                            <th class="py-2">Event</th>
+                            <th class="py-2">Status</th>
+                            <th class="py-2">Purchase</th>
+                            <th class="py-2">Error</th>
+                            <th class="py-2">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in recent_templates %}
-                        <tr>
-                            <td>{{ item.title }}</td>
-                            <td>${{ "%.2f"|format(item.price) }}</td>
-                            <td>{{ item.version }}</td>
-                            <td><a href="/preview/{{ item.slug }}">Preview</a></td>
-                        </tr>
+                        {% for event in failed_webhook_events %}
+                            <tr class="border-b border-brand-border/70 align-top">
+                                <td class="py-2">
+                                    <p class="font-medium">{{ event.event_type }}</p>
+                                    <p class="text-xs text-brand-muted">{{ event.event_id }}</p>
+                                </td>
+                                <td class="py-2">
+                                    <span class="rounded-full px-2 py-1 text-xs font-semibold {{ 'bg-emerald-100 text-emerald-700' if event.status in ['processed', 'resolved'] else 'bg-rose-100 text-rose-700' }}">{{ event.status }}</span>
+                                </td>
+                                <td class="py-2">{{ event.purchase_id or "-" }}</td>
+                                <td class="py-2 text-xs text-brand-muted">{{ event.error_message or "n/a" }}</td>
+                                <td class="py-2">
+                                    {% if event.status != "resolved" %}
+                                    <form method="post" action="/admin/webhooks/resolve">
+                                        <input type="hidden" name="webhook_event_id" value="{{ event.id }}" />
+                                        <input type="hidden" name="return_to" value="{{ return_to }}" />
+                                        <button type="submit" class="rounded-lg border border-brand-border px-2 py-1 text-xs font-semibold hover:bg-slate-50">
+                                            Mark Resolved
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-xs text-brand-muted">Resolved</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="py-3 text-sm text-brand-muted">No webhook exceptions detected.</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-lg-6">
-                <div class="bg-white border-radius-10px box-shadow-medium p-35px h-100">
-                    <h2 class="alt-font fw-700 text-dark-gray mb-10px">Webhook exceptions</h2>
-                    <p class="text-medium-gray mb-25px">Recent Stripe webhook events that did not process successfully.</p>
-                    <form method="get" action="/admin" class="row g-3 mb-25px">
-                        <div class="col-md-6">
-                            <label class="form-label" for="webhook_status">Status</label>
-                            <select id="webhook_status" name="webhook_status" class="form-select form-select-sm">
-                                <option value="unresolved" {% if webhook_filters.status == "unresolved" %}selected{% endif %}>Unresolved</option>
-                                <option value="received" {% if webhook_filters.status == "received" %}selected{% endif %}>Received</option>
-                                <option value="ignored" {% if webhook_filters.status == "ignored" %}selected{% endif %}>Ignored</option>
-                                <option value="failed" {% if webhook_filters.status == "failed" %}selected{% endif %}>Failed</option>
-                                <option value="resolved" {% if webhook_filters.status == "resolved" %}selected{% endif %}>Resolved</option>
-                                <option value="processed" {% if webhook_filters.status == "processed" %}selected{% endif %}>Processed</option>
-                                <option value="all" {% if webhook_filters.status == "all" %}selected{% endif %}>All</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label" for="webhook_start_date">From</label>
-                            <input id="webhook_start_date" type="date" name="start_date" value="{{ webhook_filters.start_date }}" class="form-control form-control-sm" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label" for="webhook_end_date">To</label>
-                            <input id="webhook_end_date" type="date" name="end_date" value="{{ webhook_filters.end_date }}" class="form-control form-control-sm" />
-                        </div>
-                        <div class="col-12">
-                            <input type="hidden" name="email_status" value="{{ email_filters.status }}" />
-                            <button type="submit" class="btn btn-dark-gray btn-small btn-rounded">Apply</button>
-                        </div>
-                    </form>
-                    <div class="table-responsive">
-                        <table class="table table-sm mb-0">
-                            <thead><tr><th>Event</th><th>Status</th><th>Purchase</th><th>Error</th><th></th></tr></thead>
-                            <tbody>
-                                {% for event in failed_webhook_events %}
-                                <tr>
-                                    <td><strong>{{ event.event_type }}</strong><br><span class="fs-12 text-medium-gray">{{ event.event_id }}</span></td>
-                                    <td>{{ event.status }}</td>
-                                    <td>{{ event.purchase_id or "-" }}</td>
-                                    <td class="fs-12">{{ event.error_message or "n/a" }}</td>
-                                    <td>
-                                        {% if event.status != "resolved" %}
-                                        <form method="post" action="/admin/webhooks/resolve">
-                                            <input type="hidden" name="webhook_event_id" value="{{ event.id }}" />
-                                            <input type="hidden" name="return_to" value="{{ return_to }}" />
-                                            <button type="submit" class="btn btn-very-small btn-transparent-light-gray btn-rounded">Resolve</button>
-                                        </form>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr><td colspan="5" class="text-medium-gray">No webhook exceptions detected.</td></tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+        </section>
+
+        <section class="rounded-2xl border border-brand-border bg-white p-6">
+            <h2 class="text-xl font-semibold">Fulfillment Email Queue</h2>
+            <p class="mt-1 text-sm text-brand-muted">Filter and retry customer delivery emails without leaving the dashboard.</p>
+            <form method="get" action="/admin" class="mt-4 grid gap-3 rounded-xl border border-brand-border/70 bg-slate-50 p-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="email_status">Email Status</label>
+                    <select id="email_status" name="email_status" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm">
+                        <option value="failed" {% if email_filters.status == "failed" %}selected{% endif %}>Failed</option>
+                        <option value="pending" {% if email_filters.status == "pending" %}selected{% endif %}>Pending</option>
+                        <option value="sent" {% if email_filters.status == "sent" %}selected{% endif %}>Sent</option>
+                        <option value="all" {% if email_filters.status == "all" %}selected{% endif %}>All</option>
+                    </select>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="bg-white border-radius-10px box-shadow-medium p-35px h-100">
-                    <h2 class="alt-font fw-700 text-dark-gray mb-10px">Fulfillment email queue</h2>
-                    <p class="text-medium-gray mb-25px">Filter and retry customer delivery emails.</p>
-                    <form method="get" action="/admin" class="row g-3 mb-25px">
-                        <div class="col-md-6">
-                            <label class="form-label" for="email_status">Email status</label>
-                            <select id="email_status" name="email_status" class="form-select form-select-sm">
-                                <option value="failed" {% if email_filters.status == "failed" %}selected{% endif %}>Failed</option>
-                                <option value="pending" {% if email_filters.status == "pending" %}selected{% endif %}>Pending</option>
-                                <option value="sent" {% if email_filters.status == "sent" %}selected{% endif %}>Sent</option>
-                                <option value="all" {% if email_filters.status == "all" %}selected{% endif %}>All</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label" for="email_start_date">From</label>
-                            <input id="email_start_date" type="date" name="start_date" value="{{ email_filters.start_date }}" class="form-control form-control-sm" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label" for="email_end_date">To</label>
-                            <input id="email_end_date" type="date" name="end_date" value="{{ email_filters.end_date }}" class="form-control form-control-sm" />
-                        </div>
-                        <div class="col-12">
-                            <input type="hidden" name="webhook_status" value="{{ webhook_filters.status }}" />
-                            <button type="submit" class="btn btn-dark-gray btn-small btn-rounded">Apply</button>
-                        </div>
-                    </form>
-                    {% for item in failed_fulfillment_emails %}
-                    <article class="border border-color-extra-medium-gray border-radius-8px p-20px mb-15px">
-                        <p class="fw-600 mb-5px">{{ item.purchase.template.title }}</p>
-                        <p class="fs-13 text-medium-gray mb-10px">To: {{ item.recipient }} · Attempts: {{ item.attempts }} · {{ item.status }}</p>
-                        <p class="fs-13 text-medium-gray mb-15px">{{ item.last_error or "n/a" }}</p>
-                        <form method="post" action="/admin/fulfillment/retry">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="email_start_date">From</label>
+                    <input id="email_start_date" type="date" name="start_date" value="{{ email_filters.start_date }}" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm" />
+                </div>
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-brand-muted" for="email_end_date">To</label>
+                    <input id="email_end_date" type="date" name="end_date" value="{{ email_filters.end_date }}" class="mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm" />
+                </div>
+                <div class="self-end">
+                    <input type="hidden" name="webhook_status" value="{{ webhook_filters.status }}" />
+                    <button type="submit" class="w-full rounded-lg bg-brand-emerald px-3 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Apply</button>
+                </div>
+            </form>
+            <div class="mt-4 space-y-3">
+                {% for item in failed_fulfillment_emails %}
+                    <article class="rounded-xl border border-brand-border p-4">
+                        <p class="font-semibold">{{ item.purchase.template.title }}</p>
+                        <a href="/preview/{{ item.purchase.template.slug }}" class="mt-2 inline-flex rounded border border-brand-border px-2 py-1 text-xs font-semibold hover:bg-slate-50">
+                            Live Preview
+                        </a>
+                        <p class="mt-1 text-xs text-brand-muted">
+                            To: {{ item.recipient }} · Attempts: {{ item.attempts }} · Last error: {{ item.last_error or "n/a" }}
+                        </p>
+                        <p class="mt-1 text-xs text-brand-muted">
+                            Status: <span class="font-semibold">{{ item.status }}</span>
+                        </p>
+                        <form method="post" action="/admin/fulfillment/retry" class="mt-3">
                             <input type="hidden" name="fulfillment_email_id" value="{{ item.id }}" />
                             <input type="hidden" name="return_to" value="{{ return_to }}" />
-                            <button type="submit" class="btn btn-very-small btn-transparent-light-gray btn-rounded">Retry delivery</button>
+                            <button type="submit" class="rounded-lg border border-brand-border px-3 py-2 text-xs font-semibold hover:bg-slate-50">
+                                Retry Email Delivery
+                            </button>
                         </form>
                     </article>
-                    {% else %}
-                    <p class="text-medium-gray mb-0">No fulfillment emails found for current filters.</p>
-                    {% endfor %}
-                </div>
+                {% else %}
+                    <p class="text-sm text-brand-muted">No fulfillment emails found for current filters.</p>
+                {% endfor %}
             </div>
-        </div>
+        </section>
     </div>
 </section>
 {% endblock %}

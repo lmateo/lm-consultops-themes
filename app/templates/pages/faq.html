@@ -1,40 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-{% with page_heading="FAQ", page_subtitle="Answers about licensing, customization, and support." %}
-{% include "components/crafto/page_title.html" %}
-{% endwith %}
-<section class="pt-6 pb-8">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion accordion-style-02" id="faq-accordion">
-                    <div class="accordion-item bg-white border-radius-8px mb-20px">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq-1">What do I get with a template purchase?</button>
-                        </h2>
-                        <div id="faq-1" class="accordion-collapse collapse show" data-bs-parent="#faq-accordion">
-                            <div class="accordion-body text-medium-gray">Production-ready pages, reusable sections, and launch guidance.</div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-white border-radius-8px mb-20px">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-2">Can I request customization?</button>
-                        </h2>
-                        <div id="faq-2" class="accordion-collapse collapse" data-bs-parent="#faq-accordion">
-                            <div class="accordion-body text-medium-gray">Yes, use the customization request form and choose setup add-ons.</div>
-                        </div>
-                    </div>
-                    <div class="accordion-item bg-white border-radius-8px">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-3">Do you offer post-launch support?</button>
-                        </h2>
-                        <div id="faq-3" class="accordion-collapse collapse" data-bs-parent="#faq-accordion">
-                            <div class="accordion-body text-medium-gray">Yes, we provide setup assistance, maintenance planning, and customization support.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<section class="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold">FAQ</h1>
+    <div class="mt-8 space-y-4">
+        <details class="rounded-xl border border-brand-border bg-white p-4">
+            <summary class="cursor-pointer font-semibold">What do I get with a template purchase?</summary>
+            <p class="mt-2 text-sm text-brand-muted">Production-ready pages, reusable sections, and launch guidance.</p>
+        </details>
+        <details class="rounded-xl border border-brand-border bg-white p-4">
+            <summary class="cursor-pointer font-semibold">Can I request customization?</summary>
+            <p class="mt-2 text-sm text-brand-muted">Yes, use the customization request form and choose setup add-ons.</p>
+        </details>
+        <details class="rounded-xl border border-brand-border bg-white p-4">
+            <summary class="cursor-pointer font-semibold">Do you offer post-launch support?</summary>
+            <p class="mt-2 text-sm text-brand-muted">Yes, we provide setup assistance, maintenance planning, and customization support.</p>
+        </details>
     </div>
 </section>
 {% endblock %}

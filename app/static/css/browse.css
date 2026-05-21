@@ -1,5 +1,220 @@
-/* Browse page helpers layered on Crafto */
+/* Mateo template browse — ThemeForest-inspired list layout (original branding) */
+
+.mkt-breadcrumb a {
+  transition: color 0.15s ease;
+}
+
+.mkt-breadcrumb a:hover {
+  color: #047857;
+}
+
+.mkt-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mkt-pill:hover {
+  border-color: #10b981;
+  color: #047857;
+}
+
 .mkt-pill.is-active {
-  background-color: #111827;
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #047857;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.25);
+}
+
+.mkt-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+  gap: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1.35rem 0;
+}
+
+@media (max-width: 768px) {
+  .mkt-list-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mkt-list-row:first-child {
+  padding-top: 0.25rem;
+}
+
+.mkt-thumb-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.65rem;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  aspect-ratio: 16 / 10;
+}
+
+.mkt-thumb-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #f8fafc;
+  transition: transform 0.35s ease, opacity 0.25s ease;
+}
+
+.mkt-thumb-panel:hover img {
+  transform: scale(1.03);
+}
+
+.mkt-thumb-stack {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 0.55rem;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.mkt-thumb-stack button {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.35rem;
+  border: 2px solid #fff;
+  overflow: hidden;
+  opacity: 0.88;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.mkt-thumb-stack button:hover,
+.mkt-thumb-stack button.is-active {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.mkt-thumb-stack button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #f8fafc;
+}
+
+.mkt-list-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #111827;
+}
+
+.mkt-list-title a:hover {
+  color: #047857;
+}
+
+.mkt-meta-line {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.mkt-meta-line a {
+  color: #047857;
+  font-weight: 600;
+}
+
+.mkt-price-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.65rem 1rem;
+  margin-top: 0.65rem;
+}
+
+.mkt-price {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.mkt-status-pill {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.mkt-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.85rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #111827;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.mkt-preview-btn:hover {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.mkt-sidebar-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.85rem;
+  background: #fff;
+  padding: 1rem;
+}
+
+.mkt-studio-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.65rem;
+  padding: 0.55rem;
+  transition: background 0.15s ease;
+}
+
+.mkt-studio-link:hover {
+  background: #f8fafc;
+}
+
+.mkt-studio-avatar {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #10b981, #047857);
   color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.mkt-toolbar {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 20;
+  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 1rem;
+}
+
+.mkt-promo-banner {
+  border-radius: 0.85rem;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f8fafc 55%, #fff 100%);
+  border: 1px solid #a7f3d0;
+  padding: 1rem;
 }
