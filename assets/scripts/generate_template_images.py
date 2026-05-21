@@ -3,16 +3,22 @@
 from __future__ import annotations
 
 import random
+import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageOps
 
 OUTPUT_ROOT = Path("app/static/images/templates")
 SCENES = ("hero", "about", "services", "contact")
 GALLERY_SCENE_COUNT = 12
 INLINE_SCENE_NAMES = ("team", "blog", "feature", "showcase")
+# Supersample heroes only; page/gallery frames export at target size for speed.
+HERO_RENDER_SCALE = 1.25
+PAGE_RENDER_SIZE = (1600, 1000)
+GALLERY_RENDER_SIZE = (1440, 900)
+WEBP_QUALITY = 92
 
 
 @dataclass(frozen=True)
@@ -27,6 +33,22 @@ class TemplateTheme:
     painter: Callable[[str, tuple[int, int], random.Random, TemplateTheme], Image.Image]
 
 
+@dataclass(frozen=True)
+class SceneProfile:
+    """Camera/lighting variation so each output frame feels like a distinct photograph."""
+
+    composition_shift: float
+    warmth_delta: float
+    saturation: float
+    contrast: float
+    haze_strength: float
+    sun_x_ratio: float
+    sun_y_ratio: float
+    sun_intensity: int
+    bokeh_extra: int
+    crop_focus: tuple[float, float, float, float]
+
+
 def _rgb(r: int, g: int, b: int) -> tuple[int, int, int]:
     return (r, g, b)
 
@@ -37,6 +59,60 @@ def _shift(color: tuple[int, int, int], delta: int) -> tuple[int, int, int]:
 
 def _seed(theme: TemplateTheme, scene: str) -> random.Random:
     return random.Random(f"{theme.slug}:{scene}")
+
+
+def _build_scene_profile(scene: str, rng: random.Random, theme: TemplateTheme) -> SceneProfile:
+    gallery_index = 0
+    match = re.fullmatch(r"gallery-(\d+)", scene)
+    if match:
+        gallery_index = int(match.group(1))
+
+    if scene == "hero":
+        warmth_delta, contrast, haze = 0.08, 1.08, 0.06
+        sun = (0.72 + rng.uniform(-0.06, 0.06), 0.18, 95)
+        crop = (0.0, 0.02, 1.0, 0.92)
+    elif scene == "about":
+        warmth_delta, contrast, haze = 0.12, 1.04, 0.08
+        sun = (0.62, 0.22, 80)
+        crop = (0.04, 0.05, 0.96, 0.94)
+    elif scene == "services":
+        warmth_delta, contrast, haze = 0.04, 1.1, 0.05
+        sun = (0.55, 0.2, 75)
+        crop = (0.0, 0.03, 0.98, 0.9)
+    elif scene == "contact":
+        warmth_delta, contrast, haze = 0.06, 1.02, 0.1
+        sun = (0.48, 0.24, 65)
+        crop = (0.03, 0.08, 0.97, 0.98)
+    elif scene in {"team", "blog", "feature", "showcase"}:
+        warmth_delta, contrast, haze = 0.05, 1.06, 0.07
+        sun = (0.58 + rng.uniform(-0.08, 0.08), 0.2, 70)
+        crop = (0.05, 0.04, 0.95, 0.92)
+    else:
+        warmth_delta, contrast, haze = 0.03, 1.05, 0.07
+        sun = (0.5 + rng.uniform(-0.2, 0.2), 0.2 + rng.uniform(-0.05, 0.05), 72)
+        crop = (
+            max(0.0, 0.02 * (gallery_index % 4)),
+            max(0.0, 0.02 * ((gallery_index + 1) % 3)),
+            min(1.0, 0.98 - 0.02 * (gallery_index % 3)),
+            min(1.0, 0.96 - 0.02 * (gallery_index % 2)),
+        )
+
+    composition_shift = rng.uniform(-0.12, 0.12)
+    if gallery_index:
+        composition_shift = ((gallery_index % 7) - 3) * 0.035 + rng.uniform(-0.04, 0.04)
+
+    return SceneProfile(
+        composition_shift=composition_shift,
+        warmth_delta=warmth_delta,
+        saturation=1.05 + (gallery_index % 3) * 0.02,
+        contrast=contrast,
+        haze_strength=haze,
+        sun_x_ratio=sun[0],
+        sun_y_ratio=sun[1],
+        sun_intensity=sun[2],
+        bokeh_extra=4 + (gallery_index % 5),
+        crop_focus=crop,
+    )
 
 
 def _lerp(a: int, b: int, t: float) -> int:
@@ -73,6 +149,44 @@ def _noise_layer(size: tuple[int, int], scale: float, opacity: int) -> Image.Ima
     small = (max(64, w // 8), max(64, h // 8))
     noise = Image.effect_noise(small, 42).convert("L").resize(size, Image.Resampling.LANCZOS)
     return Image.merge("RGBA", [noise, noise, noise, Image.new("L", size, opacity)])
+
+
+def _film_grain(size: tuple[int, int], rng: random.Random, opacity: int = 34) -> Image.Image:
+    grain = Image.effect_noise((max(96, size[0] // 6), max(96, size[1] // 6)), rng.randint(35, 55))
+    grain = grain.convert("L").resize(size, Image.Resampling.LANCZOS)
+    return Image.merge("RGBA", [grain, grain, grain, Image.new("L", size, opacity)])
+
+
+def _atmospheric_haze(size: tuple[int, int], strength: float) -> Image.Image:
+    w, h = size
+    haze = vertical_gradient(size, ((0.0, (245, 248, 252)), (0.55, (220, 228, 236)), (1.0, (180, 188, 198))))
+    alpha = Image.new("L", size, int(255 * strength))
+    return Image.merge("RGBA", [*haze.split(), alpha])
+
+
+def _chromatic_aberration(img: Image.Image, amount: int = 2) -> Image.Image:
+    if amount <= 0:
+        return img
+    red, green, blue = img.split()
+    red = ImageChops.offset(red, -amount, 0)
+    blue = ImageChops.offset(blue, amount, 0)
+    return Image.merge("RGB", (red, green, blue))
+
+
+def _highlight_bloom(img: Image.Image, intensity: float = 0.14) -> Image.Image:
+    luminance = img.convert("L")
+    bright = luminance.point(lambda value: 255 if value > 206 else 0)
+    bright = bright.filter(ImageFilter.GaussianBlur(radius=14))
+    warm = Image.new("RGB", img.size, (255, 244, 230))
+    glow = Image.blend(img, warm, intensity)
+    return Image.composite(glow, img, bright)
+
+
+def _apply_scene_crop(img: Image.Image, crop: tuple[float, float, float, float]) -> Image.Image:
+    w, h = img.size
+    box = (int(w * crop[0]), int(h * crop[1]), int(w * crop[2]), int(h * crop[3]))
+    cropped = img.crop(box)
+    return cropped.resize((w, h), Image.Resampling.LANCZOS)
 
 
 def _bokeh_layer(
@@ -196,22 +310,48 @@ def _heart(
     draw.polygon([(cx - r - 10, cy), (cx + r + 10, cy), (cx, cy + size // 2 + 14)], fill=(*color, alpha))
 
 
-def _photo_finish(img: Image.Image, theme: TemplateTheme, scene: str) -> Image.Image:
-    if scene == "about":
-        img = ImageEnhance.Brightness(img).enhance(1.05)
-    elif scene == "services":
-        img = ImageEnhance.Contrast(img).enhance(1.1)
-    img = ImageEnhance.Color(img).enhance(1.06)
-    img = ImageEnhance.Sharpness(img).enhance(1.08 if scene == "hero" else 1.04)
-    if theme.warmth > 0:
-        warm = Image.new("RGB", img.size, (255, 220, 180))
-        img = Image.blend(img, warm, theme.warmth * (0.12 if scene != "contact" else 0.06))
+def _photo_finish(
+    img: Image.Image,
+    theme: TemplateTheme,
+    scene: str,
+    profile: SceneProfile,
+    rng: random.Random,
+) -> Image.Image:
+    is_hero = scene == "hero"
+    img = ImageEnhance.Contrast(img).enhance(profile.contrast)
+    img = ImageEnhance.Color(img).enhance(profile.saturation)
+    img = ImageEnhance.Brightness(img).enhance(1.03 if scene in {"about", "contact"} else 1.0)
+    if is_hero:
+        img = _highlight_bloom(img, 0.16)
+    elif scene.startswith("gallery-"):
+        img = _highlight_bloom(img, 0.08)
+    else:
+        img = _highlight_bloom(img, 0.1)
+
+    warmth = min(0.28, theme.warmth + profile.warmth_delta)
+    if warmth > 0:
+        warm = Image.new("RGB", img.size, (255, 224, 188))
+        img = Image.blend(img, warm, warmth * (0.14 if scene != "contact" else 0.07))
+
+    img = ImageOps.autocontrast(img, cutoff=1)
+    if is_hero:
+        blurred = img.filter(ImageFilter.GaussianBlur(radius=1.4))
+        img = Image.blend(blurred, img, 0.84)
+        img = ImageEnhance.Sharpness(img).enhance(1.14)
+        img = _chromatic_aberration(img, amount=2)
+    else:
+        img = ImageEnhance.Sharpness(img).enhance(1.06)
+        img = _chromatic_aberration(img, amount=1)
+
+    grain_opacity = 30 if is_hero else 22
+    img = Image.alpha_composite(img.convert("RGBA"), _film_grain(img.size, rng, grain_opacity)).convert("RGB")
+
     vignette = Image.new("L", img.size, 0)
     vdraw = ImageDraw.Draw(vignette)
     w, h = img.size
-    vdraw.ellipse((-w // 6, -h // 8, w + w // 6, h + h // 4), fill=210)
-    vignette = vignette.filter(ImageFilter.GaussianBlur(radius=min(w, h) // 5))
-    dark = Image.new("RGB", img.size, (8, 12, 18))
+    vdraw.ellipse((-w // 5, -h // 7, w + w // 5, h + h // 3), fill=215)
+    vignette = vignette.filter(ImageFilter.GaussianBlur(radius=max(8, min(w, h) // 6)))
+    dark = Image.new("RGB", img.size, (10, 14, 20))
     return Image.composite(img, Image.composite(dark, img, vignette), vignette.point(lambda p: 255 - p))
 
 
@@ -220,16 +360,41 @@ def _compose(
     theme: TemplateTheme,
     scene: str,
     rng: random.Random,
+    profile: SceneProfile,
     *,
     bokeh_palette: tuple[tuple[int, int, int], ...] | None = None,
     bokeh_count: int = 14,
 ) -> Image.Image:
     img = base.convert("RGBA")
+    if profile.haze_strength > 0:
+        img = Image.alpha_composite(img, _atmospheric_haze(img.size, profile.haze_strength))
     if bokeh_palette:
-        img = Image.alpha_composite(img, _bokeh_layer(img.size, rng, bokeh_count, bokeh_palette))
-    grain = _noise_layer(img.size, 1.0, 22)
-    img = Image.alpha_composite(img, grain)
-    return _photo_finish(img.convert("RGB"), theme, scene)
+        total_bokeh = bokeh_count + profile.bokeh_extra
+        img = Image.alpha_composite(img, _bokeh_layer(img.size, rng, total_bokeh, bokeh_palette))
+    img = Image.alpha_composite(img, _noise_layer(img.size, 1.0, 18))
+    finished = _photo_finish(img.convert("RGB"), theme, scene, profile, rng)
+    return _apply_scene_crop(finished, profile.crop_focus)
+
+
+def _finish_compose(
+    img: Image.Image,
+    theme: TemplateTheme,
+    scene: str,
+    rng: random.Random,
+    *,
+    bokeh_palette: tuple[tuple[int, int, int], ...] | None = None,
+    bokeh_count: int = 14,
+) -> Image.Image:
+    profile = _build_scene_profile(scene, rng, theme)
+    return _compose(
+        img,
+        theme,
+        scene,
+        rng,
+        profile,
+        bokeh_palette=bokeh_palette,
+        bokeh_count=bokeh_count,
+    )
 
 
 # --- Industry painters (aligned with assets/prompts/*.txt) ---
@@ -238,6 +403,7 @@ def _compose(
 def paint_greenfield_farm(
     scene: str, size: tuple[int, int], rng: random.Random, theme: TemplateTheme
 ) -> Image.Image:
+    profile = _build_scene_profile(scene, rng, theme)
     w, h = size
     sky_top = _shift(theme.sky, 8)
     horizon = theme.mid
@@ -254,7 +420,7 @@ def paint_greenfield_farm(
         draw.line([(x, fence_y), (x, fence_y - 44)], fill=(*_shift(theme.accent, 40), 180), width=3)
     draw.line([(0, fence_y), (w, fence_y)], fill=(*_shift(theme.accent, 55), 200), width=4)
     barn_w, barn_h = int(w * 0.22), int(h * 0.2)
-    bx = int(w * (0.58 if scene == "hero" else 0.42))
+    bx = int(w * ((0.58 if scene == "hero" else 0.42) + profile.composition_shift))
     by = int(h * 0.48)
     draw.polygon(
         [(bx, by), (bx + barn_w // 2, by - barn_h // 2), (bx + barn_w, by)],
@@ -268,7 +434,7 @@ def paint_greenfield_farm(
     img = _sun_glow(img, (int(w * 0.78), int(h * 0.16)), int(min(w, h) * 0.14), (255, 236, 190), 90)
     if scene == "about":
         img = _figures(img, [(w // 4, int(h * 0.72), 1.0), (w // 2, int(h * 0.7), 1.1), (3 * w // 4, int(h * 0.73), 0.95)], _shift(theme.accent, -40))
-    return _compose(
+    return _finish_compose(
         img.convert("RGB"),
         theme,
         scene,
@@ -313,7 +479,7 @@ def paint_tradepro_local(
             _shift(theme.sky, -20),
         )
     img = Image.alpha_composite(base.convert("RGBA"), overlay)
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=8)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=8)
 
 
 def paint_pizza_local_eats(
@@ -337,7 +503,7 @@ def paint_pizza_local_eats(
         draw.ellipse((px + 48, py + 38, px + 62, py + 52), fill=(176, 38, 38, 220))
     img = Image.alpha_composite(base.convert("RGBA"), layer)
     img = _sun_glow(img, (oven_x + 110, oven_y + 95), 120, (255, 150, 60), 110)
-    return _compose(
+    return _finish_compose(
         img.convert("RGB"),
         theme,
         scene,
@@ -372,7 +538,7 @@ def paint_cloudcare_it(
             [(w // 5, int(h * 0.7), 1.0), (2 * w // 5, int(h * 0.68), 1.05), (3 * w // 5, int(h * 0.71), 0.95)],
             _shift(theme.sky, 60),
         )
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.accent), bokeh_count=12)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.accent), bokeh_count=12)
 
 
 def paint_mountain_lodge(
@@ -404,7 +570,7 @@ def paint_mountain_lodge(
         draw.polygon([(tx, h - 120), (tx + 22, h - 200), (tx + 44, h - 120)], fill=(*_shift(theme.mid, -25), 200))
     img = Image.alpha_composite(base.convert("RGBA"), layer)
     img = _sun_glow(img, (int(w * 0.7), int(h * 0.2)), int(min(w, h) * 0.16), (255, 210, 150), 85)
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.ground, (255, 230, 180)), bokeh_count=9)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.ground, (255, 230, 180)), bokeh_count=9)
 
 
 def paint_petcare_studio(
@@ -432,7 +598,7 @@ def paint_petcare_studio(
     img = Image.alpha_composite(base.convert("RGBA"), layer)
     if scene in {"hero", "about"}:
         img = _figures(img, [(int(w * 0.35), int(h * 0.55), 1.0), (int(w * 0.55), int(h * 0.53), 1.05)], _shift(theme.sky, -15))
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=11)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=11)
 
 
 def paint_community_impact(
@@ -452,7 +618,7 @@ def paint_community_impact(
     img = Image.alpha_composite(base.convert("RGBA"), layer)
     crowd = [(w // 6, int(h * 0.72), 0.9), (w // 3, int(h * 0.7), 1.0), (w // 2, int(h * 0.68), 1.1), (2 * w // 3, int(h * 0.71), 0.95), (5 * w // 6, int(h * 0.73), 0.88)]
     img = _figures(img, crowd, _shift(theme.accent, -35))
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=7)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=7)
 
 
 def paint_homebase_realty(
@@ -480,7 +646,7 @@ def paint_homebase_realty(
     img = Image.alpha_composite(base.convert("RGBA"), layer)
     if scene == "about":
         img = _figures(img, [(int(w * 0.72), int(h * 0.62), 1.05)], _shift(theme.accent, -20))
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, (255, 248, 230)), bokeh_count=8)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, (255, 248, 230)), bokeh_count=8)
 
 
 def paint_autoworks_garage(
@@ -505,7 +671,7 @@ def paint_autoworks_garage(
     img = _sun_glow(img, (int(w * 0.55), int(h * 0.32)), 90, (255, 200, 160), 70)
     if scene in {"hero", "services"}:
         img = _figures(img, [(int(w * 0.62), int(h * 0.58), 1.0)], _shift(theme.ground, 80))
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.accent, theme.mid), bokeh_count=10)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.accent, theme.mid), bokeh_count=10)
 
 
 def paint_wellness_local(
@@ -527,7 +693,7 @@ def paint_wellness_local(
             [(int(w * 0.3), int(h * 0.58), 1.0), (int(w * 0.42), int(h * 0.56), 0.95)],
             _shift(theme.accent, -25),
         )
-    return _compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=9)
+    return _finish_compose(img.convert("RGB"), theme, scene, rng, bokeh_palette=(theme.mid, theme.ground), bokeh_count=9)
 
 
 THEMES: list[TemplateTheme] = [
@@ -546,12 +712,11 @@ THEMES: list[TemplateTheme] = [
 
 def create_scene(theme: TemplateTheme, scene: str, size: tuple[int, int] = (1920, 1200)) -> Image.Image:
     rng = _seed(theme, scene)
+    if scene == "hero":
+        render_size = (int(size[0] * HERO_RENDER_SCALE), int(size[1] * HERO_RENDER_SCALE))
+        rendered = theme.painter(scene, render_size, rng, theme)
+        return rendered.resize(size, Image.Resampling.LANCZOS)
     return theme.painter(scene, size, rng, theme)
-
-
-def create_thumbnail(theme: TemplateTheme, size: tuple[int, int] = (960, 576)) -> Image.Image:
-    hero = create_scene(theme, "hero", (1920, 1200))
-    return hero.resize(size, Image.Resampling.LANCZOS)
 
 
 def export_variant(
@@ -573,45 +738,67 @@ def export_variant(
         image = ImageEnhance.Sharpness(image).enhance(sharpen)
     image = ImageEnhance.Color(image).enhance(1.03)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(out_path, "WEBP", quality=quality, method=6)
+    image.save(out_path, "WEBP", quality=max(quality, WEBP_QUALITY), method=6)
 
 
-def generate_template_assets(theme: TemplateTheme):
+def generate_template_assets(theme: TemplateTheme) -> int:
     target = OUTPUT_ROOT / theme.slug
     target.mkdir(parents=True, exist_ok=True)
+    written = 0
 
-    hero = create_scene(theme, "hero")
-    about = create_scene(theme, "about")
-    services = create_scene(theme, "services")
-    contact = create_scene(theme, "contact")
-    thumb = create_thumbnail(theme)
-
+    print(f"    rendering hero...", flush=True)
+    hero = create_scene(theme, "hero", (1920, 1200))
     export_variant(hero, target / "hero.webp", (1600, 900), sharpen=1.12)
     export_variant(hero, target / "hero-mobile.webp", (900, 1200), (0.12, 0.0, 0.88, 1.0), sharpen=1.14)
-    export_variant(thumb, target / "thumbnail.webp", (800, 480), sharpen=1.1)
+    export_variant(hero, target / "thumbnail.webp", (800, 480), sharpen=1.1)
     export_variant(hero, target / "preview.webp", (1440, 900), (0.0, 0.02, 1.0, 0.9), sharpen=1.1)
+    written += 4
 
-    export_variant(about, target / "about.webp", (1280, 720), sharpen=1.08)
-    export_variant(services, target / "services.webp", (1280, 720), sharpen=1.1)
-    export_variant(contact, target / "contact.webp", (1280, 720), sharpen=1.08)
+    for page_scene, filename in (
+        ("about", "about.webp"),
+        ("services", "services.webp"),
+        ("contact", "contact.webp"),
+    ):
+        print(f"    rendering {page_scene}...", flush=True)
+        page_image = create_scene(theme, page_scene, PAGE_RENDER_SIZE)
+        export_variant(page_image, target / filename, (1280, 720), sharpen=1.08)
+        written += 1
 
     for index in range(1, GALLERY_SCENE_COUNT + 1):
-        gallery_scene = create_scene(theme, f"gallery-{index}")
+        print(f"    rendering gallery-{index}...", flush=True)
+        gallery_scene = create_scene(theme, f"gallery-{index}", GALLERY_RENDER_SIZE)
         export_variant(gallery_scene, target / f"gallery-{index}.webp", (1280, 720), sharpen=1.1)
+        written += 1
 
     for scene_name in INLINE_SCENE_NAMES:
-        inline_scene = create_scene(theme, scene_name)
+        print(f"    rendering {scene_name}...", flush=True)
+        inline_scene = create_scene(theme, scene_name, GALLERY_RENDER_SIZE)
         export_variant(inline_scene, target / f"{scene_name}.webp", (1280, 720), sharpen=1.08)
+        written += 1
+
+    return written
 
 
 def main():
-    for theme in THEMES:
-        generate_template_assets(theme)
-        print(
-            f"  {theme.slug}: hero, pages, {GALLERY_SCENE_COUNT} galleries, "
-            f"{len(INLINE_SCENE_NAMES)} inline scenes, thumbnail"
-        )
-    print(f"Generated photorealistic assets for {len(THEMES)} templates in {OUTPUT_ROOT}")
+    import sys
+
+    slugs = [theme.slug for theme in THEMES]
+    if len(sys.argv) > 1:
+        requested = {arg.strip() for arg in sys.argv[1:]}
+        themes = [theme for theme in THEMES if theme.slug in requested]
+        if not themes:
+            raise SystemExit(f"No matching slugs. Available: {', '.join(slugs)}")
+    else:
+        themes = THEMES
+
+    total_files = 0
+    for theme in themes:
+        print(f"  {theme.slug}:", flush=True)
+        total_files += generate_template_assets(theme)
+    print(
+        f"Generated {total_files} photorealistic WebP files "
+        f"for {len(themes)} template(s) in {OUTPUT_ROOT}"
+    )
 
 
 if __name__ == "__main__":

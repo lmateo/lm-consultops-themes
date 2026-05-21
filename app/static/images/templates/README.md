@@ -48,4 +48,16 @@ Exports hero, thumbnail, preview, page banners, 12 gallery scenes, and inline se
 python assets/scripts/generate_template_images.py
 ```
 
-Creates industry-specific photographic-style scenes per page plus 12 gallery variants and inline section images when AI sources are unavailable.
+Creates industry-specific photographic-style scenes per page plus 12 gallery variants and inline section images when AI sources are unavailable. The generator applies film grain, bloom, atmospheric haze, vignette, and per-scene camera profiles so each WebP looks like a distinct photograph.
+
+Regenerate all templates:
+
+```bash
+python assets/scripts/generate_template_images.py
+```
+
+Regenerate one slug:
+
+```bash
+python assets/scripts/generate_template_images.py cloudcare-it
+```
