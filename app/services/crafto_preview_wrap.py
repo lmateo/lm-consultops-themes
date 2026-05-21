@@ -43,13 +43,22 @@ _TEMPLATE_IMAGE_SET: tuple[str, ...] = (
     "contact.webp",
 )
 
+_PAGE_PRIMARY_IMAGE: dict[str, str] = {
+    "home": "hero.webp",
+    "about": "about.webp",
+    "services": "services.webp",
+    "contact": "contact.webp",
+}
+
 _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
     "home": (
         "hero.webp",
         "preview.webp",
+        "preview.webp",
         "hero-mobile.webp",
         "gallery-1.webp",
         "gallery-2.webp",
+        "gallery-1.webp",
         "services.webp",
         "thumbnail.webp",
         "gallery-3.webp",
@@ -59,6 +68,7 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
     "about": (
         "about.webp",
         "gallery-2.webp",
+        "about.webp",
         "gallery-1.webp",
         "thumbnail.webp",
         "hero.webp",
@@ -69,6 +79,7 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
         "hero-mobile.webp",
     ),
     "services": (
+        "services.webp",
         "services.webp",
         "preview.webp",
         "gallery-1.webp",
@@ -83,6 +94,7 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
     "contact": (
         "contact.webp",
         "hero-mobile.webp",
+        "contact.webp",
         "thumbnail.webp",
         "about.webp",
         "gallery-3.webp",
@@ -94,15 +106,31 @@ _PAGE_WEIGHTED_SEQUENCE: dict[str, tuple[str, ...]] = {
     ),
 }
 
+_SLUG_IMAGE_WEIGHT_BOOSTS: dict[str, tuple[str, ...]] = {
+    "pizza-local-eats": ("gallery-1.webp", "gallery-2.webp", "gallery-3.webp", "thumbnail.webp"),
+    "mountain-lodge": ("hero.webp", "gallery-1.webp", "gallery-2.webp", "preview.webp"),
+    "homebase-realty": ("thumbnail.webp", "gallery-1.webp", "about.webp", "preview.webp"),
+    "cloudcare-it": ("services.webp", "preview.webp", "hero-mobile.webp"),
+    "tradepro-local": ("services.webp", "preview.webp", "thumbnail.webp"),
+    "autoworks-garage": ("services.webp", "gallery-3.webp", "preview.webp"),
+    "community-impact": ("about.webp", "contact.webp", "gallery-3.webp"),
+    "wellness-local": ("hero-mobile.webp", "about.webp", "gallery-2.webp"),
+    "petcare-studio": ("hero-mobile.webp", "services.webp", "gallery-2.webp"),
+    "greenfield-farm": ("hero.webp", "gallery-1.webp", "services.webp"),
+}
 
-def _preview_image_pool(page: str) -> tuple[str, ...]:
-    weighted = _PAGE_WEIGHTED_SEQUENCE.get(page, _PAGE_WEIGHTED_SEQUENCE["home"])
-    unique = tuple(dict.fromkeys(weighted))
-    if len(unique) == len(_TEMPLATE_IMAGE_SET):
-        return unique
+
+def _preview_image_pool(page: str, slug: str) -> tuple[str, ...]:
+    primary = _PAGE_PRIMARY_IMAGE.get(page, _PAGE_PRIMARY_IMAGE["home"])
+    weighted = list(_PAGE_WEIGHTED_SEQUENCE.get(page, _PAGE_WEIGHTED_SEQUENCE["home"]))
+    if not weighted:
+        weighted = [primary]
+    if weighted[0] != primary:
+        weighted.insert(0, primary)
+    weighted.extend(_SLUG_IMAGE_WEIGHT_BOOSTS.get(slug, ()))
     # Keep resilient if new assets are added but not yet listed in weighted sequences.
-    remaining = tuple(image for image in _TEMPLATE_IMAGE_SET if image not in unique)
-    return unique + remaining
+    remaining = [image for image in _TEMPLATE_IMAGE_SET if image not in weighted]
+    return tuple(weighted + remaining)
 
 
 def _stable_index(value: str, modulo: int) -> int:
@@ -134,7 +162,7 @@ def normalize_preview_viewport_meta(html: str) -> str:
 
 def inject_template_preview_images(html: str, slug: str, page: str) -> str:
     """Replace placeholders and stock photos with varied per-template WebP assets."""
-    pool = _preview_image_pool(page)
+    pool = _preview_image_pool(page, slug)
     base = f"/static/images/templates/{slug}"
     assigned = 0
     primary_served = False

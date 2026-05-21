@@ -3,6 +3,7 @@ import re
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.services.crafto_preview_wrap import _preview_image_pool
 from app.services.crafto_demos import CRAFTO_TEMPLATE_DEMOS, get_crafto_demo_or_default
 from app.services.preview_demos import SLUG_LAYOUT_MAP, get_layout_key
 
@@ -64,6 +65,19 @@ def test_wrapped_preview_uses_varied_template_images():
     assert response.status_code == 200
     images = re.findall(r"/static/images/templates/greenfield-farm/([\w-]+\.webp)", response.text)
     assert len(set(images)) >= 4
+
+
+def test_image_pool_applies_page_primary_and_slug_weighting():
+    home_pool = _preview_image_pool("home", "pizza-local-eats")
+    services_pool = _preview_image_pool("services", "cloudcare-it")
+    contact_pool = _preview_image_pool("contact", "community-impact")
+
+    assert home_pool[0] == "hero.webp"
+    assert services_pool[0] == "services.webp"
+    assert contact_pool[0] == "contact.webp"
+
+    assert home_pool.count("gallery-1.webp") > 1
+    assert services_pool.count("services.webp") > 1
 
 
 def test_wrapped_preview_inner_pages_use_page_banners():
