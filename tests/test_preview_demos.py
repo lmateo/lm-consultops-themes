@@ -1,3 +1,5 @@
+import re
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -55,6 +57,13 @@ def test_wrapped_preview_uses_template_photos_not_placeholders():
     assert response.status_code == 200
     assert "placehold.co" not in response.text
     assert "/static/images/templates/greenfield-farm/hero.webp" in response.text
+
+
+def test_wrapped_preview_uses_varied_template_images():
+    response = client.get("/preview/greenfield-farm/home")
+    assert response.status_code == 200
+    images = re.findall(r"/static/images/templates/greenfield-farm/([\w-]+\.webp)", response.text)
+    assert len(set(images)) >= 4
 
 
 def test_wrapped_preview_inner_pages_use_page_banners():
