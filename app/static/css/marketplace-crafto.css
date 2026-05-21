@@ -1,0 +1,189 @@
+/* Mateo ConsultOps Themes — Crafto landing integration + brand overrides */
+:root {
+  --base-color: #10b981;
+  --dark-gray: #111827;
+  --medium-gray: #6b7280;
+  --green: #047857;
+  --crusoe-green: #d1fae5;
+  --light-red: #ffeded;
+  --red: #e75050;
+}
+
+body.landing-page {
+  background-color: #fff;
+}
+
+.mkt-brand-logo {
+  max-height: 36px;
+  width: auto;
+}
+
+.btn.btn-base-color,
+.bg-base-color {
+  background-color: var(--base-color) !important;
+  border-color: var(--base-color) !important;
+}
+
+.btn.btn-base-color:hover,
+.btn.btn-base-color:focus {
+  background-color: var(--green) !important;
+  border-color: var(--green) !important;
+}
+
+.text-base-color {
+  color: var(--base-color) !important;
+}
+
+.bg-gradient-dark-green-light-green {
+  background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+}
+
+.bg-gradient-top-very-light-gray {
+  background: linear-gradient(180deg, #f4f5fa 0%, #fff 100%);
+}
+
+.mkt-template-card .border-radius-5px {
+  aspect-ratio: 5 / 3;
+  object-fit: contain;
+  background: #f4f5fa;
+}
+
+.mkt-list-row {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+@media (min-width: 768px) {
+  .mkt-list-row {
+    grid-template-columns: 280px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.mkt-list-row:last-child {
+  border-bottom: 0;
+}
+
+.mkt-thumb-panel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.mkt-thumb-panel > a {
+  display: block;
+  aspect-ratio: 5 / 3;
+}
+
+.mkt-thumb-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.mkt-thumb-stack {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.mkt-thumb-stack button {
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0;
+  overflow: hidden;
+  width: 52px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.mkt-thumb-stack button.is-active {
+  border-color: var(--base-color);
+}
+
+.mkt-thumb-stack img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mkt-list-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.mkt-meta-line a {
+  color: var(--base-color);
+  font-weight: 500;
+}
+
+.mkt-price-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.mkt-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--dark-gray);
+}
+
+.mkt-status-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--crusoe-green);
+  color: var(--green);
+}
+
+.mkt-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.mkt-preview-btn:hover {
+  background: #f8fafc;
+}
+
+.mkt-browse-sidebar .form-control,
+.mkt-browse-sidebar .form-select {
+  border-radius: 6px;
+}
+
+.mkt-rating {
+  color: #f59e0b;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+.sr-only-focusable:focus {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 9999;
+  background: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  clip: auto;
+  width: auto;
+  height: auto;
+}

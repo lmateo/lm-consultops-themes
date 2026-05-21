@@ -1,11 +1,10 @@
-<div class="mt-5">
-    <p class="text-sm font-semibold text-brand-ink">
-        More featured
-        <span class="text-brand-dark">{{ scope_label }}</span>:
+<div class="mt-20px">
+    <p class="fw-600 text-dark-gray mb-10px">
+        More featured <span class="text-base-color">{{ scope_label }}</span>:
     </p>
-    <div class="mt-3 flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2">
         {% if show_all_link %}
-            <a href="{{ base_path }}" class="mkt-pill {{ 'is-active' if not active_slug else '' }}">All</a>
+        <a href="{{ base_path }}" class="mkt-pill btn btn-very-small btn-rounded {{ 'btn-dark-gray is-active' if not active_slug else 'btn-transparent-light-gray' }}">All</a>
         {% endif %}
         {% for row in categories_with_counts %}
             {% if link_style == "query" %}
@@ -13,8 +12,7 @@
             {% else %}
                 {% set category_href = "/categories/" ~ row.category.slug %}
             {% endif %}
-            <a href="{{ category_href }}"
-               class="mkt-pill {{ 'is-active' if active_slug == row.category.slug else '' }}">
+            <a href="{{ category_href }}" class="mkt-pill btn btn-very-small btn-rounded {{ 'btn-dark-gray is-active' if active_slug == row.category.slug else 'btn-transparent-light-gray' }}">
                 {{ row.category.name }}
             </a>
         {% endfor %}

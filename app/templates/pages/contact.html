@@ -1,215 +1,70 @@
 {% extends "base.html" %}
-
 {% block content %}
+{% with page_heading="Customization Request", page_subtitle="Tell us what you need and we will map your template + service plan." %}
+{% include "components/crafto/page_title.html" %}
+{% endwith %}
 
-<section
-
-    class="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8"
-
-    x-data="{
-
-        loading: false,
-
-        error: '',
-
-        success: '',
-
-        async submitForm(event) {
-
-            this.loading = true;
-
-            this.error = '';
-
-            this.success = '';
-
-            const form = event.target;
-
-            const body = new FormData(form);
-
-            try {
-
-                const response = await fetch('/api/contact', { method: 'POST', body });
-
-                const data = await response.json().catch(() => ({}));
-
-                if (!response.ok) {
-
-                    const detail = data.detail;
-
-                    this.error = Array.isArray(detail) ? detail.map((d) => d.msg || d).join(' ') : (detail || 'Submission failed. Please try again.');
-
-                    return;
-
-                }
-
-                this.success = data.message || 'Thank you. Your message was sent successfully.';
-
-                form.reset();
-
-            } catch {
-
-                this.error = 'Unable to submit. Please try again or email us directly.';
-
-            } finally {
-
-                this.loading = false;
-
+<section class="pt-6 pb-8" x-data="{
+    loading: false,
+    error: '',
+    success: '',
+    async submitForm(event) {
+        this.loading = true;
+        this.error = '';
+        this.success = '';
+        const form = event.target;
+        const body = new FormData(form);
+        try {
+            const response = await fetch('/api/contact', { method: 'POST', body });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const detail = data.detail;
+                this.error = Array.isArray(detail) ? detail.map((d) => d.msg || d).join(' ') : (detail || 'Submission failed. Please try again.');
+                return;
             }
-
+            this.success = data.message || 'Thank you. Your message was sent successfully.';
+            form.reset();
+        } catch {
+            this.error = 'Unable to submit. Please try again or email us directly.';
+        } finally {
+            this.loading = false;
         }
+    }
+}">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div x-show="success" x-cloak class="alert alert-success border-radius-8px mb-30px" x-text="success" role="status"></div>
+                <div x-show="error" x-cloak class="alert alert-danger border-radius-8px mb-30px" x-text="error" role="alert"></div>
 
-    }"
-
->
-
-    <h1 class="text-3xl font-bold">Customization Request</h1>
-
-    <p class="mt-3 text-brand-muted">Tell us what you need and we will map your template + service plan.</p>
-
-
-
-    <div
-
-        x-show="success"
-
-        x-cloak
-
-        class="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
-
-        x-text="success"
-
-        role="status"
-
-    ></div>
-
-    <div
-
-        x-show="error"
-
-        x-cloak
-
-        class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-
-        x-text="error"
-
-        role="alert"
-
-    ></div>
-
-
-
-    <form
-
-        x-show="!success"
-
-        x-cloak
-
-        method="post"
-
-        action="/api/contact"
-
-        class="mt-8 space-y-4 rounded-2xl border border-brand-border bg-white p-6"
-
-        @submit.prevent="submitForm($event)"
-
-        novalidate
-
-    >
-
-        <input type="hidden" name="captcha_a" value="{{ captcha_a }}" />
-
-        <input type="hidden" name="captcha_b" value="{{ captcha_b }}" />
-
-
-
-        <div class="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
-
-            <label for="website">Website</label>
-
-            <input tabindex="-1" autocomplete="off" id="website" name="website" type="text" />
-
+                <form x-show="!success" x-cloak method="post" action="/api/contact" class="contact-form-style-01 bg-white border-radius-10px box-shadow-medium p-40px" @submit.prevent="submitForm($event)" novalidate>
+                    <input type="hidden" name="captcha_a" value="{{ captcha_a }}" />
+                    <input type="hidden" name="captcha_b" value="{{ captcha_b }}" />
+                    <div class="position-absolute opacity-0" style="left:-9999px" aria-hidden="true">
+                        <label for="website">Website</label>
+                        <input tabindex="-1" autocomplete="off" id="website" name="website" type="text" />
+                    </div>
+                    <div class="mb-20px">
+                        <label class="form-label" for="name">Name</label>
+                        <input required id="name" name="name" autocomplete="name" class="form-control" />
+                    </div>
+                    <div class="mb-20px">
+                        <label class="form-label" for="email">Email</label>
+                        <input required type="email" id="email" name="email" autocomplete="email" class="form-control" />
+                    </div>
+                    <div class="mb-20px">
+                        <label class="form-label" for="message">Message</label>
+                        <textarea required id="message" name="message" rows="5" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-20px">
+                        <label class="form-label" for="captcha_answer">What is {{ captcha_a }} + {{ captcha_b }}?</label>
+                        <input required id="captcha_answer" name="captcha_answer" inputmode="numeric" pattern="[0-9]*" autocomplete="off" class="form-control" style="max-width:12rem" aria-describedby="captcha-hint" />
+                        <p id="captcha-hint" class="fs-13 text-medium-gray mt-10px mb-0">Answer the math question to help prevent spam.</p>
+                    </div>
+                    <button type="submit" class="btn btn-dark-gray btn-medium btn-rounded" :disabled="loading" x-text="loading ? 'Sending…' : 'Submit request'">Submit request</button>
+                </form>
+            </div>
         </div>
-
-
-
-        <div>
-
-            <label class="text-sm font-medium" for="name">Name</label>
-
-            <input required id="name" name="name" autocomplete="name" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-emerald" />
-
-        </div>
-
-        <div>
-
-            <label class="text-sm font-medium" for="email">Email</label>
-
-            <input required type="email" id="email" name="email" autocomplete="email" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-emerald" />
-
-        </div>
-
-        <div>
-
-            <label class="text-sm font-medium" for="message">Message</label>
-
-            <textarea required id="message" name="message" rows="5" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-emerald"></textarea>
-
-        </div>
-
-        <div>
-
-            <label class="text-sm font-medium" for="captcha_answer">
-
-                What is {{ captcha_a }} + {{ captcha_b }}?
-
-            </label>
-
-            <input
-
-                required
-
-                id="captcha_answer"
-
-                name="captcha_answer"
-
-                inputmode="numeric"
-
-                pattern="[0-9]*"
-
-                autocomplete="off"
-
-                class="mt-1 w-full max-w-xs rounded-lg border border-brand-border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-emerald"
-
-                aria-describedby="captcha-hint"
-
-            />
-
-            <p id="captcha-hint" class="mt-1 text-xs text-brand-muted">Answer the math question to help prevent spam.</p>
-
-        </div>
-
-        <button
-
-            type="submit"
-
-            class="rounded-lg bg-brand-emerald px-5 py-3 font-semibold text-white hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-emerald focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-
-            :disabled="loading"
-
-            x-text="loading ? 'Sending…' : 'Submit Request'"
-
-        >
-
-            Submit Request
-
-        </button>
-
-    </form>
-
+    </div>
 </section>
-
-<style>[x-cloak] { display: none !important; }</style>
-
 {% endblock %}
-
-

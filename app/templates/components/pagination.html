@@ -1,11 +1,11 @@
 {% if pagination["page_count"] > 1 %}
-<nav aria-label="Pagination" class="mt-8 flex flex-wrap items-center justify-center gap-2">
-    {% for link in page_urls %}
-        <a href="{{ link.url }}"
-           class="rounded-lg px-3 py-2 text-sm font-medium {{ 'bg-brand-emerald text-white' if link.current else 'border border-brand-border bg-white hover:border-brand-emerald' }}"
-           {% if link.current %}aria-current="page"{% endif %}>
-            {{ link.page }}
-        </a>
-    {% endfor %}
+<nav aria-label="Pagination" class="mt-40px">
+    <ul class="pagination pagination-style-01 justify-content-center mb-0">
+        {% for link in page_urls %}
+        <li class="page-item{% if link.current %} active{% endif %}">
+            <a href="{{ link.url }}" class="page-link"{% if link.current %} aria-current="page"{% endif %}>{{ link.page }}</a>
+        </li>
+        {% endfor %}
+    </ul>
 </nav>
 {% endif %}

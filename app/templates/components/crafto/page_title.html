@@ -1,0 +1,27 @@
+<section class="page-title-center-alignment cover-background top-space-margin" style="background-image: url('/static/crafto/images/crafto-landing-page-hero-section-bg.jpg')">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-lg-8 text-center">
+                {% if breadcrumbs %}
+                <nav aria-label="Breadcrumb" class="mb-20px">
+                    <ol class="breadcrumb justify-content-center text-white mb-0">
+                        {% for crumb in breadcrumbs %}
+                        <li class="breadcrumb-item{% if loop.last %} active{% endif %}"{% if loop.last %} aria-current="page"{% endif %}>
+                            {% if crumb.url and not loop.last %}
+                            <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+                            {% else %}
+                            {{ crumb.label }}
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+                {% endif %}
+                <h1 class="alt-font text-white fw-600 ls-minus-2px mb-15px">{{ page_heading | default(meta_title) }}</h1>
+                {% if page_subtitle %}
+                <p class="text-white opacity-8 fs-18 mb-0">{{ page_subtitle }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>

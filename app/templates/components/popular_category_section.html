@@ -1,16 +1,16 @@
-<section class="border-t border-brand-border pt-10 first:border-t-0 first:pt-0">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-            <h2 class="text-xl font-bold">Popular in {{ section.category.name }}</h2>
-            <p class="mt-1 text-sm text-brand-muted">{{ section.total_count }} templates</p>
+<div class="mb-50px">
+    <div class="row align-items-end mb-25px">
+        <div class="col-md-8">
+            <h3 class="alt-font fw-700 text-dark-gray ls-minus-1px mb-5px">Popular in {{ section.category.name }}</h3>
+            <p class="mb-0 text-medium-gray">{{ section.total_count }} templates</p>
         </div>
-        <a href="/popular?category={{ section.category.slug }}" class="text-sm font-semibold text-brand-dark hover:text-brand-emerald">
-            View all {{ section.category.name }} templates
-        </a>
+        <div class="col-md-4 text-md-end">
+            <a href="/popular?category={{ section.category.slug }}" class="btn btn-link text-dark-gray fw-600">View all {{ section.category.name }} templates <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
     </div>
-    <div class="mt-5 rounded-xl border border-brand-border bg-white px-4 sm:px-6">
+    <div class="bg-white border-radius-10px box-shadow-medium p-20px md-p-30px">
         {% for item in section.templates %}
             {% include "components/template_list_row.html" %}
         {% endfor %}
     </div>
-</section>
+</div>

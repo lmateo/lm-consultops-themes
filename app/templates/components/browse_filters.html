@@ -1,39 +1,39 @@
-<div class="mkt-sidebar-card">
-    <h2 class="text-sm font-bold uppercase tracking-wide text-brand-muted">Filter templates</h2>
-    <form method="get" action="/popular" class="mt-3 space-y-3">
-        <div>
-            <label for="q" class="text-sm font-medium">Search</label>
-            <input id="q" name="q" value="{{ filters.q }}" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 text-sm" />
+<div class="bg-white border-radius-10px box-shadow-medium p-25px mb-30px">
+    <h2 class="alt-font fs-14 fw-700 text-uppercase text-medium-gray mb-20px">Filter templates</h2>
+    <form method="get" action="/popular">
+        <div class="mb-20px">
+            <label for="q" class="form-label">Search</label>
+            <input id="q" name="q" value="{{ filters.q }}" class="form-control" />
         </div>
-        <div>
-            <label for="category" class="text-sm font-medium">Category</label>
-            <select id="category" name="category" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 text-sm">
+        <div class="mb-20px">
+            <label for="category" class="form-label">Category</label>
+            <select id="category" name="category" class="form-select">
                 <option value="">All categories</option>
                 {% for c in categories %}
-                    <option value="{{ c.slug }}" {% if filters.category == c.slug %}selected{% endif %}>{{ c.name }}</option>
+                <option value="{{ c.slug }}" {% if filters.category == c.slug %}selected{% endif %}>{{ c.name }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
-            <label for="industry" class="text-sm font-medium">Industry</label>
-            <select id="industry" name="industry" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 text-sm">
+        <div class="mb-20px">
+            <label for="industry" class="form-label">Industry</label>
+            <select id="industry" name="industry" class="form-select">
                 <option value="">All industries</option>
                 {% for i in industries %}
-                    <option value="{{ i.slug }}" {% if filters.industry == i.slug %}selected{% endif %}>{{ i.name }}</option>
+                <option value="{{ i.slug }}" {% if filters.industry == i.slug %}selected{% endif %}>{{ i.name }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-            <div>
-                <label for="min_price" class="text-sm font-medium">Min</label>
-                <input id="min_price" name="min_price" value="{{ filters.min_price }}" type="number" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 text-sm" />
+        <div class="row g-2 mb-20px">
+            <div class="col-6">
+                <label for="min_price" class="form-label">Min</label>
+                <input id="min_price" name="min_price" value="{{ filters.min_price }}" type="number" class="form-control" />
             </div>
-            <div>
-                <label for="max_price" class="text-sm font-medium">Max</label>
-                <input id="max_price" name="max_price" value="{{ filters.max_price }}" type="number" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2 text-sm" />
+            <div class="col-6">
+                <label for="max_price" class="form-label">Max</label>
+                <input id="max_price" name="max_price" value="{{ filters.max_price }}" type="number" class="form-control" />
             </div>
         </div>
         <input type="hidden" name="sort" value="{{ filters.sort }}" />
-        <button type="submit" class="w-full rounded-lg bg-brand-emerald px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark">Apply filters</button>
+        <button type="submit" class="btn btn-dark-gray btn-medium btn-rounded w-100">Apply filters</button>
     </form>
 </div>

@@ -1,0 +1,64 @@
+<header>
+    <nav class="navbar navbar-expand-lg {{ header_class | default('header-light bg-white header-reverse header-demo') }}" data-header-hover="dark">
+        <div class="container-fluid">
+            <div class="col-auto col-lg-2 me-lg-0 me-auto">
+                <a class="navbar-brand" href="/">
+                    <img src="/static/images/logos/logo_transparent.png" alt="Mateo ConsultOps Themes" class="default-logo mkt-brand-logo" />
+                    <img src="/static/images/logos/logo_transparent.png" alt="" class="alt-logo mkt-brand-logo" />
+                    <img src="/static/images/logos/logo_transparent.png" alt="" class="mobile-logo mkt-brand-logo" />
+                </a>
+            </div>
+            <div class="col-auto col-lg-8 menu-order position-static">
+                <button class="navbar-toggler float-start" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                    <span class="navbar-toggler-line"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown submenu">
+                            <a href="javascript:void(0);" class="nav-link">Browse Templates</a>
+                            <i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                            <div class="dropdown-menu submenu-content">
+                                <div class="d-lg-flex mega-menu m-auto">
+                                    <ul class="col">
+                                        <li class="sub-title">Categories</li>
+                                        {% for category in nav_categories[:8] %}
+                                        <li><a href="/popular?category={{ category.slug }}">{{ category.name }}</a></li>
+                                        {% endfor %}
+                                        <li><a href="/popular">View all categories</a></li>
+                                    </ul>
+                                    <ul class="col">
+                                        <li class="sub-title">Industries</li>
+                                        {% for industry in nav_industries[:8] %}
+                                        <li><a href="/popular?industry={{ industry.slug }}">{{ industry.name }}</a></li>
+                                        {% endfor %}
+                                        <li><a href="/popular">View all industries</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a href="/popular" class="nav-link">Marketplace</a></li>
+                        <li class="nav-item"><a href="/pricing" class="nav-link">Pricing</a></li>
+                        <li class="nav-item"><a href="/services/setup" class="nav-link">Setup</a></li>
+                        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+                        <li class="nav-item"><a href="/contact" class="nav-link">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-auto col-lg-2 text-end lg-ps-0 xs-pe-0">
+                <div class="header-icon">
+                    <div class="header-button">
+                        <a href="/popular" class="btn btn-dark-gray fw-500 btn-small btn-switch-text btn-rounded text-transform-none btn-box-shadow">
+                            <span>
+                                <span class="btn-double-text" data-text="Browse Templates">Browse Templates</span>
+                                <span><i class="feather icon-feather-shopping-bag"></i></span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

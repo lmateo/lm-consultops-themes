@@ -1,24 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-bold">Licensing & Pricing</h1>
-    <p class="mt-3 max-w-2xl text-brand-muted">Choose the right license and optional services for your launch velocity.</p>
-    <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <article class="rounded-2xl border border-brand-border bg-white p-6">
-            <h2 class="text-xl font-semibold">Standard</h2>
-            <p class="mt-3 text-3xl font-bold">$59</p>
-            <p class="mt-2 text-sm text-brand-muted">One production website, self-managed deployment.</p>
-        </article>
-        <article class="rounded-2xl border-2 border-brand-emerald bg-white p-6 shadow-soft">
-            <h2 class="text-xl font-semibold">Business</h2>
-            <p class="mt-3 text-3xl font-bold">$129</p>
-            <p class="mt-2 text-sm text-brand-muted">Includes setup assistance and launch checklist.</p>
-        </article>
-        <article class="rounded-2xl border border-brand-border bg-white p-6">
-            <h2 class="text-xl font-semibold">Agency</h2>
-            <p class="mt-3 text-3xl font-bold">$299</p>
-            <p class="mt-2 text-sm text-brand-muted">Multi-client usage with priority consulting support.</p>
-        </article>
+{% with page_heading="Licensing & Pricing", page_subtitle="Choose the right license and optional services for your launch velocity." %}
+{% include "components/crafto/page_title.html" %}
+{% endwith %}
+<section class="pt-6 pb-8">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+            <div class="col">
+                <div class="bg-white border-radius-10px box-shadow-medium p-40px text-center h-100">
+                    <h2 class="alt-font fw-700 text-dark-gray">Standard</h2>
+                    <p class="alt-font fs-45 fw-700 text-dark-gray my-20px">$59</p>
+                    <p class="text-medium-gray mb-0">One production website, self-managed deployment.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="bg-dark-gray border-radius-10px box-shadow-quadruple-large p-40px text-center h-100 text-white">
+                    <h2 class="alt-font fw-700">Business</h2>
+                    <p class="alt-font fs-45 fw-700 my-20px">$129</p>
+                    <p class="opacity-8 mb-0">Includes setup assistance and launch checklist.</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="bg-white border-radius-10px box-shadow-medium p-40px text-center h-100">
+                    <h2 class="alt-font fw-700 text-dark-gray">Agency</h2>
+                    <p class="alt-font fs-45 fw-700 text-dark-gray my-20px">$299</p>
+                    <p class="text-medium-gray mb-0">Multi-client usage with priority consulting support.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}
