@@ -16,7 +16,10 @@ alwaysApply: true
 - Reuse `@crafto-html-templates/` components and functionality as building blocks only; do not ship Crafto branding/content.
 - Replace any visible "Crafto", "ThemeZaa", or Crafto vendor references with "Mateo Consulting Tech" (unless hidden/internal technical pathing requires otherwise).
 - Template links must not default to Crafto destinations.
-- Use Mateo business logo assets for favicon and primary brand logo in all live preview templates.
+- Use Mateo business logo assets for favicon and primary brand logo in all live preview templates:
+  - Favicon: `/static/images/logos/mateo-favicon.ico`
+  - Header/footer primary logo: `/static/images/logos/mateo-logo_horizontal_transparent.png`
+- Wire these through `app/services/crafto_preview_wrap.py` (`rewrite_crafto_brand_assets`); do not use Crafto demo logos or legacy `mateo-logo.svg` / `mateo-favicon.svg` in wrapped live previews.
 - Do not use Crafto demo logos in preview header/footer brand lockups.
 
 ## Mandatory Audit Checklist (run on each template update)

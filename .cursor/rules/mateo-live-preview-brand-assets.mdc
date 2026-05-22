@@ -1,0 +1,30 @@
+---
+description: Canonical Mateo favicon and header logo paths for wrapped live template previews
+alwaysApply: true
+---
+
+# Mateo Live Preview Brand Assets
+
+## Canonical Assets
+
+Use only these files for favicon and primary header/footer logo lockups in **wrapped live template previews** (`/preview/{slug}/{page}`):
+
+| Role | Path |
+|------|------|
+| Favicon | `/static/images/logos/mateo-favicon.ico` |
+| Primary logo (navbar, footer logo, default/alt/mobile logo imgs) | `/static/images/logos/mateo-logo_horizontal_transparent.png` |
+
+Source files live under `app/static/images/logos/`.
+
+## Implementation
+
+- Centralize rewrites in `app/services/crafto_preview_wrap.py` via `_MATEO_FAVICON_SRC`, `_MATEO_LOGO_SRC`, and `rewrite_crafto_brand_assets()`.
+- Do not hardcode Crafto `images/favicon.png` or demo-specific `*-logo.png` paths in preview output; the wrap layer must replace them.
+- Do not substitute `mateo-logo.svg`, `mateo-favicon.svg`, or Crafto demo logos in live preview headers/footers.
+
+## Verification
+
+After branding or preview-wrap changes:
+
+- Run `py scripts/audit_assets_components.py` and confirm no logo/favicon issues.
+- Spot-check a preview page: favicon link and `navbar-brand` / `footer-logo` images must resolve to the canonical paths above.
