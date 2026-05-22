@@ -13,6 +13,21 @@ def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", lowered).strip("-")
 
 
+def _sync_template_prices(db) -> int:
+    """Apply catalog prices from TEMPLATE_SEED to existing templates by slug."""
+    updated = 0
+    for item in TEMPLATE_SEED:
+        slug = slugify(item["title"])
+        template = db.scalar(select(Template).where(Template.slug == slug))
+        if template is None:
+            continue
+        price = float(item["price"])
+        if template.price != price:
+            template.price = price
+            updated += 1
+    return updated
+
+
 def _cleanup_hosting_data(db) -> tuple[int, int]:
     templates_to_update = db.scalars(
         select(Template.id).where(Template.hosting_available.is_(True))
@@ -34,10 +49,12 @@ def seed():
     try:
         existing = db.scalar(select(Template.id).limit(1))
         if existing:
+            price_updates = _sync_template_prices(db)
             template_updates, deleted_addons = _cleanup_hosting_data(db)
             db.commit()
             print(
                 "Seed skipped (existing templates). "
+                f"Price sync applied: {price_updates} templates updated. "
                 f"Hosting cleanup applied: {template_updates} templates updated, {deleted_addons} add-ons removed."
             )
             return
@@ -64,7 +81,7 @@ def seed():
                 description=item["description"],
                 category_id=categories[item["category"]].id,
                 industry_id=industries[item["industry"]].id,
-                price=59 + idx * 7,
+                price=float(item["price"]),
                 rating=4.5 + (idx % 5) * 0.1,
                 sales_count=80 * idx,
                 last_updated=datetime.now() - timedelta(days=idx * 3),
