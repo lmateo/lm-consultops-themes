@@ -1,0 +1,4 @@
+PREVIEW TITLE AUDIT
+pages checked: 40
+mismatches: 0
+expected: Mateo Consulting Team - The Multipurpose HTML5 Template

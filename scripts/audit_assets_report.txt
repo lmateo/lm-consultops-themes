@@ -1,0 +1,14 @@
+ASSET/LINK/COMPONENT AUDIT
+mapped pages checked: 40
+missing html refs: 0
+missing asset refs: 0
+missing jinja includes: 0
+logo/favicon issues in wrapped preview: 0
+header/footer brand text issues in wrapped preview: 0
+branding mentions in app paths: 4
+
+BRANDING MENTIONS (app paths)
+app\routers\public.py
+app\services\crafto_demos.py
+app\services\crafto_preview_wrap.py
+app\templates\demos\partials\premium_home_sections.html

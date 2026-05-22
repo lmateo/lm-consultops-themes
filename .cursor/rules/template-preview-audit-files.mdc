@@ -1,0 +1,31 @@
+---
+description: File-scoped audit guardrails for preview routes, demo templates, and template audits
+globs: app/templates/demos/**/*.html,app/templates/components/preview_chrome.html,app/services/*preview*.py,app/services/crafto_demos.py,app/routers/public.py,scripts/audit_*.py,scripts/*audit*.txt
+alwaysApply: false
+---
+
+# File-Scoped Template Preview QA Rule
+
+## When This Rule Applies
+
+- Any edit to preview routing, demo HTML pages, preview chrome, Crafto demo mappings, or audit scripts/reports.
+
+## Required Checks Before Finishing
+
+- Run link audit: `py scripts/audit_preview_header_footer_links.py`
+- Run hash-link audit: `py scripts/audit_crafto_hash_links.py`
+- Run title audit: `py scripts/audit_preview_titles.py`
+- Refresh report: `scripts/audit_report.txt`
+- Confirm no Crafto/ThemeZaa user-facing branding in edited preview/template pages.
+- Confirm favicon and primary logo in live preview pages use Mateo business assets.
+- Confirm header and footer text in wrapped previews do not contain "Crafto" or "ThemeZaa".
+- Confirm wrapped preview `<title>` equals `Mateo Consulting Team - The Multipurpose HTML5 Template`.
+- Confirm wrapped previews do not emit `/crafto/#` or bare `#`; map those to `/preview/{slug}/home`.
+- Confirm preview links map to `/preview/{slug}/{page}` or gracefully fallback to `/preview/{slug}/home`.
+- Confirm edited pages have no missing CSS/JS/component references.
+
+## Route + Fallback Standard
+
+- Do not return broken preview-site paths.
+- If an inner page is missing/unmapped, route to template home preview.
+- Keep header/footer/navigation links consistent across the mapped page set.

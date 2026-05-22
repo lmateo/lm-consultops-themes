@@ -28,6 +28,9 @@ require_git_bash() {
 
 require_git_bash
 
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$REPO_ROOT"
+
 BRANCH=$(git branch --show-current)
 
 if [ -z "$BRANCH" ]; then
@@ -38,6 +41,59 @@ fi
 echo "Current branch: $BRANCH"
 echo "Checking git status..."
 git status
+
+run_preview_audits() {
+  if [ ! -f "scripts/audit_crafto_hash_links.py" ]; then
+    return
+  fi
+
+  echo "Running preview audit checks..."
+  py scripts/audit_crafto_hash_links.py > scripts/audit_crafto_hash_links_report.txt
+  HASH_MATCHES="$(awk -F': ' '/^matches:/ {print $2}' scripts/audit_crafto_hash_links_report.txt || true)"
+  HASH_MATCHES="${HASH_MATCHES:-0}"
+
+  if ! [[ "$HASH_MATCHES" =~ ^[0-9]+$ ]]; then
+    echo "Error: could not parse hash-link audit result:"
+    echo "  scripts/audit_crafto_hash_links_report.txt"
+    exit 1
+  fi
+
+  if [ "$HASH_MATCHES" -gt 0 ]; then
+    echo "Error: hash-link audit found $HASH_MATCHES invalid links."
+    echo "Fix '/crafto/#' or bare '#' links before autopush."
+    echo "See: scripts/audit_crafto_hash_links_report.txt"
+    exit 1
+  fi
+
+  if [ -f "scripts/audit_preview_header_footer_links.py" ]; then
+    py scripts/audit_preview_header_footer_links.py > scripts/audit_report.txt
+  fi
+
+  if [ -f "scripts/audit_preview_titles.py" ]; then
+    py scripts/audit_preview_titles.py > scripts/audit_preview_titles_report.txt
+    TITLE_MISMATCHES="$(awk -F': ' '/^mismatches:/ {print $2}' scripts/audit_preview_titles_report.txt || true)"
+    TITLE_MISMATCHES="${TITLE_MISMATCHES:-0}"
+
+    if ! [[ "$TITLE_MISMATCHES" =~ ^[0-9]+$ ]]; then
+      echo "Error: could not parse title audit result:"
+      echo "  scripts/audit_preview_titles_report.txt"
+      exit 1
+    fi
+
+    if [ "$TITLE_MISMATCHES" -gt 0 ]; then
+      echo "Error: title audit found $TITLE_MISMATCHES mismatches."
+      echo "Fix preview <title> values before autopush."
+      echo "See: scripts/audit_preview_titles_report.txt"
+      exit 1
+    fi
+  fi
+
+  if [ -f "scripts/audit_assets_components.py" ]; then
+    py scripts/audit_assets_components.py > scripts/audit_assets_report.txt
+  fi
+}
+
+run_preview_audits
 
 echo "Staging changes..."
 git add .

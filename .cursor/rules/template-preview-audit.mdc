@@ -1,0 +1,48 @@
+---
+description: Always-on QA and branding guardrails for template and preview demo pages
+alwaysApply: true
+---
+
+# Template + Preview Audit Rule
+
+## Scope
+
+- Apply to all current templates and every newly created template.
+- Audit all HTML demo pages and wrapped preview pages (`home`, `about`, `services`, `contact`, and any added pages).
+
+## Build + Brand Requirements
+
+- Every template must be a unique build designed for Mateo Consulting Tech business goals.
+- Reuse `@crafto-html-templates/` components and functionality as building blocks only; do not ship Crafto branding/content.
+- Replace any visible "Crafto", "ThemeZaa", or Crafto vendor references with "Mateo Consulting Tech" (unless hidden/internal technical pathing requires otherwise).
+- Template links must not default to Crafto destinations.
+- Use Mateo business logo assets for favicon and primary brand logo in all live preview templates.
+- Do not use Crafto demo logos in preview header/footer brand lockups.
+
+## Mandatory Audit Checklist (run on each template update)
+
+- Validate all anchor links in header, footer, nav, CTA blocks, and key section components.
+- Validate there are no `/crafto/#` or bare `#` hrefs in wrapped live preview output.
+- Convert any would-be `/crafto/#` links to `/preview/{slug}/home`.
+- Validate all JS and CSS references used by each HTML demo page (no missing or broken asset paths).
+- Validate component/partial references used to assemble demo pages.
+- Validate favicon and primary logo sources in preview pages resolve to Mateo assets.
+- Validate visible header/footer text has no "Crafto" or "ThemeZaa" after preview rewrites.
+- Replace header/footer branding mentions with "Mateo Consulting Tech".
+- Validate live preview `<title>` is exactly `Mateo Consulting Team - The Multipurpose HTML5 Template` for all preview pages.
+- Ensure preview chrome links (`Back`, page tabs, `Purchase`) resolve correctly for each slug.
+- Ensure no broken links remain in preview output.
+
+## Preview Fallback + Routing Rules
+
+- If a requested preview-site page does not exist, default to that template's home preview route.
+- Broken or unmapped preview-site links must gracefully route to `/preview/{slug}/home` instead of failing.
+- Allowed preview page links should resolve to `/preview/{slug}/{page}`.
+
+## Verification Commands
+
+- Run `py scripts/audit_preview_header_footer_links.py` after template/preview link changes.
+- Run `py scripts/audit_crafto_hash_links.py` and ensure matches are zero.
+- Run `py scripts/audit_preview_titles.py` and ensure mismatches are zero.
+- Run `py scripts/audit_assets_components.py` after branding/logo or asset changes.
+- Save or update report output in `scripts/audit_report.txt` and review flagged issues before completion.

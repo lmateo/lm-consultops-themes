@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" role="img" aria-labelledby="mateoLogoTitle mateoLogoDesc">
+  <title id="mateoLogoTitle">Mateo Consulting Tech</title>
+  <desc id="mateoLogoDesc">Wordmark logo for Mateo Consulting Tech.</desc>
+  <defs>
+    <linearGradient id="mateoGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="8" width="56" height="56" rx="14" fill="url(#mateoGrad)"/>
+  <path d="M18 46V24h8l7 9 7-9h8v22h-7V34l-8 9-8-9v12z" fill="#FFFFFF"/>
+  <text x="74" y="35" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" fill="#111827">
+    Mateo Consulting
+  </text>
+  <text x="74" y="54" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" fill="#047857">
+    Tech
+  </text>
+</svg>
