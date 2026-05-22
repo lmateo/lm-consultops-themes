@@ -9,12 +9,21 @@ alwaysApply: true
 
 Use only these files for favicon and primary header/footer logo lockups in **wrapped live template previews** (`/preview/{slug}/{page}`):
 
-| Role | Path |
-|------|------|
-| Favicon | `/static/images/logos/mateo-favicon.ico` |
-| Primary logo (navbar, footer logo, default/alt/mobile logo imgs) | `/static/images/logos/mateo-logo_horizontal_transparent.png` |
+- Favicon: `/static/images/logos/mateo-favicon.ico`
+- Primary logo (navbar, footer logo, default/alt/mobile logo imgs): `/static/images/logos/mateo-logo_horizontal_transparent.png`
 
 Source files live under `app/static/images/logos/`.
+
+## Display Size (Balanced Header Sizing)
+
+Render `mateo-logo_horizontal_transparent.png` at a balanced size in the marketplace shell and wrapped live previews so header branding remains clear but not oversized. Do not upscale the PNG file itself; use CSS.
+
+- Marketplace header (`base.html`): prior `h-8` (32px) -> target `2.2rem` (~35px) via `.mkt-mateo-brand-logo` in `marketplace.css`.
+- Live preview header/footer logos: prior Crafto `max-height: 46px` -> target `51px` via `--mkt-mateo-logo-max-height` in `preview-chrome.css`.
+- Live preview mobile navbar: prior `28px` cap -> target `31px` in `preview-mobile.css`.
+
+- Add class `mkt-mateo-brand-logo` to Mateo logo `<img>` tags in `rewrite_crafto_brand_assets()` and marketplace `base.html`.
+- Keep aspect ratio with `width: auto` / `height: auto`; use `max-height` in previews so demo-specific Crafto caps do not shrink the logo.
 
 ## Implementation
 

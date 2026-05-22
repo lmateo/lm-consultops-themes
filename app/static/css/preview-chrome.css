@@ -6,6 +6,8 @@
   --mkt-chrome-border: #e5e7eb;
   --mkt-chrome-accent: #10b981;
   --mkt-chrome-accent-dark: #047857;
+  /* Balanced logo cap for wrapped preview headers/footers */
+  --mkt-mateo-logo-max-height: 51px;
 }
 
 body.mkt-preview-active {
@@ -34,6 +36,14 @@ body.mkt-preview-active .mkt-preview-canvas .header-top-bar {
 
 body.mkt-preview-active .mkt-preview-canvas .header-top-bar + .navbar {
   top: calc(var(--mkt-chrome-height) + var(--mkt-header-top-bar-height, 0px)) !important;
+}
+
+/* Mateo horizontal logo in wrapped template headers/footers */
+.mkt-preview-canvas .mkt-mateo-brand-logo,
+.mkt-preview-canvas img[src*="mateo-logo_horizontal_transparent"] {
+  max-height: var(--mkt-mateo-logo-max-height) !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 html[data-mkt-viewport="desktop"] .mkt-preview-canvas {

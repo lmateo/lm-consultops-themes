@@ -24,6 +24,7 @@ _CANVAS_CLOSE = "</div><!-- /mkt-preview-canvas -->"
 _BODY_SCRIPT = '<script defer src="/static/js/preview-chrome.js"></script>'
 _MATEO_LOGO_SRC = "/static/images/logos/mateo-logo_horizontal_transparent.png"
 _MATEO_FAVICON_SRC = "/static/images/logos/mateo-favicon.ico"
+_MATEO_LOGO_CLASS = "mkt-mateo-brand-logo"
 _MATEO_BRAND_NAME = "Mateo Consulting Tech"
 _MATEO_PREVIEW_TITLE = "Mateo Consulting Team - The Multipurpose HTML5 Template"
 
@@ -305,6 +306,28 @@ def rewrite_crafto_preview_links(html: str, *, slug: str, crafto: CraftoDemoMapp
     return _HREF_RE.sub(_replace_href, html)
 
 
+def _ensure_mateo_logo_class_on_imgs(html: str) -> str:
+    """Tag Mateo logo images so preview CSS can apply consistent balanced sizing."""
+
+    def _tag_img(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        if _MATEO_LOGO_SRC not in tag:
+            return tag
+        if re.search(rf'\bclass=(["\'])[^"\']*\b{re.escape(_MATEO_LOGO_CLASS)}\b', tag, flags=re.IGNORECASE):
+            return tag
+        class_match = re.search(r'\bclass=(["\'])([^"\']*)\1', tag, flags=re.IGNORECASE)
+        if class_match:
+            quote, classes = class_match.group(1), class_match.group(2)
+            return tag.replace(
+                class_match.group(0),
+                f'class={quote}{classes} {_MATEO_LOGO_CLASS}{quote}',
+                1,
+            )
+        return tag[:-1] + f' class="{_MATEO_LOGO_CLASS}">'
+
+    return re.sub(r"<img[^>]*>", _tag_img, html, flags=re.IGNORECASE)
+
+
 def rewrite_crafto_brand_assets(html: str) -> str:
     """Replace demo favicon and primary logo lockups with Mateo brand assets."""
     # Normalize favicon and Apple touch icons to Mateo favicon.
@@ -381,7 +404,7 @@ def rewrite_crafto_brand_assets(html: str) -> str:
     # Catch any remaining in-page Crafto logo assets and normalize to Mateo logo.
     html = _SRC_RE.sub(_replace_any_crafto_logo_attr, html)
     html = _DATA_AT2X_RE.sub(_replace_any_crafto_logo_at2x_attr, html)
-    return html
+    return _ensure_mateo_logo_class_on_imgs(html)
 
 
 def rewrite_crafto_brand_copy(html: str) -> str:
