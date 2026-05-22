@@ -531,12 +531,17 @@ def _render_chrome(
     crafto: CraftoDemoMapping,
     active_page: str,
 ) -> str:
+    ordered_pages = tuple(
+        ["home", *[page for page in crafto.pages.keys() if page != "home"]]
+        if "home" in crafto.pages
+        else crafto.pages.keys()
+    )
     tpl = templates.env.get_template("components/preview_chrome.html")
     return tpl.render(
         template_slug=template.slug,
         template_title=template.title,
         crafto_demo_label=crafto.crafto_demo_label,
-        demo_pages=tuple(crafto.pages.keys()),
+        demo_pages=ordered_pages,
         active_page=active_page,
     )
 

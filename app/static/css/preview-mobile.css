@@ -159,14 +159,16 @@ html[data-mkt-viewport="mobile"] .mkt-preview-canvas [class*="marquee"] {
   overflow: hidden;
 }
 
-/* Navbar: tuned mobile cap to avoid oversized branding */
+/* Navbar: balanced Mateo logo cap to avoid nav overlap */
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas header .navbar-brand img {
-  max-height: 31px;
+  max-height: 34px;
+  max-width: 170px;
 }
 
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas .mkt-mateo-brand-logo,
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas img[src*="mateo-logo_horizontal_transparent"] {
-  max-height: 31px !important;
+  max-height: 34px !important;
+  max-width: 170px !important;
 }
 
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas .navbar .navbar-nav .nav-link {

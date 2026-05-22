@@ -14,13 +14,13 @@ Use only these files for favicon and primary header/footer logo lockups in **wra
 
 Source files live under `app/static/images/logos/`.
 
-## Display Size (Balanced Header Sizing)
+## Display Size (Balanced Live Preview Sizing)
 
-Render `mateo-logo_horizontal_transparent.png` at a balanced size in the marketplace shell and wrapped live previews so header branding remains clear but not oversized. Do not upscale the PNG file itself; use CSS.
+Render `mateo-logo_horizontal_transparent.png` at balanced, non-overlapping sizes in wrapped live previews so navigation stays readable across all demo header layouts. Do not upscale the PNG file itself; use CSS.
 
-- Marketplace header (`base.html`): prior `h-8` (32px) -> target `2.2rem` (~35px) via `.mkt-mateo-brand-logo` in `marketplace.css`.
-- Live preview header/footer logos: prior Crafto `max-height: 46px` -> target `51px` via `--mkt-mateo-logo-max-height` in `preview-chrome.css`.
-- Live preview mobile navbar: prior `28px` cap -> target `31px` in `preview-mobile.css`.
+- Marketplace header (`base.html`): configured separately via `.mkt-mateo-brand-logo` in `marketplace.css`.
+- Live preview header/footer logos: cap to `56px` height and `220px` width via `--mkt-mateo-logo-max-height` and `--mkt-mateo-logo-max-width` in `preview-chrome.css`.
+- Live preview mobile navbar: cap to `34px` height and `170px` width in `preview-mobile.css`.
 
 - Add class `mkt-mateo-brand-logo` to Mateo logo `<img>` tags in `rewrite_crafto_brand_assets()` and marketplace `base.html`.
 - Keep aspect ratio with `width: auto` / `height: auto`; use `max-height` in previews so demo-specific Crafto caps do not shrink the logo.
@@ -28,6 +28,8 @@ Render `mateo-logo_horizontal_transparent.png` at a balanced size in the marketp
 ## Implementation
 
 - Centralize rewrites in `app/services/crafto_preview_wrap.py` via `_MATEO_FAVICON_SRC`, `_MATEO_LOGO_SRC`, and `rewrite_crafto_brand_assets()`.
+- In `app/templates/components/preview_chrome.html`, render the Mateo logo before the `Home` tab link in the live preview header toolbar for every template/slug.
+- Keep `home` as the first preview page item when rendering chrome tabs so the logo always appears before `Home`.
 - Do not hardcode Crafto `images/favicon.png` or demo-specific `*-logo.png` paths in preview output; the wrap layer must replace them.
 - Do not substitute `mateo-logo.svg`, `mateo-favicon.svg`, or Crafto demo logos in live preview headers/footers.
 
@@ -37,3 +39,6 @@ After branding or preview-wrap changes:
 
 - Run `py scripts/audit_assets_components.py` and confirm no logo/favicon issues.
 - Spot-check a preview page: favicon link and `navbar-brand` / `footer-logo` images must resolve to the canonical paths above.
+- Spot-check the preview chrome toolbar: Mateo logo must appear before the `Home` link/tab on all live preview pages.
+- Spot-check multiple slugs (including compact header variants) to confirm logo does not overlap nav links.
+- Run `py scripts/audit_preview_logo_placement.py` and review `artifacts/live-preview-audit/report.json` plus per-slug screenshots to verify brand-before-home and zero overlap across all slugs.

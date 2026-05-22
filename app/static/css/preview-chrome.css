@@ -6,8 +6,9 @@
   --mkt-chrome-border: #e5e7eb;
   --mkt-chrome-accent: #10b981;
   --mkt-chrome-accent-dark: #047857;
-  /* Balanced logo cap for wrapped preview headers/footers */
-  --mkt-mateo-logo-max-height: 51px;
+  /* Balanced logo caps for wrapped preview headers/footers */
+  --mkt-mateo-logo-max-height: 56px;
+  --mkt-mateo-logo-max-width: 220px;
 }
 
 body.mkt-preview-active {
@@ -42,8 +43,22 @@ body.mkt-preview-active .mkt-preview-canvas .header-top-bar + .navbar {
 .mkt-preview-canvas .mkt-mateo-brand-logo,
 .mkt-preview-canvas img[src*="mateo-logo_horizontal_transparent"] {
   max-height: var(--mkt-mateo-logo-max-height) !important;
+  max-width: min(var(--mkt-mateo-logo-max-width), 100%) !important;
   width: auto !important;
   height: auto !important;
+}
+
+/* Keep header lockups inside their logo columns in all Crafto variants */
+body.mkt-preview-active .mkt-preview-canvas header .navbar .navbar-brand,
+body.mkt-preview-active .mkt-preview-canvas header .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(var(--mkt-mateo-logo-max-width), 100%);
+}
+
+body.mkt-preview-active .mkt-preview-canvas header .menu-logo .navbar-brand,
+body.mkt-preview-active .mkt-preview-canvas header [class*="logo"] .navbar-brand {
+  max-width: 100%;
 }
 
 html[data-mkt-viewport="desktop"] .mkt-preview-canvas {
@@ -87,6 +102,19 @@ html[data-mkt-viewport="desktop"] .mkt-preview-canvas {
   border: 1px solid var(--mkt-chrome-border);
   background: #fff;
   transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.mkt-preview-chrome__brand {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.mkt-preview-chrome__brand .mkt-mateo-brand-logo {
+  height: 1.95rem;
+  width: auto;
+  max-height: none;
 }
 
 .mkt-preview-chrome__back:hover {
@@ -227,6 +255,10 @@ html[data-mkt-viewport="desktop"] .mkt-preview-canvas {
   .mkt-preview-chrome__viewport {
     order: 2;
     margin-left: auto;
+  }
+
+  .mkt-preview-chrome__brand .mkt-mateo-brand-logo {
+    height: 1.7rem;
   }
 
   .mkt-preview-chrome__cta {

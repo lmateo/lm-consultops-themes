@@ -21,7 +21,7 @@ alwaysApply: true
   - Header/footer primary logo: `/static/images/logos/mateo-logo_horizontal_transparent.png`
 - Wire these through `app/services/crafto_preview_wrap.py` (`rewrite_crafto_brand_assets`); do not use Crafto demo logos or legacy `mateo-logo.svg` / `mateo-favicon.svg` in wrapped live previews.
 - Do not use Crafto demo logos in preview header/footer brand lockups.
-- Render `mateo-logo_horizontal_transparent.png` with balanced header sizing (`51px` desktop preview, `31px` mobile preview, `2.2rem` marketplace lockup) via `mkt-mateo-brand-logo` and preview CSS — do not upscale the PNG file.
+- Render `mateo-logo_horizontal_transparent.png` with balanced non-overlapping header sizing (`56px` max height + `220px` max width desktop preview, `34px` max height + `170px` max width mobile preview) via `mkt-mateo-brand-logo` and preview CSS — do not upscale the PNG file.
 
 ## Mandatory Audit Checklist (run on each template update)
 
@@ -35,6 +35,7 @@ alwaysApply: true
 - Replace header/footer branding mentions with "Mateo Consulting Tech".
 - Validate live preview `<title>` is exactly `Mateo Consulting Team - The Multipurpose HTML5 Template` for all preview pages.
 - Ensure preview chrome links (`Back`, page tabs, `Purchase`) resolve correctly for each slug.
+- Ensure preview chrome toolbar shows Mateo logo before the `Home` link/tab for every slug/page.
 - Ensure no broken links remain in preview output.
 
 ## Preview Fallback + Routing Rules
@@ -49,4 +50,5 @@ alwaysApply: true
 - Run `py scripts/audit_crafto_hash_links.py` and ensure matches are zero.
 - Run `py scripts/audit_preview_titles.py` and ensure mismatches are zero.
 - Run `py scripts/audit_assets_components.py` after branding/logo or asset changes.
+- Run `py scripts/audit_preview_logo_placement.py` and ensure fails are zero (logo before `Home`, no overlap).
 - Save or update report output in `scripts/audit_report.txt` and review flagged issues before completion.

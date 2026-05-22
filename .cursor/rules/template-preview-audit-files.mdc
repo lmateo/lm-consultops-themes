@@ -15,13 +15,16 @@ alwaysApply: false
 - Run link audit: `py scripts/audit_preview_header_footer_links.py`
 - Run hash-link audit: `py scripts/audit_crafto_hash_links.py`
 - Run title audit: `py scripts/audit_preview_titles.py`
+- Run visual logo placement audit: `py scripts/audit_preview_logo_placement.py`
 - Refresh report: `scripts/audit_report.txt`
 - Confirm no Crafto/ThemeZaa user-facing branding in edited preview/template pages.
-- Confirm favicon and primary logo in live preview pages use Mateo business assets (`mateo-favicon.ico`, `mateo-logo_horizontal_transparent.png`) at balanced display size (`mkt-mateo-brand-logo`, 51px desktop / 31px mobile / 2.2rem marketplace).
+- Confirm favicon and primary logo in live preview pages use Mateo business assets (`mateo-favicon.ico`, `mateo-logo_horizontal_transparent.png`) at non-overlapping display size (`mkt-mateo-brand-logo`, desktop max 56px x 220px / mobile max 34px x 170px).
 - Confirm header and footer text in wrapped previews do not contain "Crafto" or "ThemeZaa".
 - Confirm wrapped preview `<title>` equals `Mateo Consulting Team - The Multipurpose HTML5 Template`.
 - Confirm wrapped previews do not emit `/crafto/#` or bare `#`; map those to `/preview/{slug}/home`.
 - Confirm preview links map to `/preview/{slug}/{page}` or gracefully fallback to `/preview/{slug}/home`.
+- Confirm preview chrome header includes Mateo logo before the `Home` tab on all live preview pages.
+- Confirm `artifacts/live-preview-audit/report.json` shows zero failures and review generated screenshots for visual overlap.
 - Confirm edited pages have no missing CSS/JS/component references.
 
 ## Route + Fallback Standard
