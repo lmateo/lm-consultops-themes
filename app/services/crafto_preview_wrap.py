@@ -22,7 +22,7 @@ _CANVAS_OPEN = '<div id="mkt-preview-canvas" class="mkt-preview-canvas">'
 _CANVAS_CLOSE = "</div><!-- /mkt-preview-canvas -->"
 
 _BODY_SCRIPT = '<script defer src="/static/js/preview-chrome.js"></script>'
-_MATEO_LOGO_SRC = "/static/images/logos/logo-black.png"
+_MATEO_LOGO_SRC = "/static/images/logos/mateo-logo_horizontal_transparent.png"
 _MATEO_FAVICON_SRC = "/static/images/logos/mateo-favicon.ico"
 _MATEO_LOGO_CLASS = "mkt-mateo-brand-logo"
 _MATEO_BRAND_NAME = "Mateo Consulting Tech"
