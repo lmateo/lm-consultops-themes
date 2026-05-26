@@ -35,10 +35,11 @@ h3,
   font-family: var(--mkt-font-display);
 }
 
-/* Extra-large marketplace header lockup sizing */
+/* Marketplace header lockup sizing (+10%) */
 .mkt-brand-lockup .mkt-mateo-brand-logo,
-.mkt-brand-lockup img[src*="mateo-logo_horizontal_transparent"] {
-  height: 3.1rem;
+.mkt-brand-lockup img[src*="mateo-logo_horizontal_transparent"],
+.mkt-brand-lockup img[src*="logo-black"] {
+  height: 3.4rem;
   max-height: none;
   width: auto;
 }
