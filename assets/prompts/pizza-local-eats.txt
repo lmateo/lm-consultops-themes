@@ -1,8 +1,11 @@
-crafto_preview: Pizza Parlor (demo-pizza-parlor)
+mateo_preview: Pizza Parlor (demo-pizza-parlor)
 subject: Artisan pizza restaurant — wood-fired oven with fresh pizza, rustic dining room, chef plating food, warm neighborhood pizzeria atmosphere.
 lighting: Warm evening restaurant glow with oven fire highlights.
 mood: Welcoming, handcrafted, local favorite, appetizing.
 composition: Wide hero with oven and dining area visible, food as focal point.
 palette: Tomato red, basil green, warm wood, charcoal brick.
 camera angle: Eye-level interior restaurant photography.
-website usage context: Live preview for pizza-parlor Crafto demo (menu, chefs, franchise).
+alignment instructions: Keep oven, chef, or plated pizza focal area centered with breathing room on every edge so hero, preview, thumbnail, and mobile crops stay aligned.
+website usage context: Live preview for pizza-parlor Mateo Consulting Tech demo (menu, chefs, franchise).
+image generation instructions: Generate a cohesive website image set aligned to this pizza restaurant subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep people, setting, props, and styling consistent across all images.
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

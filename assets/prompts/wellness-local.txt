@@ -1,8 +1,31 @@
-crafto_preview: Spa Salon (demo-spa-salon)
-subject: Luxury spa and beauty salon — serene treatment room with massage table, candles, towels, aesthetician performing facial or massage, elegant interior.
-lighting: Soft warm ambient spa lighting with gentle highlights.
-mood: Relaxing, pampering, luxurious self-care, tranquil.
-composition: Wide hero with treatment room or spa lounge as focal point, minimalist elegant decor.
-palette: Blush pink, cream, soft gold, sage green, warm white.
-camera angle: Eye-level gentle wide interior spa photography.
-website usage context: Live preview for spa-salon Crafto demo (treatments, packages, facility) — NOT hospital clinic or therapy office.
+mateo_preview: Wellness Local (demo-spa-salon)
+
+subject: Integrative healthcare and wellness clinic — physician in white coat consulting with patient in a bright modern exam room, physical therapist guiding rehabilitation exercise, nutritionist reviewing health plan at desk, clean clinical reception with warm accents.
+
+lighting: Bright clinical daylight with warm natural tones, professional and inviting medical atmosphere.
+
+mood: Caring, holistic, evidence-based wellness, patient-centered, trustworthy healthcare.
+
+composition: Wide hero with healthcare provider and patient consultation as focal point, modern clinic environment with clean organized medical details.
+
+palette: Calming teal, clean white, warm wood accents, soft sage green, light gray.
+
+camera angle: Eye-level medium-wide modern healthcare clinic interior photography.
+
+alignment instructions: Keep healthcare provider and patient interaction centered with safe margins on all sides so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep physician/patient consultation locked in center-safe window (middle 42% width and middle 48% height), with clear left/right negative space for desktop and thumbnail crops.
+
+about alignment instructions: Keep clinical team centered with full faces visible and no subject touching side or top frame edges.
+
+services alignment instructions: Keep the treatment or consultation action centered with generous side margins so responsive crops do not cut the provider or patient.
+
+contact alignment instructions: Keep the clinic reception or front desk centered with open negative space on both sides for stable crop behavior.
+
+gallery alignment instructions: Keep one dominant healthcare focal subject near center with balanced edge spacing; avoid extreme close-ups that crop awkwardly in 16:9.
+
+website usage context: Live preview for Wellness Local Mateo Consulting Tech demo (primary care, physical therapy, nutrition coaching, chronic care management, telehealth, corporate wellness, HIPAA-compliant integrative healthcare).
+
+image generation instructions: Generate a cohesive website image set aligned to this integrative healthcare subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep healthcare providers, patients, clinic environment, medical equipment, and styling consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

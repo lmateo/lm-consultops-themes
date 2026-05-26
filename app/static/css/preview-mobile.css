@@ -166,7 +166,7 @@ html[data-mkt-viewport="mobile"] .mkt-preview-canvas header .navbar-brand img {
 }
 
 html[data-mkt-viewport="mobile"] .mkt-preview-canvas .mkt-mateo-brand-logo,
-html[data-mkt-viewport="mobile"] .mkt-preview-canvas img[src*="mateo-logo_horizontal_transparent"] {
+html[data-mkt-viewport="mobile"] .mkt-preview-canvas img[src*="logo-black"] {
   max-height: 34px !important;
   max-width: 170px !important;
 }

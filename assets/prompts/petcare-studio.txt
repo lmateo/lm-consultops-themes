@@ -1,8 +1,31 @@
-crafto_preview: Medical (demo-medical)
-subject: Human healthcare clinic — trusted doctor in white coat with stethoscope, modern hospital reception and exam room, patient consultation scene.
-lighting: Bright clean clinical daylight, soft and reassuring.
-mood: Professional, caring, medical trust, health partner.
-composition: Wide hero with doctor/patient or clinic interior as focal point, clean medical environment.
-palette: Clinical white, soft blue, red accent, light gray.
-camera angle: Eye-level medium-wide healthcare interior photography.
-website usage context: Live preview for medical Crafto demo (doctors, treatments, appointments) — NOT veterinary pets or animal grooming.
+mateo_preview: Pet Care (demo-petcare)
+
+subject: Modern pet care and veterinary clinic — caring veterinarian with dog and cat patients, welcoming pet reception area, clean exam room, pet wellness consultation scene.
+
+lighting: Bright natural daylight with warm welcoming indoor lighting, soft and comforting.
+
+mood: Compassionate, trustworthy, family-friendly, professional pet healthcare and wellness.
+
+composition: Wide hero with veterinarian interacting with pets and owners as focal point, modern pet clinic environment with clean organized details.
+
+palette: Soft teal, clean white, warm beige, calming green accents, light gray.
+
+camera angle: Eye-level medium-wide veterinary clinic interior photography.
+
+alignment instructions: Keep veterinarian, pets, and key clinic action centered with safe margins around all edges so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep veterinarian and pets locked in an ultra-tight center-safe window (middle 38% width and middle 46% height), ensure no faces/pets appear near frame edges, and keep strong left/right negative space for preview, thumbnail, and mobile crops.
+
+about alignment instructions: Keep staff and pets centered with full heads/hands visible and no subject touching the top or side frame edges.
+
+services alignment instructions: Keep the treatment action centered and framed with generous side margins so responsive crops do not cut the veterinarian or pet.
+
+contact alignment instructions: Keep reception desk or clinic entrance centered with open negative space on both sides and top for stable crop behavior.
+
+gallery alignment instructions: Keep one dominant focal subject near center with balanced edge spacing; avoid extreme close-ups that crop awkwardly in 16:9.
+
+website usage context: Live preview for pet care Mateo Consulting Tech demo (veterinary clinic, pet wellness, grooming, appointments, pet healthcare services).
+
+image generation instructions: Generate a cohesive website image set aligned to this pet care subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep pets, veterinary staff, clinic environment, props, and styling consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

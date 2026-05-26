@@ -10,13 +10,13 @@ alwaysApply: true
 Use only these files for favicon and primary header/footer logo lockups in **wrapped live template previews** (`/preview/{slug}/{page}`):
 
 - Favicon: `/static/images/logos/mateo-favicon.ico`
-- Primary logo (navbar, footer logo, default/alt/mobile logo imgs): `/static/images/logos/mateo-logo_horizontal_transparent.png`
+- Primary logo (navbar, footer logo, default/alt/mobile logo imgs): `/static/images/logos/logo-black.png`
 
 Source files live under `app/static/images/logos/`.
 
 ## Display Size (Balanced Live Preview Sizing)
 
-Render `mateo-logo_horizontal_transparent.png` at balanced, non-overlapping sizes in wrapped live previews so navigation stays readable across all demo header layouts. Do not upscale the PNG file itself; use CSS.
+Render `logo-black.png` at balanced, non-overlapping sizes in wrapped live previews so navigation stays readable across all demo header layouts. Do not upscale the PNG file itself; use CSS.
 
 - Marketplace header (`base.html`): configured separately via `.mkt-mateo-brand-logo` in `marketplace.css`.
 - Live preview header/footer logos: cap to `56px` height and `220px` width via `--mkt-mateo-logo-max-height` and `--mkt-mateo-logo-max-width` in `preview-chrome.css`.

@@ -41,7 +41,7 @@ body.mkt-preview-active .mkt-preview-canvas .header-top-bar + .navbar {
 
 /* Mateo horizontal logo in wrapped template headers/footers */
 .mkt-preview-canvas .mkt-mateo-brand-logo,
-.mkt-preview-canvas img[src*="mateo-logo_horizontal_transparent"] {
+.mkt-preview-canvas img[src*="logo-black"] {
   max-height: var(--mkt-mateo-logo-max-height) !important;
   max-width: min(var(--mkt-mateo-logo-max-width), 100%) !important;
   width: auto !important;

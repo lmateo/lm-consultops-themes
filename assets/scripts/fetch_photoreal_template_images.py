@@ -77,27 +77,52 @@ SCENE_MODIFIERS: dict[str, str] = {
     "showcase": "portfolio showcase scene, wide composition, high-end marketing photo",
 }
 
-# Queries align with Crafto live-preview demos (see app/services/crafto_demos.py), not marketplace titles.
+SCENE_ALIGNMENT_DIRECTIVES: dict[str, str] = {
+    "hero": (
+        "Keep the primary subject inside the center safe area (middle 60% width and middle 55% height). "
+        "Leave clear breathing room on both horizontal edges for responsive crops."
+    ),
+    "about": (
+        "Frame people and key objects with headroom and side margins; avoid placing faces or hands against frame edges."
+    ),
+    "services": (
+        "Center the main service action and preserve generous side margins so 16:9 and 4:3 crops remain balanced."
+    ),
+    "contact": (
+        "Use centered architectural/interior framing with uncluttered edge space for text overlays and responsive crops."
+    ),
+    "team": "Keep the group centered with even spacing and no person clipped by the frame boundaries.",
+    "blog": "Compose with one clear focal subject centered and supporting elements distributed symmetrically.",
+    "feature": "Place the featured object in the center third with clean negative space around it.",
+    "showcase": "Use a balanced wide composition with the focal subject centered and crop-safe margins.",
+}
+
+GLOBAL_QUALITY_DIRECTIVE = (
+    "Photorealistic commercial photography, consistent lens style and lighting across the full template set, "
+    "no text, no letters, no logos, no watermark, no UI mockups, no collage, no split-screen."
+)
+
+# Queries aligned to marketplace brand subjects (not underlying Crafto demo keys).
 PEXELS_QUERIES: dict[str, dict[str, str]] = {
     "greenfield-farm": {
-        "hero": "solar panels rooftop renewable energy",
-        "about": "green energy team solar installation",
-        "services": "wind turbine renewable energy field",
-        "contact": "sustainable energy office modern",
-        "team": "solar technicians safety gear",
-        "blog": "solar farm aerial renewable",
-        "feature": "solar panel close up blue sky",
-        "showcase": "wind turbines sunset landscape",
+        "hero": "apple orchard farm rows autumn harvest",
+        "about": "farm family portrait rural barn",
+        "services": "u-pick fruit farm visitors baskets",
+        "contact": "farm stand fresh produce wooden display",
+        "team": "farmers field harvest workers smiling",
+        "blog": "farm to table outdoor dinner sunset",
+        "feature": "CSA harvest box fresh vegetables",
+        "showcase": "pastoral farm landscape barn aerial",
     },
     "tradepro-local": {
-        "hero": "business consulting office team meeting",
-        "about": "corporate professionals strategy meeting",
-        "services": "business analytics dashboard office",
-        "contact": "modern corporate office reception",
-        "team": "business executives office portrait",
-        "blog": "startup business growth office",
-        "feature": "laptop business presentation office",
-        "showcase": "skyscraper corporate city business",
+        "hero": "HVAC technician rooftop unit repair",
+        "about": "electrician residential panel service",
+        "services": "roofer inspecting shingles residential",
+        "contact": "trades company office dispatch",
+        "team": "tradespeople uniforms tool belts group",
+        "blog": "plumber fixing pipes residential kitchen",
+        "feature": "branded service van suburban home",
+        "showcase": "residential home improvement construction",
     },
     "pizza-local-eats": {
         "hero": "pizza restaurant wood fired oven",
@@ -130,14 +155,14 @@ PEXELS_QUERIES: dict[str, dict[str, str]] = {
         "showcase": "resort aerial forest mountains",
     },
     "petcare-studio": {
-        "hero": "doctor hospital healthcare professional",
-        "about": "medical team hospital doctors",
-        "services": "hospital examination room medical",
-        "contact": "hospital reception healthcare",
-        "team": "doctors medical staff hospital",
-        "blog": "healthcare patient doctor consultation",
-        "feature": "stethoscope doctor hands medical",
-        "showcase": "modern hospital building exterior",
+        "hero": "veterinary clinic dog cat pet care",
+        "about": "veterinarian team pet clinic staff",
+        "services": "pet wellness exam veterinary room",
+        "contact": "pet clinic reception welcoming",
+        "team": "veterinary staff pets smiling",
+        "blog": "pet health dog cat wellness",
+        "feature": "veterinarian examining puppy kitten",
+        "showcase": "modern pet clinic building exterior",
     },
     "community-impact": {
         "hero": "community volunteers charity event",
@@ -160,24 +185,24 @@ PEXELS_QUERIES: dict[str, dict[str, str]] = {
         "showcase": "suburban house aerial view",
     },
     "autoworks-garage": {
-        "hero": "shipping logistics warehouse trucks",
-        "about": "logistics team warehouse operations",
-        "services": "cargo containers port freight",
-        "contact": "logistics office freight company",
-        "team": "warehouse workers logistics team",
-        "blog": "supply chain shipping delivery",
-        "feature": "semi truck highway freight",
-        "showcase": "distribution center aerial warehouse",
+        "hero": "auto repair mechanic car lift garage",
+        "about": "auto mechanic team portrait shop",
+        "services": "brake inspection automotive service bay",
+        "contact": "auto shop reception customer counter",
+        "team": "ASE certified mechanics group photo",
+        "blog": "engine diagnostics scanner OBD vehicle",
+        "feature": "oil change automotive service close up",
+        "showcase": "clean auto repair garage interior",
     },
     "wellness-local": {
-        "hero": "luxury spa salon massage room",
-        "about": "spa salon team aestheticians",
-        "services": "spa facial massage treatment",
-        "contact": "spa salon reception elegant",
-        "team": "beauty salon staff spa",
-        "blog": "spa wellness relaxation lifestyle",
-        "feature": "spa candles towels relaxation",
-        "showcase": "luxury spa interior pool",
+        "hero": "doctor patient consultation medical clinic",
+        "about": "healthcare team physician therapist clinic",
+        "services": "physical therapy rehabilitation exercise",
+        "contact": "medical clinic reception desk modern",
+        "team": "healthcare providers group photo clinic",
+        "blog": "nutrition coaching healthy lifestyle",
+        "feature": "telehealth video consultation doctor",
+        "showcase": "modern integrative wellness clinic interior",
     },
 }
 
@@ -193,15 +218,26 @@ def _scene_list() -> tuple[str, ...]:
     )
 
 
-def _load_prompt_subject(slug: str) -> str:
+def _load_prompt_fields(slug: str) -> dict[str, str]:
+    """Load all key: value fields from a prompt file."""
     path = PROMPTS_DIR / f"{slug}.txt"
+    fields: dict[str, str] = {}
     if not path.is_file():
-        return f"Professional {slug.replace('-', ' ')} business photography"
+        return fields
     text = path.read_text(encoding="utf-8")
     for line in text.splitlines():
-        if line.lower().startswith("subject:"):
-            return line.split(":", 1)[1].strip()
-    return f"Professional {slug.replace('-', ' ')} photography"
+        if ":" in line:
+            key, _, value = line.partition(":")
+            key = key.strip().lower().replace(" ", "_")
+            value = value.strip()
+            if key and value:
+                fields[key] = value
+    return fields
+
+
+def _load_prompt_subject(slug: str) -> str:
+    fields = _load_prompt_fields(slug)
+    return fields.get("subject", f"Professional {slug.replace('-', ' ')} business photography")
 
 
 def _gallery_modifier(index: int) -> str:
@@ -223,21 +259,54 @@ def _gallery_modifier(index: int) -> str:
 
 
 def _build_prompt(slug: str, scene: str) -> str:
-    subject = _load_prompt_subject(slug)
+    fields = _load_prompt_fields(slug)
+    subject = fields.get("subject", f"Professional {slug.replace('-', ' ')} photography")
+    lighting = fields.get("lighting", "")
+    mood = fields.get("mood", "")
+    composition = fields.get("composition", "")
+    palette = fields.get("palette", "")
+    camera_angle = fields.get("camera_angle", "")
+    template_alignment = fields.get("alignment_instructions", "")
+    scene_alignment = fields.get(f"{scene}_alignment_instructions", "")
+    gallery_alignment = fields.get("gallery_alignment_instructions", "")
+
     if scene.startswith("gallery-"):
         index = int(scene.split("-", 1)[1])
         modifier = _gallery_modifier(index)
+        default_alignment = (
+            "Keep the focal subject centered with protected margins so landscape and portrait crops "
+            "remain coherent."
+        )
     else:
         modifier = SCENE_MODIFIERS.get(scene, "professional marketing photography")
-    return (
-        f"{subject}. {modifier}. "
-        "Photorealistic, natural colors, no text, no watermark, no logo, "
-        "high resolution commercial stock photo."
-    )
+        default_alignment = SCENE_ALIGNMENT_DIRECTIVES.get(
+            scene,
+            "Use a balanced centered composition with responsive crop safety on all sides.",
+        )
+    if scene.startswith("gallery-"):
+        alignment = scene_alignment or gallery_alignment or template_alignment or default_alignment
+    else:
+        alignment = scene_alignment or template_alignment or default_alignment
+
+    parts = [subject]
+    if lighting:
+        parts.append(f"Lighting: {lighting}")
+    if mood:
+        parts.append(f"Mood: {mood}")
+    if composition and scene == "hero":
+        parts.append(composition)
+    if camera_angle:
+        parts.append(camera_angle)
+    if palette:
+        parts.append(f"Color palette: {palette}")
+    parts.append(modifier)
+    parts.append(alignment)
+    parts.append(GLOBAL_QUALITY_DIRECTIVE)
+    return ". ".join(parts) + "."
 
 
 def _stable_seed(slug: str, scene: str) -> int:
-    digest = hashlib.sha256(f"{slug}:{scene}:mateo-preview".encode()).hexdigest()
+    digest = hashlib.sha256(f"{slug}:{scene}:mateo-preview-v2".encode()).hexdigest()
     return int(digest[:8], 16)
 
 
@@ -368,19 +437,33 @@ def export_variant(
     canvas.save(out_path, "WEBP", quality=WEBP_QUALITY, method=6)
 
 
-def generate_slug_assets(slug: str, *, pexels_key: str | None, delay_s: float) -> int:
+def generate_slug_assets(
+    slug: str,
+    *,
+    pexels_key: str | None,
+    delay_s: float,
+    selected_scenes: set[str] | None = None,
+) -> int:
     target = OUTPUT_ROOT / slug
     target.mkdir(parents=True, exist_ok=True)
     written = 0
     scene_cache: dict[str, Image.Image] = {}
 
-    for scene in _scene_list():
+    all_scenes = _scene_list()
+    if selected_scenes is None:
+        scenes_to_download = all_scenes
+    else:
+        scenes_to_download = tuple(scene for scene in all_scenes if scene in selected_scenes)
+
+    for scene in scenes_to_download:
         print(f"    downloading {scene}...", flush=True)
         scene_cache[scene] = fetch_scene_image(slug, scene, pexels_key=pexels_key)
         if delay_s > 0:
             time.sleep(delay_s)
 
     for scene, exports in EXPORTS.items():
+        if selected_scenes is not None and scene not in selected_scenes:
+            continue
         source = scene_cache[scene]
         for filename, width, height, crop in exports:
             export_variant(source, target / filename, width, height, crop)
@@ -397,6 +480,17 @@ def main() -> None:
         default=1.5,
         help="Seconds between remote downloads (rate limiting)",
     )
+    parser.add_argument(
+        "--scenes",
+        type=str,
+        default="",
+        help="Comma-separated scene names to regenerate (e.g. hero,about).",
+    )
+    parser.add_argument(
+        "--hero-only",
+        action="store_true",
+        help="Shortcut for --scenes hero (updates hero, hero-mobile, thumbnail, preview).",
+    )
     args = parser.parse_args()
 
     selected = args.slugs or list(SLUGS)
@@ -410,10 +504,34 @@ def main() -> None:
     else:
         print("PEXELS_API_KEY not set — using Pollinations (prompt-based), then Picsum fallback.")
 
+    if args.hero_only and args.scenes.strip():
+        raise SystemExit("Use either --hero-only or --scenes, not both.")
+
+    scenes_arg = "hero" if args.hero_only else args.scenes
+
+    selected_scenes: set[str] | None = None
+    if scenes_arg.strip():
+        requested = {
+            scene.strip().lower()
+            for scene in scenes_arg.split(",")
+            if scene.strip()
+        }
+        valid = set(_scene_list())
+        unknown_scenes = sorted(requested - valid)
+        if unknown_scenes:
+            raise SystemExit(f"Unknown scenes: {', '.join(unknown_scenes)}")
+        selected_scenes = requested
+        print(f"Restricting generation to scenes: {', '.join(sorted(selected_scenes))}")
+
     total = 0
     for slug in selected:
         print(f"  {slug}:", flush=True)
-        total += generate_slug_assets(slug, pexels_key=pexels_key, delay_s=args.delay)
+        total += generate_slug_assets(
+            slug,
+            pexels_key=pexels_key,
+            delay_s=args.delay,
+            selected_scenes=selected_scenes,
+        )
 
     print(f"Exported {total} photorealistic WebP files to {OUTPUT_ROOT}")
 

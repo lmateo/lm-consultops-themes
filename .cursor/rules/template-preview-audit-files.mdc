@@ -18,7 +18,7 @@ alwaysApply: false
 - Run visual logo placement audit: `py scripts/audit_preview_logo_placement.py`
 - Refresh report: `scripts/audit_report.txt`
 - Confirm no Crafto/ThemeZaa user-facing branding in edited preview/template pages.
-- Confirm favicon and primary logo in live preview pages use Mateo business assets (`mateo-favicon.ico`, `mateo-logo_horizontal_transparent.png`) at non-overlapping display size (`mkt-mateo-brand-logo`, desktop max 56px x 220px / mobile max 34px x 170px).
+- Confirm favicon and primary logo in live preview pages use Mateo business assets (`mateo-favicon.ico`, `logo-black.png`) at non-overlapping display size (`mkt-mateo-brand-logo`, desktop max 56px x 220px / mobile max 34px x 170px).
 - Confirm header and footer text in wrapped previews do not contain "Crafto" or "ThemeZaa".
 - Confirm wrapped preview `<title>` equals `Mateo Consulting Team - The Multipurpose HTML5 Template`.
 - Confirm wrapped previews do not emit `/crafto/#` or bare `#`; map those to `/preview/{slug}/home`.

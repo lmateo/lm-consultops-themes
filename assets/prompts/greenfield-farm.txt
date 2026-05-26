@@ -1,8 +1,31 @@
-crafto_preview: Green Energy (demo-green-energy)
-subject: Renewable green energy company — solar panel array on modern commercial rooftop, wind turbines on horizon, technicians in safety gear inspecting installation.
-lighting: Bright clear daylight with clean sky, optimistic sustainable mood.
-mood: Innovative, eco-forward, professional, trustworthy energy provider.
-composition: Wide hero with solar panels foreground and wind farm or green landscape depth.
-palette: Fresh green, sky blue, white, silver metallic panels.
-camera angle: Slightly elevated wide-angle architectural/industrial photo.
-website usage context: Live preview for green-energy Crafto demo (solar, wind, battery services) — NOT farms or agriculture.
+mateo_preview: GreenField Farm (demo-green-energy)
+
+subject: Family-run agritourism farm and orchard — rows of apple trees with ripe fruit, rustic barn and farm stand with fresh produce, visitors at u-pick event, farm-to-table dinner table set outdoors at golden hour, CSA harvest boxes on wooden display.
+
+lighting: Warm golden hour sunlight with pastoral glow, authentic rural atmosphere.
+
+mood: Wholesome, inviting, farm-fresh, community-rooted, seasonal celebration.
+
+composition: Wide hero with orchard rows or farm stand as focal point, rolling countryside and barn structures visible in depth.
+
+palette: Harvest gold, barn red, leaf green, warm cream, sky blue.
+
+camera angle: Eye-level to slightly elevated wide pastoral farm photography.
+
+alignment instructions: Keep the orchard or farm stand focal area centered with safe margins on all sides so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep orchard rows or farm stand locked in center-safe window (middle 44% width and middle 48% height), with clear left/right negative space for desktop and thumbnail crops.
+
+about alignment instructions: Keep the farm family or staff portrait centered with full faces visible and no subject touching side frame edges.
+
+services alignment instructions: Keep the featured agritourism activity (u-pick, farm dinner, CSA) centered with generous side margins so responsive crops remain balanced.
+
+contact alignment instructions: Keep the barn entrance or farmhouse reception area centered with open negative space on both sides for stable crop behavior.
+
+gallery alignment instructions: Keep one dominant farm focal subject near center with balanced edge spacing; avoid extreme close-ups that crop awkwardly in 16:9.
+
+website usage context: Live preview for GreenField Farm Mateo Consulting Tech demo (u-pick orchards, CSA boxes, farm stand, farm-to-table dinners, agritourism events, seasonal harvests).
+
+image generation instructions: Generate a cohesive website image set aligned to this agritourism farm subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep farm landscape, orchards, produce, barn, visitors, and styling consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

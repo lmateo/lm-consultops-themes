@@ -1,8 +1,31 @@
-crafto_preview: IT Business (demo-it-business)
-subject: IT services and cybersecurity firm — analysts at workstations with multi-monitor dashboards, modern tech office, cloud infrastructure visuals on screens.
-lighting: Bright contemporary office with cool blue screen glow.
-mood: Secure, innovative, enterprise-ready, digital transformation.
-composition: Wide hero with team and technology screens in foreground, sleek office depth.
-palette: Blue-cyan, graphite, white, emerald accent.
-camera angle: Slightly wide modern office perspective.
-website usage context: Live preview for it-business Crafto demo (services, case studies, cloud consulting).
+mateo_preview: Cloud Care IT (demo-cloud-care-it)
+
+subject: Cloud infrastructure and managed IT services company — cloud engineers and cybersecurity analysts collaborating at multi-monitor workstations, modern network operations center, cloud architecture dashboards and secure infrastructure visuals displayed on screens.
+
+lighting: Bright contemporary tech office lighting with cool blue monitor glow, subtle ambient LED accents, clean professional atmosphere.
+
+mood: Secure, innovative, enterprise-grade, proactive IT support, digital transformation and cloud reliability.
+
+composition: Wide cinematic hero with IT professionals monitoring cloud environments and cybersecurity dashboards in the foreground, modern office depth with infrastructure visuals and collaborative workspace.
+
+palette: Blue-cyan, graphite gray, white, emerald green accents, subtle neon highlights.
+
+camera angle: Slightly wide modern office perspective with immersive technology-focused framing.
+
+alignment instructions: Keep people, monitors, and focal action centered in the middle safe area with edge breathing room so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep the lead engineer/team cluster and main dashboard screens locked in an ultra-tight center-safe window (middle 40% width and middle 46% height), avoid any key monitor content near frame edges, and preserve strong left/right negative space for preview, thumbnail, and mobile crops.
+
+about alignment instructions: Keep collaboration subjects centered with no faces clipped and maintain clean edge margins around desks and monitors.
+
+services alignment instructions: Keep infrastructure or cybersecurity action centered and avoid placing key screens at extreme frame edges.
+
+contact alignment instructions: Keep reception/help-desk composition centered with symmetrical side spacing and uncluttered top margin.
+
+gallery alignment instructions: Keep one clear IT focal subject centered with balanced negative space; avoid dense edge-heavy monitor walls that crop poorly.
+
+website usage context: Live preview for Cloud Care IT by Mateo Consulting Tech demo (managed IT services, cloud consulting, cybersecurity, infrastructure management, support services, digital transformation).
+
+image generation instructions: Generate a cohesive website image set aligned to this Cloud Care IT subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep people, office setting, cloud dashboards, cybersecurity visuals, props, branding style, and lighting consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech" or "Cloud Care IT by Mateo Consulting Tech".

@@ -1,8 +1,11 @@
-crafto_preview: Hotel & Resort (demo-hotel-and-resort)
+mateo_preview: Hotel & Resort (demo-hotel-and-resort)
 subject: Upscale hotel and mountain resort — elegant lobby, guest suite with panoramic window view, pool or terrace, concierge hospitality scene.
 lighting: Golden hour warm hospitality lighting or bright resort daylight.
 mood: Luxurious, relaxing getaway, premium hospitality.
 composition: Wide hero with resort exterior or suite view as focal point, scenic mountain or coastal backdrop optional.
 palette: Warm beige, cedar wood, white linens, soft gold accents.
 camera angle: Elevated or eye-level hospitality architectural photography.
-website usage context: Live preview for hotel-and-resort Crafto demo (rooms, amenities, bistro).
+alignment instructions: Keep the resort focal area centered with clean edge breathing room so hero, preview, thumbnail, and mobile crops remain aligned.
+website usage context: Live preview for hotel-and-resort Mateo Consulting Tech demo (rooms, amenities, bistro).
+image generation instructions: Generate a cohesive website image set aligned to this hotel and resort subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep people, setting, props, and styling consistent across all images.
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

@@ -1,8 +1,11 @@
-crafto_preview: Charity (demo-charity)
+mateo_preview: Charity (demo-charity)
 subject: Nonprofit charity organization — diverse volunteers distributing supplies, fundraising event, community support booths, hopeful outdoor gathering.
 lighting: Bright natural daylight, authentic and uplifting.
 mood: Compassionate, hopeful, community-driven, making impact.
 composition: Wide documentary-style hero with volunteers and activity as focal point.
 palette: Sky blue, leaf green, warm neutrals, white.
 camera angle: Eye-level candid community event photography.
-website usage context: Live preview for charity Crafto demo (causes, volunteer, stories, donate).
+alignment instructions: Keep volunteer activity centered with comfortable top, side, and bottom margins so hero, preview, thumbnail, and mobile crops remain compositionally aligned.
+website usage context: Live preview for charity Mateo Consulting Tech demo (causes, volunteer, stories, donate).
+image generation instructions: Generate a cohesive website image set aligned to this charity subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep people, setting, props, and styling consistent across all images.
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

@@ -1,8 +1,11 @@
-crafto_preview: Real Estate (demo-real-estate)
+mateo_preview: Real Estate (demo-real-estate)
 subject: Premium real estate agency — modern home exterior with for-sale presentation, professional agent with clients, luxury property facade and landscaped yard.
 lighting: Bright clear daylight for architectural detail and curb appeal.
 mood: Aspirational, trustworthy, premium listings, dream home.
 composition: Wide hero with signature property as focal point, clean street or neighborhood context.
 palette: Stone gray, white, green landscaping, sky blue.
 camera angle: Slightly elevated architectural real estate photography.
-website usage context: Live preview for real-estate Crafto demo (sell, rent, agents, property details).
+alignment instructions: Keep the featured property centered with balanced side and top margin space so hero, preview, thumbnail, and mobile crops remain aligned.
+website usage context: Live preview for real-estate Mateo Consulting Tech demo (sell, rent, agents, property details).
+image generation instructions: Generate a cohesive website image set aligned to this real estate subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep people, setting, props, and styling consistent across all images.
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

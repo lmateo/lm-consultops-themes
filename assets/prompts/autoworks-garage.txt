@@ -1,8 +1,31 @@
-crafto_preview: Logistics (demo-logistics)
-subject: Global freight and logistics operation — cargo containers at port, semi-trucks at distribution warehouse, logistics coordinator with tablet near loading dock.
-lighting: Industrial daylight with crisp contrast, active operations mood.
-mood: Efficient, reliable, worldwide shipping, supply chain strength.
-composition: Wide hero with trucks/containers foreground and warehouse or port depth.
-palette: Orange accent, steel gray, white, deep blue.
-camera angle: Dynamic low-to-mid angle logistics yard or warehouse shot.
-website usage context: Live preview for logistics Crafto demo (air, road, ocean, train freight) — NOT auto repair garage or mechanics.
+mateo_preview: AutoWorks Garage (demo-logistics)
+
+subject: Family-owned auto repair garage — ASE-certified mechanic performing brake inspection under hydraulic lift, organized tool wall, diagnostic scanner on engine bay, customer vehicle on service ramp in a clean well-lit shop.
+
+lighting: Bright overhead shop fluorescents mixed with natural bay door daylight, clean industrial atmosphere.
+
+mood: Trustworthy, hands-on expertise, neighborhood reliability, precision auto care.
+
+composition: Wide hero with mechanic working under a vehicle on a lift as focal point, organized garage environment with tool chests and diagnostic equipment visible in depth.
+
+palette: Charcoal gray, safety orange accent, clean white, steel blue.
+
+camera angle: Eye-level to slightly low medium-wide automotive shop interior photography.
+
+alignment instructions: Keep the mechanic and vehicle lift centered with safe margins on all sides so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep mechanic and lifted vehicle locked in center-safe window (middle 42% width and middle 48% height), with clean negative space on left/right edges for desktop and thumbnail crops.
+
+about alignment instructions: Keep team portrait and shop interior centered with full heads visible and no subject touching side frame edges.
+
+services alignment instructions: Keep the service action (brake work, oil change, diagnostics) centered with generous side margins so responsive crops do not cut the mechanic or vehicle.
+
+contact alignment instructions: Keep the shop front or customer reception desk centered with open negative space on both sides for stable crop behavior.
+
+gallery alignment instructions: Keep one dominant automotive focal subject near center with balanced edge spacing; avoid extreme close-ups that crop awkwardly in 16:9.
+
+website usage context: Live preview for AutoWorks Garage Mateo Consulting Tech demo (oil changes, brake service, alignment, fleet maintenance, ASE-certified mechanics, tire rotation, engine diagnostics).
+
+image generation instructions: Generate a cohesive website image set aligned to this auto repair garage subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep mechanics, vehicles, shop environment, tools, and styling consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

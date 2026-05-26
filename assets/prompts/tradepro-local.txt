@@ -1,8 +1,31 @@
-crafto_preview: Business (demo-business)
-subject: Corporate business consulting agency — diverse professionals in sleek modern office, strategy presentation on glass wall, laptops and charts.
-lighting: Dramatic office lighting with cool blue-gray tones and warm accent highlights.
-mood: Ambitious, premium, agency-for-growth, executive confidence.
-composition: Wide hero with team collaboration foreground and city skyline or office depth.
-palette: Deep navy, charcoal, white, subtle gold or blue accent.
-camera angle: Eye-level medium-wide corporate interior photography.
-website usage context: Live preview for business Crafto demo (planning, research, digital solutions) — NOT contractors, HVAC, or trades vans.
+mateo_preview: TradePro Local (demo-business)
+
+subject: Licensed local trades and home services company — HVAC technician servicing rooftop unit, electrician at residential panel, roofer inspecting shingles, branded service van parked at suburban home, team in matching uniforms with tool belts.
+
+lighting: Bright outdoor daylight with clear skies for exterior shots, warm indoor lighting for interior service scenes.
+
+mood: Dependable, skilled, community-trusted, professional trades craftsmanship.
+
+composition: Wide hero with tradesperson actively working on a job site as focal point, residential or light commercial environment visible in depth.
+
+palette: Safety orange, work-boot brown, clean white, slate blue, suburban green.
+
+camera angle: Eye-level to slightly elevated medium-wide residential service photography.
+
+alignment instructions: Keep the tradesperson and job site centered with safe margins on all sides so hero, preview, thumbnail, and mobile crops stay aligned.
+
+hero alignment instructions: Keep tradesperson and work area locked in center-safe window (middle 44% width and middle 48% height), with clear left/right negative space for desktop and thumbnail crops.
+
+about alignment instructions: Keep team portrait and service van centered with full heads visible and no subject touching side frame edges.
+
+services alignment instructions: Keep the trade action (HVAC install, panel upgrade, roof repair) centered with generous side margins so responsive crops do not cut the worker or equipment.
+
+contact alignment instructions: Keep the company office or dispatch area centered with open negative space on both sides for stable crop behavior.
+
+gallery alignment instructions: Keep one dominant trades focal subject near center with balanced edge spacing; avoid extreme close-ups that crop awkwardly in 16:9.
+
+website usage context: Live preview for TradePro Local Mateo Consulting Tech demo (HVAC, electrical, roofing, plumbing, licensed contractors, service dispatch, residential and commercial trades).
+
+image generation instructions: Generate a cohesive website image set aligned to this local trades and home services subject for `hero.webp`, `hero-mobile.webp`, `thumbnail.webp`, `preview.webp`, `gallery-1.webp`, `gallery-2.webp`, and `gallery-3.webp`; keep tradespeople, service vans, job sites, tools, uniforms, and styling consistent across all images.
+
+branding instructions: Replace any visible "Crafto" branding/text with "Mateo Consulting Tech".

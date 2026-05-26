@@ -1,0 +1,317 @@
+{
+  "total": 10,
+  "passes": 10,
+  "fails": 0,
+  "results": [
+    {
+      "slug": "autoworks-garage",
+      "url": "http://localhost:8010/preview/autoworks-garage/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\autoworks-garage-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 259,
+        "y": 56,
+        "width": 87.28125,
+        "height": 116,
+        "top": 56,
+        "right": 346.28125,
+        "bottom": 172,
+        "left": 259
+      }
+    },
+    {
+      "slug": "cloudcare-it",
+      "url": "http://localhost:8010/preview/cloudcare-it/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\cloudcare-it-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 489.890625,
+        "y": 56,
+        "width": 89.578125,
+        "height": 116,
+        "top": 56,
+        "right": 579.46875,
+        "bottom": 172,
+        "left": 489.890625
+      }
+    },
+    {
+      "slug": "community-impact",
+      "url": "http://localhost:8010/preview/community-impact/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\community-impact-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 106,
+        "top": 56,
+        "right": 228,
+        "bottom": 162,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 259,
+        "y": 56,
+        "width": 78.765625,
+        "height": 106,
+        "top": 56,
+        "right": 337.765625,
+        "bottom": 162,
+        "left": 259
+      }
+    },
+    {
+      "slug": "greenfield-farm",
+      "url": "http://localhost:8010/preview/greenfield-farm/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\greenfield-farm-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 259,
+        "y": 56,
+        "width": 91.234375,
+        "height": 116,
+        "top": 56,
+        "right": 350.234375,
+        "bottom": 172,
+        "left": 259
+      }
+    },
+    {
+      "slug": "homebase-realty",
+      "url": "http://localhost:8010/preview/homebase-realty/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\homebase-realty-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 304,
+        "y": 56,
+        "width": 87.28125,
+        "height": 116,
+        "top": 56,
+        "right": 391.28125,
+        "bottom": 172,
+        "left": 304
+      }
+    },
+    {
+      "slug": "mountain-lodge",
+      "url": "http://localhost:8010/preview/mountain-lodge/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\mountain-lodge-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 716,
+        "y": 56,
+        "width": 168,
+        "height": 96,
+        "top": 56,
+        "right": 884,
+        "bottom": 152,
+        "left": 716
+      },
+      "homeRect": {
+        "x": 405.609375,
+        "y": 56,
+        "width": 88.484375,
+        "height": 96,
+        "top": 56,
+        "right": 494.09375,
+        "bottom": 152,
+        "left": 405.609375
+      }
+    },
+    {
+      "slug": "petcare-studio",
+      "url": "http://localhost:8010/preview/petcare-studio/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\petcare-studio-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 450.671875,
+        "y": 56,
+        "width": 94.984375,
+        "height": 116,
+        "top": 56,
+        "right": 545.65625,
+        "bottom": 172,
+        "left": 450.671875
+      }
+    },
+    {
+      "slug": "pizza-local-eats",
+      "url": "http://localhost:8010/preview/pizza-local-eats/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\pizza-local-eats-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 716,
+        "y": 47,
+        "width": 168,
+        "height": 116,
+        "top": 47,
+        "right": 884,
+        "bottom": 163,
+        "left": 716
+      },
+      "homeRect": {
+        "x": 479.171875,
+        "y": 56,
+        "width": 79.453125,
+        "height": 98,
+        "top": 56,
+        "right": 558.625,
+        "bottom": 154,
+        "left": 479.171875
+      }
+    },
+    {
+      "slug": "tradepro-local",
+      "url": "http://localhost:8010/preview/tradepro-local/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\tradepro-local-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 60,
+        "y": 56,
+        "width": 168,
+        "height": 116,
+        "top": 56,
+        "right": 228,
+        "bottom": 172,
+        "left": 60
+      },
+      "homeRect": {
+        "x": 454.015625,
+        "y": 56,
+        "width": 92.03125,
+        "height": 116,
+        "top": 56,
+        "right": 546.046875,
+        "bottom": 172,
+        "left": 454.015625
+      }
+    },
+    {
+      "slug": "wellness-local",
+      "url": "http://localhost:8010/preview/wellness-local/home",
+      "status": "pass",
+      "screenshot": "artifacts\\live-preview-audit\\wellness-local-home.png",
+      "hasNav": true,
+      "hasBrand": true,
+      "hasHome": true,
+      "brandBeforeHome": true,
+      "overlaps": false,
+      "brandRect": {
+        "x": 716,
+        "y": 58,
+        "width": 168,
+        "height": 116,
+        "top": 58,
+        "right": 884,
+        "bottom": 174,
+        "left": 716
+      },
+      "homeRect": {
+        "x": 411.671875,
+        "y": 56,
+        "width": 90.578125,
+        "height": 120,
+        "top": 56,
+        "right": 502.25,
+        "bottom": 176,
+        "left": 411.671875
+      }
+    }
+  ]
+}

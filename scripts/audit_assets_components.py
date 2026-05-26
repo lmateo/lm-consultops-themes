@@ -17,7 +17,7 @@ ATTR_RE = re.compile(r"""\b(?:href|src)=(["'])([^"']+)\1""", re.IGNORECASE)
 LOGO_ATTR_RE = re.compile(r"""\b(?:href|src|data-at2x)=(["'])([^"']+)\1""", re.IGNORECASE)
 INCLUDE_RE = re.compile(r"""\{\%\s*(?:include|extends|import)\s+["']([^"']+)["']""")
 SKIP_PREFIXES = ("#", "mailto:", "tel:", "javascript:", "data:")
-MATEO_LOGO = "/static/images/logos/mateo-logo_horizontal_transparent.png"
+MATEO_LOGO = "/static/images/logos/logo-black.png"
 MATEO_FAVICON = "/static/images/logos/mateo-favicon.ico"
 BRAND_TERM_RE = re.compile(r"\b(?:Crafto|ThemeZaa)\b", re.IGNORECASE)
 HEADER_OR_FOOTER_RE = re.compile(
