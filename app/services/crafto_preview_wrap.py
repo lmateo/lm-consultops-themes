@@ -197,6 +197,22 @@ def _discover_template_images(slug: str) -> tuple[str, ...]:
     return discovered or _TEMPLATE_IMAGE_SET
 
 
+def _image_cache_buster(slug: str) -> str:
+    """Return a short hash of template image mtimes for URL cache-busting."""
+    folder = _STATIC_ROOT / slug
+    if not folder.is_dir():
+        return ""
+    mtimes = sorted(
+        f"{p.name}:{int(p.stat().st_mtime)}"
+        for p in folder.iterdir()
+        if p.is_file() and p.suffix.lower() == ".webp"
+    )
+    if not mtimes:
+        return ""
+    digest = hashlib.sha1("|".join(mtimes).encode()).hexdigest()[:8]
+    return f"?v={digest}"
+
+
 def _preview_image_pool(page: str, slug: str) -> tuple[str, ...]:
     primary = _PAGE_PRIMARY_IMAGE.get(page, _PAGE_PRIMARY_IMAGE["home"])
     weighted = list(_PAGE_WEIGHTED_SEQUENCE.get(page, _PAGE_WEIGHTED_SEQUENCE["home"]))
@@ -474,6 +490,7 @@ def inject_template_preview_images(html: str, slug: str, page: str) -> str:
     if not pool:
         return html
     base = f"/static/images/templates/{slug}"
+    cache_suffix = _image_cache_buster(slug)
     assigned = 0
     primary_served = False
     shape_offsets = {"landscape": 0, "square": 2, "portrait": 4}
@@ -490,7 +507,7 @@ def inject_template_preview_images(html: str, slug: str, page: str) -> str:
             idx = 1 + _stable_index(f"{slug}:{page}:{assigned}:{key}", width)
             filename = pool[idx]
         assigned += 1
-        return f"{base}/{filename}"
+        return f"{base}/{filename}{cache_suffix}"
 
     def _replace_placeholder(match: re.Match[str]) -> str:
         nonlocal assigned
@@ -505,7 +522,7 @@ def inject_template_preview_images(html: str, slug: str, page: str) -> str:
         offset = shape_offsets[shape_hint]
         filename = pool[(assigned + offset) % len(pool)]
         assigned += 1
-        return f"{base}/{filename}"
+        return f"{base}/{filename}{cache_suffix}"
 
     html = _PLACEHOLDER_RE.sub(_replace_placeholder, html)
 

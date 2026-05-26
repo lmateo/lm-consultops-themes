@@ -306,7 +306,8 @@ def _build_prompt(slug: str, scene: str) -> str:
 
 
 def _stable_seed(slug: str, scene: str) -> int:
-    digest = hashlib.sha256(f"{slug}:{scene}:mateo-preview-v2".encode()).hexdigest()
+    prompt = _build_prompt(slug, scene)
+    digest = hashlib.sha256(f"{slug}:{scene}:{prompt}".encode()).hexdigest()
     return int(digest[:8], 16)
 
 
@@ -365,26 +366,46 @@ def _fetch_from_pexels(api_key: str, slug: str, scene: str, width: int, height: 
         return None
 
 
-def _fetch_from_pollinations(slug: str, scene: str, width: int, height: int) -> Image.Image | None:
+_pollinations_available: bool | None = None
+
+
+def _fetch_from_pollinations(
+    slug: str, scene: str, width: int, height: int, *, generation_id: str = ""
+) -> Image.Image | None:
+    global _pollinations_available
+    if _pollinations_available is False:
+        return None
     prompt = _build_prompt(slug, scene)
     seed = _stable_seed(slug, scene)
+    if generation_id:
+        prompt += f" [version {generation_id}]"
+        seed = int(hashlib.sha256(f"{seed}:{generation_id}".encode()).hexdigest()[:8], 16)
     encoded = quote(prompt, safe="")
     url = (
         "https://image.pollinations.ai/prompt/"
-        f"{encoded}?width={width}&height={height}&seed={seed}&nologo=true&enhance=true"
+        f"{encoded}?width={width}&height={height}&seed={seed}"
+        f"&nologo=true&enhance=true"
     )
     try:
         raw = _download_bytes(url)
         image = Image.open(BytesIO(raw))
         if image.mode != "RGB":
             image = image.convert("RGB")
+        _pollinations_available = True
         return image
-    except OSError:
+    except OSError as exc:
+        if _pollinations_available is None:
+            _pollinations_available = False
+            print(f"      [!] Pollinations API unavailable ({type(exc).__name__}); using Picsum fallback.", flush=True)
         return None
 
 
-def _fetch_from_picsum(slug: str, scene: str, width: int, height: int) -> Image.Image | None:
+def _fetch_from_picsum(
+    slug: str, scene: str, width: int, height: int, *, generation_id: str = ""
+) -> Image.Image | None:
     seed = f"{slug}-{scene}"
+    if generation_id:
+        seed = f"{slug}-{scene}-{generation_id}"
     url = f"https://picsum.photos/seed/{quote(seed, safe='')}/{width}/{height}"
     try:
         raw = _download_bytes(url)
@@ -396,19 +417,21 @@ def _fetch_from_picsum(slug: str, scene: str, width: int, height: int) -> Image.
         return None
 
 
-def fetch_scene_image(slug: str, scene: str, *, pexels_key: str | None) -> Image.Image:
+def fetch_scene_image(
+    slug: str, scene: str, *, pexels_key: str | None, generation_id: str = ""
+) -> tuple[Image.Image, str]:
+    """Returns (image, source_name)."""
     width, height = (1920, 1200) if scene == "hero" else (1600, 1000)
     if pexels_key:
         image = _fetch_from_pexels(pexels_key, slug, scene, width, height)
         if image is not None:
-            return image
-    # Prompt-based generation before Picsum so live-preview subjects stay on-brand.
-    image = _fetch_from_pollinations(slug, scene, width, height)
+            return image, "pexels"
+    image = _fetch_from_pollinations(slug, scene, width, height, generation_id=generation_id)
     if image is not None:
-        return image
-    image = _fetch_from_picsum(slug, scene, width, height)
+        return image, "pollinations"
+    image = _fetch_from_picsum(slug, scene, width, height, generation_id=generation_id)
     if image is not None:
-        return image
+        return image, "picsum"
     raise RuntimeError(f"Unable to download photo for {slug}/{scene}")
 
 
@@ -443,6 +466,7 @@ def generate_slug_assets(
     pexels_key: str | None,
     delay_s: float,
     selected_scenes: set[str] | None = None,
+    generation_id: str = "",
 ) -> int:
     target = OUTPUT_ROOT / slug
     target.mkdir(parents=True, exist_ok=True)
@@ -455,11 +479,23 @@ def generate_slug_assets(
     else:
         scenes_to_download = tuple(scene for scene in all_scenes if scene in selected_scenes)
 
+    source_counts: dict[str, int] = {}
     for scene in scenes_to_download:
-        print(f"    downloading {scene}...", flush=True)
-        scene_cache[scene] = fetch_scene_image(slug, scene, pexels_key=pexels_key)
+        print(f"    downloading {scene}...", end=" ", flush=True)
+        image, source = fetch_scene_image(
+            slug, scene, pexels_key=pexels_key, generation_id=generation_id
+        )
+        scene_cache[scene] = image
+        source_counts[source] = source_counts.get(source, 0) + 1
+        print(f"[{source}]", flush=True)
         if delay_s > 0:
             time.sleep(delay_s)
+    if "picsum" in source_counts and source_counts.get("pexels", 0) == 0:
+        print(
+            f"    [!] {source_counts['picsum']} image(s) from Picsum (generic stock)."
+            " Set PEXELS_API_KEY for themed photos.",
+            flush=True,
+        )
 
     for scene, exports in EXPORTS.items():
         if selected_scenes is not None and scene not in selected_scenes:
@@ -490,6 +526,12 @@ def main() -> None:
         "--hero-only",
         action="store_true",
         help="Shortcut for --scenes hero (updates hero, hero-mobile, thumbnail, preview).",
+    )
+    parser.add_argument(
+        "--version",
+        type=str,
+        default="",
+        help="Generation version ID. Change to force fresh images (bypasses CDN cache).",
     )
     args = parser.parse_args()
 
@@ -523,6 +565,10 @@ def main() -> None:
         selected_scenes = requested
         print(f"Restricting generation to scenes: {', '.join(sorted(selected_scenes))}")
 
+    generation_id = args.version.strip()
+    if generation_id:
+        print(f"Generation version: {generation_id}")
+
     total = 0
     for slug in selected:
         print(f"  {slug}:", flush=True)
@@ -531,6 +577,7 @@ def main() -> None:
             pexels_key=pexels_key,
             delay_s=args.delay,
             selected_scenes=selected_scenes,
+            generation_id=generation_id,
         )
 
     print(f"Exported {total} photorealistic WebP files to {OUTPUT_ROOT}")

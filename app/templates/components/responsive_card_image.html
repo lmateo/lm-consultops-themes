@@ -1,7 +1,9 @@
 {% set base = "/static/images/templates/" ~ item.slug %}
+{% set v = image_version(item.slug) %}
+{% set qs = "?v=" ~ v if v else "" %}
 <img
-    src="{{ base }}/thumbnail.webp"
-    srcset="{{ base }}/thumbnail.webp 800w, {{ base }}/preview.webp 1440w"
+    src="{{ base }}/thumbnail.webp{{ qs }}"
+    srcset="{{ base }}/thumbnail.webp{{ qs }} 800w, {{ base }}/preview.webp{{ qs }} 1440w"
     sizes="{{ sizes | default('(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw') }}"
     alt="{{ item.title }} thumbnail"
     width="800"

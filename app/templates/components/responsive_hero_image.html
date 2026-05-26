@@ -1,19 +1,21 @@
 {% set base = "/static/images/templates/" ~ slug %}
+{% set v = image_version(slug) %}
+{% set qs = "?v=" ~ v if v else "" %}
 <picture>
     <source
         media="(max-width: 768px)"
-        srcset="{{ base }}/hero-mobile.webp"
+        srcset="{{ base }}/hero-mobile.webp{{ qs }}"
         type="image/webp"
     />
     <source
         media="(min-width: 769px)"
-        srcset="{{ base }}/hero.webp 1600w, {{ base }}/preview.webp 1440w"
+        srcset="{{ base }}/hero.webp{{ qs }} 1600w, {{ base }}/preview.webp{{ qs }} 1440w"
         sizes="(min-width: 1280px) 66vw, 100vw"
         type="image/webp"
     />
     <img
-        src="{{ base }}/hero.webp"
-        srcset="{{ base }}/hero-mobile.webp 900w, {{ base }}/hero.webp 1600w, {{ base }}/preview.webp 1440w"
+        src="{{ base }}/hero.webp{{ qs }}"
+        srcset="{{ base }}/hero-mobile.webp{{ qs }} 900w, {{ base }}/hero.webp{{ qs }} 1600w, {{ base }}/preview.webp{{ qs }} 1440w"
         sizes="(max-width: 768px) 100vw, (min-width: 1280px) 66vw, 100vw"
         alt="{{ alt }}"
         width="1600"
