@@ -30,6 +30,7 @@ require_git_bash
 
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$REPO_ROOT"
+export PYTHONPATH="$REPO_ROOT"
 
 BRANCH=$(git branch --show-current)
 
