@@ -1,0 +1,16 @@
+Current branch: main
+Checking git status...
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/audit_crafto_hash_links_report.txt
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	autopush-out.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Running preview audit checks...

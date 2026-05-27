@@ -3,51 +3,9 @@ mapped pages checked: 40
 missing html refs: 0
 missing asset refs: 0
 missing jinja includes: 0
-logo/favicon issues in wrapped preview: 40
+logo/favicon issues in wrapped preview: 0
 header/footer brand text issues in wrapped preview: 0
 branding mentions in app paths: 4
-
-LOGO/FAVICON ISSUES
-autoworks-garage | about | demo-logistics-about-us.html | missing Mateo primary logo in wrapped preview
-autoworks-garage | contact | demo-logistics-contact-us.html | missing Mateo primary logo in wrapped preview
-autoworks-garage | home | demo-logistics.html | missing Mateo primary logo in wrapped preview
-autoworks-garage | services | demo-logistics-our-services.html | missing Mateo primary logo in wrapped preview
-cloudcare-it | about | demo-it-business-about.html | missing Mateo primary logo in wrapped preview
-cloudcare-it | contact | demo-it-business-contact.html | missing Mateo primary logo in wrapped preview
-cloudcare-it | home | demo-it-business.html | missing Mateo primary logo in wrapped preview
-cloudcare-it | services | demo-it-business-services.html | missing Mateo primary logo in wrapped preview
-community-impact | about | demo-charity-about.html | missing Mateo primary logo in wrapped preview
-community-impact | contact | demo-charity-contact.html | missing Mateo primary logo in wrapped preview
-community-impact | home | demo-charity.html | missing Mateo primary logo in wrapped preview
-community-impact | services | demo-charity-causes.html | missing Mateo primary logo in wrapped preview
-greenfield-farm | about | demo-green-energy-about.html | missing Mateo primary logo in wrapped preview
-greenfield-farm | contact | demo-green-energy-contact.html | missing Mateo primary logo in wrapped preview
-greenfield-farm | home | demo-green-energy.html | missing Mateo primary logo in wrapped preview
-greenfield-farm | services | demo-green-energy-services.html | missing Mateo primary logo in wrapped preview
-homebase-realty | about | demo-real-estate-about.html | missing Mateo primary logo in wrapped preview
-homebase-realty | contact | demo-real-estate-contact.html | missing Mateo primary logo in wrapped preview
-homebase-realty | home | demo-real-estate.html | missing Mateo primary logo in wrapped preview
-homebase-realty | services | demo-real-estate-sell.html | missing Mateo primary logo in wrapped preview
-mountain-lodge | about | demo-hotel-and-resort-about-us.html | missing Mateo primary logo in wrapped preview
-mountain-lodge | contact | demo-hotel-and-resort-contact.html | missing Mateo primary logo in wrapped preview
-mountain-lodge | home | demo-hotel-and-resort.html | missing Mateo primary logo in wrapped preview
-mountain-lodge | services | demo-hotel-and-resort-rooms.html | missing Mateo primary logo in wrapped preview
-petcare-studio | about | demo-medical-about.html | missing Mateo primary logo in wrapped preview
-petcare-studio | contact | demo-medical-contact.html | missing Mateo primary logo in wrapped preview
-petcare-studio | home | demo-medical.html | missing Mateo primary logo in wrapped preview
-petcare-studio | services | demo-medical-treatments.html | missing Mateo primary logo in wrapped preview
-pizza-local-eats | about | demo-pizza-parlor-about.html | missing Mateo primary logo in wrapped preview
-pizza-local-eats | contact | demo-pizza-parlor-contact.html | missing Mateo primary logo in wrapped preview
-pizza-local-eats | home | demo-pizza-parlor.html | missing Mateo primary logo in wrapped preview
-pizza-local-eats | services | demo-pizza-parlor-menu.html | missing Mateo primary logo in wrapped preview
-tradepro-local | about | demo-business-about.html | missing Mateo primary logo in wrapped preview
-tradepro-local | contact | demo-business-contact.html | missing Mateo primary logo in wrapped preview
-tradepro-local | home | demo-business.html | missing Mateo primary logo in wrapped preview
-tradepro-local | services | demo-business-services.html | missing Mateo primary logo in wrapped preview
-wellness-local | about | demo-spa-salon-about.html | missing Mateo primary logo in wrapped preview
-wellness-local | contact | demo-spa-salon-contact.html | missing Mateo primary logo in wrapped preview
-wellness-local | home | demo-spa-salon.html | missing Mateo primary logo in wrapped preview
-wellness-local | services | demo-spa-salon-treatments.html | missing Mateo primary logo in wrapped preview
 
 BRANDING MENTIONS (app paths)
 app\routers\public.py
