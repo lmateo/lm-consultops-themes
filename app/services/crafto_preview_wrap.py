@@ -423,22 +423,62 @@ def rewrite_crafto_brand_assets(html: str) -> str:
     return _ensure_mateo_logo_class_on_imgs(html)
 
 
-def rewrite_crafto_brand_copy(html: str) -> str:
-    """Replace visible Crafto/ThemeZaa text in header/footer with Mateo branding."""
+_MATEO_COPYRIGHT_RE = re.compile(
+    r"&copy;\s*\d{4}\s+Crafto\s+is\s+Proudly\s+Powered\s+by\s*<a[^>]*>\s*ThemeZaa\s*</a>",
+    re.IGNORECASE,
+)
+_MATEO_COPYRIGHT_HTML = f"<p>&copy; 2025 {_MATEO_BRAND_NAME}. All rights reserved.</p>"
+_BRAND_SHIELD_PLACEHOLDER = "__MKT_BRAND_SHIELD_{}__"
+_ATTR_VALUE_RE = re.compile(
+    r"""\b(?:href|src|action|poster|data-src|data-background)=(["'])([^"']*)\1""",
+    re.IGNORECASE,
+)
 
-    def _replace_brand_terms(block: str) -> str:
-        block = re.sub(r"\bCrafto\b", _MATEO_BRAND_NAME, block, flags=re.IGNORECASE)
-        block = re.sub(r"\bThemeZaa\b", _MATEO_BRAND_NAME, block, flags=re.IGNORECASE)
-        return block
 
-    def _replace_match(match: re.Match[str]) -> str:
-        return _replace_brand_terms(match.group(0))
+def _should_shield_brand_attr_value(value: str) -> bool:
+    lowered = value.strip().lower()
+    return "/crafto/" in lowered or lowered.startswith("/crafto") or lowered.startswith("crafto/")
 
-    html = _HEADER_BLOCK_RE.sub(_replace_match, html)
-    html = _FOOTER_BLOCK_RE.sub(_replace_match, html)
-    html = _HEADER_TAG_RE.sub(_replace_match, html)
-    html = _FOOTER_TAG_RE.sub(_replace_match, html)
+
+def _shield_brand_sensitive_fragments(html: str) -> tuple[str, list[str]]:
+    """Temporarily remove fragments that must keep literal crafto path segments."""
+    shields: list[str] = []
+
+    def _shield(match: re.Match[str]) -> str:
+        shields.append(match.group(0))
+        return _BRAND_SHIELD_PLACEHOLDER.format(len(shields) - 1)
+
+    html = re.sub(r"<script\b[^>]*>.*?</script>", _shield, html, flags=re.IGNORECASE | re.DOTALL)
+    html = re.sub(r"<style\b[^>]*>.*?</style>", _shield, html, flags=re.IGNORECASE | re.DOTALL)
+
+    def _shield_attr(match: re.Match[str]) -> str:
+        value = match.group(2)
+        if _should_shield_brand_attr_value(value):
+            return _shield(match)
+        return match.group(0)
+
+    html = _ATTR_VALUE_RE.sub(_shield_attr, html)
+    return html, shields
+
+
+def _unshield_brand_sensitive_fragments(html: str, shields: list[str]) -> str:
+    for index, fragment in enumerate(shields):
+        html = html.replace(_BRAND_SHIELD_PLACEHOLDER.format(index), fragment)
     return html
+
+
+def _replace_brand_terms(block: str) -> str:
+    block = re.sub(r"\bCrafto\b", _MATEO_BRAND_NAME, block, flags=re.IGNORECASE)
+    block = re.sub(r"\bThemeZaa\b", _MATEO_BRAND_NAME, block, flags=re.IGNORECASE)
+    return block
+
+
+def rewrite_crafto_brand_copy(html: str) -> str:
+    """Replace visible Crafto/ThemeZaa copy across wrapped preview HTML."""
+    html, shields = _shield_brand_sensitive_fragments(html)
+    html = _MATEO_COPYRIGHT_RE.sub(_MATEO_COPYRIGHT_HTML, html)
+    html = _replace_brand_terms(html)
+    return _unshield_brand_sensitive_fragments(html, shields)
 
 
 def rewrite_crafto_head_title(html: str) -> str:

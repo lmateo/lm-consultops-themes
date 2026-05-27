@@ -71,16 +71,36 @@ def test_wrapped_preview_nav_links_use_mateo_routes():
     assert "themezaa.com" not in text
 
 
-def test_wrapped_preview_unmapped_demo_pages_use_hash():
+def test_cloudcare_it_preview_has_no_crafto_branding():
+    brand_re = re.compile(r"\b(?:Crafto|ThemeZaa)\b", re.IGNORECASE)
+    canvas_re = re.compile(
+        r'<div id="mkt-preview-canvas"[^>]*>(.*?)</div><!-- /mkt-preview-canvas -->',
+        re.IGNORECASE | re.DOTALL,
+    )
+    for page in ("home", "about", "services", "contact"):
+        response = client.get(f"/preview/cloudcare-it/{page}")
+        assert response.status_code == 200
+        canvas_match = canvas_re.search(response.text)
+        assert canvas_match is not None, page
+        canvas_html = canvas_match.group(1)
+        assert brand_re.search(canvas_html) is None, page
+        assert "Mateo Consulting Tech" in canvas_html, page
+    assert 'base href="/crafto/"' in client.get("/preview/cloudcare-it/home").text
+
+
+def test_wrapped_preview_unmapped_demo_pages_fallback_to_home():
     response = client.get("/preview/cloudcare-it/home")
     assert response.status_code == 200
     assert 'href="demo-it-business-blog.html"' not in response.text
-    assert 'href="#"' in response.text
+    assert 'href="/preview/cloudcare-it/home"' in response.text
 
 
 def test_resolve_preview_href_maps_crafto_vendor_urls():
     crafto = get_crafto_demo_or_default("cloudcare-it")
-    assert _resolve_preview_href("https://www.themezaa.com/", slug="cloudcare-it", crafto=crafto) == "#"
+    assert (
+        _resolve_preview_href("https://www.themezaa.com/", slug="cloudcare-it", crafto=crafto)
+        == "/preview/cloudcare-it/home"
+    )
     assert (
         _resolve_preview_href("demo-it-business-about.html", slug="cloudcare-it", crafto=crafto)
         == "/preview/cloudcare-it/about"
