@@ -49,6 +49,16 @@ PREVIEW_GRADIENTS = [
 ]
 
 
+def _resolve_contacts_api_url() -> str:
+    configured_url = (settings.consultops_contacts_api_url or "").strip()
+    if configured_url:
+        return configured_url
+    base_url = (settings.consultops_base_url or "").strip()
+    if not base_url:
+        return ""
+    return f"{base_url.rstrip('/')}/api/integrations/contacts"
+
+
 def _configure_stripe() -> None:
     if not settings.stripe_secret_key:
         raise HTTPException(status_code=503, detail="Stripe is not configured. Set STRIPE_SECRET_KEY.")
@@ -415,7 +425,8 @@ async def contact_submit(
     if answer != captcha_a + captcha_b:
         raise HTTPException(status_code=400, detail="Please answer the math question correctly.")
 
-    if not settings.consultops_base_url or not settings.integration_api_key:
+    contacts_api_url = _resolve_contacts_api_url()
+    if not contacts_api_url or not settings.integration_api_key:
         raise HTTPException(
             status_code=503,
             detail="Contact form is not configured. Please try again later or email us directly.",
@@ -432,13 +443,12 @@ async def contact_submit(
 
     notes = message.strip()
 
-    url = f"{settings.consultops_base_url.rstrip('/')}/api/integrations/contacts"
     payload = {"name": name.strip(), "email": email.strip(), "notes": notes}
     headers = {"Content-Type": "application/json", "X-API-Key": settings.integration_api_key}
 
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(url, headers=headers, json=payload, timeout=30.0)
+            response = await client.post(contacts_api_url, headers=headers, json=payload, timeout=30.0)
         except httpx.RequestError as exc:
             raise HTTPException(
                 status_code=502,

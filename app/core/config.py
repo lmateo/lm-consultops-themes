@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_use_tls: bool = True
     smtp_from_email: str = "no-reply@mateoconsultops.local"
+    consultops_contacts_api_url: str = "https://consultops.mateoconsultinginc.com/api/integrations/contacts"
     consultops_base_url: str = ""
     integration_api_key: str = ""
 

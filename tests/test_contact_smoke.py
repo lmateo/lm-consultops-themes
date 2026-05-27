@@ -5,7 +5,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from fastapi.testclient import TestClient
 
-from app.core.config import get_settings
 from app.main import app
 
 client = TestClient(app)
@@ -63,8 +62,12 @@ def test_contact_api_rejects_wrong_captcha():
 
 
 def test_contact_api_returns_503_when_not_configured():
-    get_settings.cache_clear()
-    try:
+    import app.routers.public as public_router
+
+    with (
+        patch.object(public_router.settings, "consultops_contacts_api_url", "https://consultops.mateoconsultinginc.com/api/integrations/contacts"),
+        patch.object(public_router.settings, "integration_api_key", ""),
+    ):
         response = client.post(
             "/api/contact",
             data={
@@ -76,10 +79,8 @@ def test_contact_api_returns_503_when_not_configured():
                 "captcha_answer": "5",
             },
         )
-        assert response.status_code == 503
-        assert "not configured" in response.json()["detail"]
-    finally:
-        get_settings.cache_clear()
+    assert response.status_code == 503
+    assert "not configured" in response.json()["detail"]
 
 
 def test_contact_api_proxies_to_consultops_on_success():
@@ -94,7 +95,11 @@ def test_contact_api_proxies_to_consultops_on_success():
     mock_http_client.__aexit__ = AsyncMock(return_value=None)
 
     with (
-        patch.object(public_router.settings, "consultops_base_url", "https://consultops.test"),
+        patch.object(
+            public_router.settings,
+            "consultops_contacts_api_url",
+            "https://consultops.mateoconsultinginc.com/api/integrations/contacts",
+        ),
         patch.object(public_router.settings, "integration_api_key", "test-key"),
         patch("app.routers.public.httpx.AsyncClient", return_value=mock_http_client),
     ):
@@ -122,4 +127,7 @@ def test_contact_api_proxies_to_consultops_on_success():
     assert call_kwargs["json"]["notes"] == "Need customization"
     assert call_kwargs["headers"]["X-API-Key"] == "test-key"
     assert call_kwargs["headers"]["Content-Type"] == "application/json"
-    assert "consultops.test/api/integrations/contacts" in str(mock_http_client.post.await_args.args[0])
+    assert (
+        str(mock_http_client.post.await_args.args[0])
+        == "https://consultops.mateoconsultinginc.com/api/integrations/contacts"
+    )
