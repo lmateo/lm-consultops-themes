@@ -1,0 +1,15 @@
+---
+description: README UI captures — Playwright by default; Figma MCP only when OAuth works
+globs: README.md,docs/images/**,docs/figma-mcp-homepage-capture.md
+alwaysApply: false
+---
+
+# README UI captures
+
+When updating homepage screenshots or README UI captures:
+
+1. **Default:** run `py scripts/capture_readme_homepage.py` (Playwright). Do not block on Figma MCP if the user cannot sign in.
+2. **Figma MCP** (`plugin-figma-figma`) is optional—use only when the user confirms OAuth succeeded and the server appears in available MCP tools.
+3. If Figma auth fails, times out, or is skipped, document Playwright as the capture method and follow `docs/figma-mcp-homepage-capture.md`.
+4. Keep README image path: `docs/images/homepage-readme.webp`.
+5. Never use server name `figma` alone—use `plugin-figma-figma` when calling Figma tools.
