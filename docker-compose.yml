@@ -7,5 +7,3 @@ services:
       - .env
     environment:
       BASE_URL: http://localhost:8010
-    volumes:
-      - ./:/code

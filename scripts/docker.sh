@@ -47,11 +47,34 @@ Docker Compose shortcuts:
   ./scripts/docker.sh ps        Show container status
   ./scripts/docker.sh shell     Open a shell in the web container
   ./scripts/docker.sh clean     down + remove volumes and orphans
+
+Optional flags:
+  --dev                         Enable bind mount (docker-compose.dev.yml)
 EOF
 }
 
-ACTION="${1:-help}"
-BUILD="${BUILD:-}"
+ACTION="help"
+BUILD_FLAG=0
+DEV_MODE=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --dev)
+      DEV_MODE=1
+      ;;
+    --build)
+      BUILD_FLAG=1
+      ;;
+    up|down|restart|rebuild|logs|ps|shell|clean|help|-h|--help)
+      ACTION="$arg"
+      ;;
+  esac
+done
+
+COMPOSE_ARGS=()
+if [[ "$DEV_MODE" == "1" ]]; then
+  COMPOSE_ARGS=(-f docker-compose.yml -f docker-compose.dev.yml)
+fi
 
 case "$ACTION" in
   help|-h|--help)
@@ -60,42 +83,42 @@ case "$ACTION" in
   up)
     ensure_env
     ARGS=(up)
-    [[ "${2:-}" == "--build" || "$BUILD" == "1" ]] && ARGS+=(--build)
+    [[ "$BUILD_FLAG" == "1" || "${BUILD:-}" == "1" ]] && ARGS+=(--build)
     ARGS+=(-d)
-    compose "${ARGS[@]}"
+    compose "${COMPOSE_ARGS[@]}" "${ARGS[@]}"
     echo
     echo "App: ${APP_URL}"
     ;;
   down)
-    compose down
+    compose "${COMPOSE_ARGS[@]}" down
     ;;
   restart)
     ensure_env
-    compose down
+    compose "${COMPOSE_ARGS[@]}" down
     ARGS=(up -d)
-    [[ "${2:-}" == "--build" || "$BUILD" == "1" ]] && ARGS+=(--build)
-    compose "${ARGS[@]}"
+    [[ "$BUILD_FLAG" == "1" || "${BUILD:-}" == "1" ]] && ARGS+=(--build)
+    compose "${COMPOSE_ARGS[@]}" "${ARGS[@]}"
     echo
     echo "App: ${APP_URL}"
     ;;
   rebuild)
     ensure_env
-    compose build --no-cache
-    compose up -d
+    compose "${COMPOSE_ARGS[@]}" build --no-cache
+    compose "${COMPOSE_ARGS[@]}" up -d
     echo
     echo "App: ${APP_URL}"
     ;;
   logs)
-    compose logs -f web
+    compose "${COMPOSE_ARGS[@]}" logs -f web
     ;;
   ps)
-    compose ps
+    compose "${COMPOSE_ARGS[@]}" ps
     ;;
   shell)
-    compose exec web sh
+    compose "${COMPOSE_ARGS[@]}" exec web sh
     ;;
   clean)
-    compose down -v --remove-orphans
+    compose "${COMPOSE_ARGS[@]}" down -v --remove-orphans
     ;;
   *)
     echo "Unknown action: $ACTION" >&2

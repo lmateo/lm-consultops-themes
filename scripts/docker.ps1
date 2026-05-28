@@ -17,7 +17,8 @@ param(
     [string] $Action = "help",
 
     [switch] $Build,
-    [switch] $NoDetach
+    [switch] $NoDetach,
+    [switch] $Dev
 )
 
 $ErrorActionPreference = "Stop"
@@ -74,6 +75,13 @@ function Invoke-Compose {
     }
 }
 
+function Get-ComposeFiles {
+    if ($Dev) {
+        return @("-f", "docker-compose.yml", "-f", "docker-compose.dev.yml")
+    }
+    return @()
+}
+
 function Show-Help {
     @"
 Docker Compose shortcuts (run from anywhere):
@@ -87,6 +95,9 @@ Docker Compose shortcuts (run from anywhere):
   .\scripts\docker.ps1 shell     Open a shell in the web container
   .\scripts\docker.ps1 clean     down + remove volumes and orphans
 
+Optional flags:
+  -Dev                           Enable bind mount (docker-compose.dev.yml)
+
 From repo root you can also use:  .\docker.ps1 up
 
 Local URL: $AppUrl (host port $HostPort -> container 8000)
@@ -99,41 +110,49 @@ switch ($Action) {
     }
     "up" {
         Ensure-EnvFile
-        $args = @("up")
-        if (-not $NoDetach) { $args += "-d" }
-        if ($Build) { $args += "--build" }
-        Invoke-Compose $args
+        $composeFiles = Get-ComposeFiles
+        $composeCommandArgs = @("up")
+        if (-not $NoDetach) { $composeCommandArgs += "-d" }
+        if ($Build) { $composeCommandArgs += "--build" }
+        Invoke-Compose @($composeFiles + $composeCommandArgs)
         Write-Host "`nApp: $AppUrl" -ForegroundColor Green
     }
     "down" {
-        Invoke-Compose @("down")
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("down"))
     }
     "restart" {
         Ensure-EnvFile
-        Invoke-Compose @("down")
-        $args = @("up")
-        if (-not $NoDetach) { $args += "-d" }
-        if ($Build) { $args += "--build" }
-        Invoke-Compose $args
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("down"))
+        $composeCommandArgs = @("up")
+        if (-not $NoDetach) { $composeCommandArgs += "-d" }
+        if ($Build) { $composeCommandArgs += "--build" }
+        Invoke-Compose @($composeFiles + $composeCommandArgs)
         Write-Host "`nApp: $AppUrl" -ForegroundColor Green
     }
     "rebuild" {
         Ensure-EnvFile
-        Invoke-Compose @("build", "--no-cache")
-        $args = @("up", "-d")
-        Invoke-Compose $args
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("build", "--no-cache"))
+        $composeCommandArgs = @("up", "-d")
+        Invoke-Compose @($composeFiles + $composeCommandArgs)
         Write-Host "`nApp: $AppUrl" -ForegroundColor Green
     }
     "logs" {
-        Invoke-Compose @("logs", "-f", "web")
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("logs", "-f", "web"))
     }
     "ps" {
-        Invoke-Compose @("ps")
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("ps"))
     }
     "shell" {
-        Invoke-Compose @("exec", "web", "sh")
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("exec", "web", "sh"))
     }
     "clean" {
-        Invoke-Compose @("down", "-v", "--remove-orphans")
+        $composeFiles = Get-ComposeFiles
+        Invoke-Compose @($composeFiles + @("down", "-v", "--remove-orphans"))
     }
 }

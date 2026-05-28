@@ -386,7 +386,8 @@ stripe listen --forward-to localhost:8000/webhooks/stripe
 
 ## Docker
 
-On first `.\docker.ps1 up`, a `.env` file is created from `.env.example` (with `BASE_URL` set for port **8010**). The stack seeds the database on startup and serves the app at **[http://localhost:8010](http://localhost:8010)** (container port 8000).
+On first `.\docker.ps1 up`, a `.env` file is created from `.env.example` (with `BASE_URL` set for port **8010**). The stack seeds the database on startup and serves the app at **[http://localhost:8010](http://localhost:8010)** (container port 8000).  
+By default, compose now runs from the built image (no bind mount), so updates are baked into the image.
 
 **Windows (PowerShell)** — from the repo root:
 
@@ -397,6 +398,7 @@ On first `.\docker.ps1 up`, a `.env` file is created from `.env.example` (with `
 .\docker.ps1 rebuild   # no-cache image rebuild + start
 .\docker.ps1 logs      # follow web logs
 .\docker.ps1 clean     # stop and remove volumes
+.\docker.ps1 up -Dev   # optional live bind mount mode
 ```
 
 **macOS / Linux / Git Bash:**
@@ -405,6 +407,7 @@ On first `.\docker.ps1 up`, a `.env` file is created from `.env.example` (with `
 ./scripts/docker.sh up
 ./scripts/docker.sh down
 ./scripts/docker.sh restart
+./scripts/docker.sh up --dev
 ```
 
 **Make** (if installed): `make up`, `make down`, `make restart`, `make rebuild`, `make logs`, `make clean`.
