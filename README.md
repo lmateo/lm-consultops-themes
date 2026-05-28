@@ -31,15 +31,24 @@ Mateo ConsultOps Themes is a production-oriented template store—not a ThemeFor
 
 ### Homepage
 
-Marketplace homepage (`/`)—hero, search, and featured templates (cropped desktop viewport for readability).
+Marketplace homepage (`/`) shown in two views for readability:
+
+- Zoomed hero + top sections (readable text)
+- Full-page screenshot (complete page coverage)
 
 <img
-  src="docs/images/homepage-readme.png"
-  alt="Mateo ConsultOps Themes marketplace homepage hero and featured templates"
+  src="docs/images/homepage-readme-hero.png"
+  alt="Mateo ConsultOps Themes homepage hero and featured templates"
   width="1400"
 />
 
-*Sharp README capture (lossless PNG viewport crop): `py scripts/capture_readme_homepage.py` — see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md).*
+<img
+  src="docs/images/homepage-readme.png"
+  alt="Mateo ConsultOps Themes full homepage screenshot"
+  width="1400"
+/>
+
+*Sharp README captures (lossless PNG): `py scripts/capture_readme_homepage.py` — see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md).*
 
 | Layer | Technology |
 |-------|------------|
@@ -552,7 +561,7 @@ lm-consultops-themes/
 ├── artifacts/                  # Live preview audit reports
 ├── docs/
 │   ├── figma-mcp-homepage-capture.md  # Figma MCP capture workflow
-│   └── images/                 # README captures (homepage-readme.png)
+│   └── images/                 # README captures (homepage-readme*.png)
 ├── docker.ps1
 ├── scripts/docker.sh
 ├── Makefile

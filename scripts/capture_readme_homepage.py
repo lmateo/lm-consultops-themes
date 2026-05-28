@@ -1,6 +1,9 @@
 """Capture the marketplace homepage for README documentation (Playwright).
 
-Writes a lossless README PNG for crisp text and a WebP archive crop.
+Writes:
+- homepage-readme-hero.png (zoomed, top section for readability)
+- homepage-readme.png (full page, complete coverage)
+- homepage.webp (archive)
 """
 
 from __future__ import annotations
@@ -23,8 +26,8 @@ def capture(
     crop_height: int = 0,
 ) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    viewport_png = OUT_DIR / "homepage-viewport.png"
     full_png = OUT_DIR / "homepage-full.png"
+    readme_hero_png = OUT_DIR / "homepage-readme-hero.png"
     readme_png = OUT_DIR / "homepage-readme.png"
     webp_path = OUT_DIR / "homepage.webp"
     readme_width = min(viewport_width, 1400)
@@ -37,17 +40,26 @@ def capture(
         )
         page.goto(f"{base_url.rstrip('/')}/", wait_until="networkidle", timeout=60_000)
         page.wait_for_timeout(2000)
-        page.screenshot(path=str(viewport_png), full_page=False)
         page.screenshot(path=str(full_png), full_page=True)
         browser.close()
 
-    with Image.open(viewport_png) as viewport_image:
-        # Keep README image lossless (PNG) for text clarity.
-        target_h = int(viewport_image.height * readme_width / viewport_image.width)
-        readme_im = viewport_image.resize((readme_width, target_h), Image.Resampling.LANCZOS)
+    with Image.open(full_png) as full_image:
+        # Zoomed hero/top section for readability in README.
+        hero_crop_height = min(1800, full_image.height)
+        hero = full_image.crop((0, 0, full_image.width, hero_crop_height))
+        if hero.width > readme_width:
+            hero_h = int(hero.height * readme_width / hero.width)
+            hero = hero.resize((readme_width, hero_h), Image.Resampling.LANCZOS)
+        hero.save(readme_hero_png, "PNG", optimize=True)
+
+        # Keep README image lossless (PNG) for text clarity, full-page.
+        if full_image.width > readme_width:
+            readme_h = int(full_image.height * readme_width / full_image.width)
+            readme_im = full_image.resize((readme_width, readme_h), Image.Resampling.LANCZOS)
+        else:
+            readme_im = full_image
         readme_im.save(readme_png, "PNG", optimize=True)
 
-    with Image.open(full_png) as full_image:
         archive = full_image
         if crop_height > 0 and full_image.height > crop_height:
             archive = full_image.crop((0, 0, full_image.width, crop_height))
@@ -56,10 +68,10 @@ def capture(
             archive = archive.resize((readme_width, h), Image.Resampling.LANCZOS)
         archive.save(webp_path, "WEBP", quality=88, method=6)
 
-    viewport_png.unlink(missing_ok=True)
     full_png.unlink(missing_ok=True)
-    print(f"Wrote {readme_png} ({readme_width}px wide, viewport crop)")
-    print(f"Wrote {webp_path} (top-of-page archive)")
+    print(f"Wrote {readme_hero_png} ({readme_width}px wide, top-section view)")
+    print(f"Wrote {readme_png} ({readme_width}px wide, full-page capture)")
+    print(f"Wrote {webp_path} (full-page archive unless --crop-height is set)")
 
 
 def main() -> None:
@@ -75,7 +87,7 @@ def main() -> None:
     parser.add_argument(
         "--crop-height",
         type=int,
-        default=2400,
+        default=0,
         help="Max height for homepage.webp top crop (0 = full page)",
     )
     args = parser.parse_args()
