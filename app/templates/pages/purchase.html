@@ -9,7 +9,7 @@
         <p class="mt-1 text-sm">Your license is active. Use the secure link below to download the full theme package.</p>
         <div class="mt-3">
             <a
-                href="/downloads/theme/{{ template_item.slug }}?token={{ request.query_params.get('download_token') }}"
+                href="/downloads/theme/{{ template_item.slug }}?token={{ download_token }}"
                 class="inline-flex rounded-lg bg-brand-emerald px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
             >
                 Download {{ template_item.title }} Theme
@@ -27,6 +27,12 @@
     <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
         <p class="font-semibold">Checkout canceled</p>
         <p class="mt-1 text-sm">No charge was made. You can restart checkout anytime.</p>
+    </div>
+    {% endif %}
+    {% if not stripe_configured %}
+    <div class="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+        <p class="font-semibold">Stripe checkout is temporarily unavailable</p>
+        <p class="mt-1 text-sm">Payments are not configured right now. Please try again shortly or contact support for a manual checkout link.</p>
     </div>
     {% endif %}
     <div class="mt-8 grid gap-6 lg:grid-cols-3">
@@ -62,7 +68,13 @@
                 <input name="agree_terms" value="yes" type="checkbox" required class="mt-1" />
                 <span>I agree to the license terms and understand that download links expire for security.</span>
             </label>
-            <button type="submit" class="mt-6 w-full rounded-lg bg-brand-emerald px-4 py-3 font-semibold text-white hover:bg-brand-dark">Continue to Secure Stripe Checkout</button>
+            <button
+                type="submit"
+                class="mt-6 w-full rounded-lg px-4 py-3 font-semibold text-white {% if stripe_configured %}bg-brand-emerald hover:bg-brand-dark{% else %}cursor-not-allowed bg-slate-400{% endif %}"
+                {% if not stripe_configured %}disabled aria-disabled="true"{% endif %}
+            >
+                Continue to Secure Stripe Checkout
+            </button>
         </form>
     </div>
 </section>

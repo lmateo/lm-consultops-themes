@@ -39,6 +39,7 @@ router = APIRouter()
 settings = get_settings()
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+ALLOWED_LICENSE_TYPES = {"Standard", "Business", "Agency"}
 
 PREVIEW_GRADIENTS = [
     ("#10B981", "#047857"),
@@ -571,6 +572,7 @@ def purchase_page(request: Request, slug: str, db: Session = Depends(get_db)):
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
+    stripe_configured = bool(settings.stripe_secret_key and settings.stripe_publishable_key)
     download_token = ""
     payment_verified = False
     payment_error = ""
@@ -615,6 +617,7 @@ def purchase_page(request: Request, slug: str, db: Session = Depends(get_db)):
             "payment_verified": payment_verified,
             "payment_error": payment_error,
             "canceled": canceled,
+            "stripe_configured": stripe_configured,
             "stripe_publishable_key": settings.stripe_publishable_key,
             "meta_title": f"Purchase {template.title}",
             "meta_description": "Secure Stripe checkout with paid download access.",
@@ -639,15 +642,30 @@ def purchase_template(
     if agree_terms is None:
         raise HTTPException(status_code=400, detail="You must agree to terms before purchasing.")
 
+    normalized_first_name = first_name.strip()
+    normalized_last_name = last_name.strip()
     normalized_email = email.strip().lower()
+    normalized_company = company.strip()
+    normalized_license_type = license_type.strip().title()
+
+    if not normalized_first_name or not normalized_last_name:
+        raise HTTPException(status_code=400, detail="First name and last name are required.")
+    if not normalized_email or not EMAIL_REGEX.match(normalized_email):
+        raise HTTPException(status_code=400, detail="A valid email address is required.")
+    if normalized_license_type not in ALLOWED_LICENSE_TYPES:
+        raise HTTPException(status_code=400, detail="Invalid license type selected.")
+
+    # Validate Stripe credentials before writing pending purchase records.
+    _configure_stripe()
+
     customer = db.scalar(select(Customer).where(Customer.email == normalized_email))
-    full_name = f"{first_name.strip()} {last_name.strip()}".strip()
+    full_name = f"{normalized_first_name} {normalized_last_name}".strip()
 
     if customer:
         customer.name = full_name
-        customer.company = company.strip()
+        customer.company = normalized_company
     else:
-        customer = Customer(name=full_name, email=normalized_email, company=company.strip())
+        customer = Customer(name=full_name, email=normalized_email, company=normalized_company)
         db.add(customer)
         db.flush()
 
@@ -655,14 +673,13 @@ def purchase_template(
         template_id=template.id,
         customer_id=customer.id,
         amount=template.price,
-        license_type=license_type,
+        license_type=normalized_license_type,
         status="pending",
     )
     db.add(purchase)
     db.commit()
     db.refresh(purchase)
     try:
-        _configure_stripe()
         checkout_session = stripe.checkout.Session.create(
             mode="payment",
             customer_email=normalized_email,
@@ -673,7 +690,7 @@ def purchase_template(
                         "currency": "usd",
                         "unit_amount": int(round(template.price * 100)),
                         "product_data": {
-                            "name": f"{template.title} Theme License ({license_type})",
+                            "name": f"{template.title} Theme License ({normalized_license_type})",
                             "description": template.description,
                         },
                     },
@@ -686,10 +703,13 @@ def purchase_template(
             success_url=f"{settings.base_url}/purchase/{template.slug}?success=1&purchase_id={purchase.id}&session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{settings.base_url}/purchase/{template.slug}?canceled=1",
         )
-    except stripe.error.StripeError as exc:
+    except (stripe.error.StripeError, Exception) as exc:  # noqa: BLE001
         purchase.status = "failed"
         db.commit()
-        raise HTTPException(status_code=502, detail=f"Stripe checkout session error: {str(exc)}") from exc
+        detail = "Stripe checkout session error"
+        if isinstance(exc, stripe.error.StripeError):
+            detail = f"{detail}: {str(exc)}"
+        raise HTTPException(status_code=502, detail=detail) from exc
 
     return RedirectResponse(url=checkout_session.url, status_code=303)
 
