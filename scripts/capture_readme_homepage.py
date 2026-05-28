@@ -1,6 +1,6 @@
 """Capture the marketplace homepage for README documentation (Playwright).
 
-Figma MCP is optional when Cursor OAuth works — see docs/figma-mcp-homepage-capture.md.
+Produces a sharp, cropped README image (viewport hero) plus an optional full-page archive.
 """
 
 from __future__ import annotations
@@ -8,40 +8,68 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "docs" / "images"
 
 
-def capture(base_url: str, viewport_width: int = 1440) -> None:
+def _enhance_readme_image(image: Image.Image) -> Image.Image:
+    """Light cleanup for README legibility without over-sharpening."""
+    rgb = image.convert("RGB")
+    contrast = ImageEnhance.Contrast(rgb).enhance(1.06)
+    sharp = contrast.filter(ImageFilter.UnsharpMask(radius=0.8, percent=90, threshold=3))
+    return sharp
+
+
+def capture(
+    base_url: str,
+    viewport_width: int = 1440,
+    viewport_height: int = 900,
+    device_scale_factor: float = 2.0,
+    crop_height: int = 0,
+) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    png_path = OUT_DIR / "homepage.png"
+    viewport_png = OUT_DIR / "homepage-viewport.png"
+    full_png = OUT_DIR / "homepage-full.png"
     webp_path = OUT_DIR / "homepage.webp"
     readme_path = OUT_DIR / "homepage-readme.webp"
+    readme_width = min(viewport_width, 1400)
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
-        page = browser.new_page(viewport={"width": viewport_width, "height": 900})
+        page = browser.new_page(
+            viewport={"width": viewport_width, "height": viewport_height},
+            device_scale_factor=device_scale_factor,
+        )
         page.goto(f"{base_url.rstrip('/')}/", wait_until="networkidle", timeout=60_000)
         page.wait_for_timeout(2000)
-        page.screenshot(path=str(png_path), full_page=True)
+        page.screenshot(path=str(viewport_png), full_page=False)
+        page.screenshot(path=str(full_png), full_page=True)
         browser.close()
 
-    with Image.open(png_path) as image:
-        full = image
-        full.save(webp_path, "WEBP", quality=85, method=6)
+    with Image.open(viewport_png) as viewport_image:
+        # Downsample retina capture to display width (crisp, not upscaled).
+        target_h = int(viewport_image.height * readme_width / viewport_image.width)
+        readme_im = viewport_image.resize((readme_width, target_h), Image.Resampling.LANCZOS)
+        readme_im = _enhance_readme_image(readme_im)
+        readme_im.save(readme_path, "WEBP", quality=90, method=6)
 
-        readme_max_width = 1400
-        readme_im = full
-        if full.width > readme_max_width:
-            height = int(full.height * readme_max_width / full.width)
-            readme_im = full.resize((readme_max_width, height), Image.Resampling.LANCZOS)
-        readme_im.save(readme_path, "WEBP", quality=88, method=6)
+    with Image.open(full_png) as full_image:
+        archive = full_image
+        if crop_height > 0 and full_image.height > crop_height:
+            archive = full_image.crop((0, 0, full_image.width, crop_height))
+        if archive.width > readme_width:
+            h = int(archive.height * readme_width / archive.width)
+            archive = archive.resize((readme_width, h), Image.Resampling.LANCZOS)
+        archive = _enhance_readme_image(archive)
+        archive.save(webp_path, "WEBP", quality=88, method=6)
 
-    png_path.unlink(missing_ok=True)
-    print(f"Wrote {webp_path} and {readme_path}")
+    viewport_png.unlink(missing_ok=True)
+    full_png.unlink(missing_ok=True)
+    print(f"Wrote {readme_path} ({readme_width}px wide, viewport crop)")
+    print(f"Wrote {webp_path} (top-of-page archive)")
 
 
 def main() -> None:
@@ -52,8 +80,22 @@ def main() -> None:
         help="App base URL (default: Docker port 8010)",
     )
     parser.add_argument("--viewport-width", type=int, default=1440)
+    parser.add_argument("--viewport-height", type=int, default=900)
+    parser.add_argument("--device-scale-factor", type=float, default=2.0)
+    parser.add_argument(
+        "--crop-height",
+        type=int,
+        default=2400,
+        help="Max height for homepage.webp top crop (0 = full page)",
+    )
     args = parser.parse_args()
-    capture(args.base_url, args.viewport_width)
+    capture(
+        args.base_url,
+        args.viewport_width,
+        args.viewport_height,
+        args.device_scale_factor,
+        args.crop_height,
+    )
 
 
 if __name__ == "__main__":
