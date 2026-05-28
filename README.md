@@ -31,11 +31,11 @@ Mateo ConsultOps Themes is a production-oriented template store—not a ThemeFor
 
 ### Homepage
 
-Pixel-accurate capture of the marketplace homepage (`/`)—hero, template search, featured grid, best sellers / new templates, and popular-by-category rows.
+Marketplace homepage (`/`)—hero, template search, featured grid, best sellers / new templates, and popular-by-category rows.
 
 ![Mateo ConsultOps Themes homepage](docs/images/homepage-readme.webp)
 
-*Captured from the running app via Playwright. See [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md) to refresh (Figma MCP is optional when Cursor OAuth works).*
+*To regenerate from the running app, see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md) (`py scripts/capture_readme_homepage.py`).*
 
 | Layer | Technology |
 |-------|------------|
