@@ -53,7 +53,7 @@ Optional flags:
 EOF
 }
 
-ACTION="help"
+ACTION=""
 BUILD_FLAG=0
 DEV_MODE=0
 
@@ -66,10 +66,19 @@ for arg in "$@"; do
       BUILD_FLAG=1
       ;;
     up|down|restart|rebuild|logs|ps|shell|clean|help|-h|--help)
+      if [[ -n "$ACTION" ]]; then
+        echo "Error: multiple actions provided ('$ACTION' and '$arg'). Please provide only one action." >&2
+        usage >&2
+        exit 1
+      fi
       ACTION="$arg"
       ;;
   esac
 done
+
+if [[ -z "$ACTION" ]]; then
+  ACTION="help"
+fi
 
 COMPOSE_ARGS=()
 if [[ "$DEV_MODE" == "1" ]]; then
