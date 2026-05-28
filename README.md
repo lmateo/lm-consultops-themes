@@ -33,7 +33,11 @@ Mateo ConsultOps Themes is a production-oriented template store—not a ThemeFor
 
 Marketplace homepage (`/`)—hero, template search, featured grid, best sellers / new templates, and popular-by-category rows.
 
-![Mateo ConsultOps Themes homepage](docs/images/homepage-readme.webp)
+<img
+  src="docs/images/homepage-readme.webp"
+  alt="Mateo ConsultOps Themes marketplace homepage"
+  width="1200"
+/>
 
 *To regenerate from the running app, see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md) (`py scripts/capture_readme_homepage.py`).*
 

@@ -30,11 +30,15 @@ def capture(base_url: str, viewport_width: int = 1440) -> None:
         browser.close()
 
     with Image.open(png_path) as image:
-        if image.width > 1280:
-            height = int(image.height * 1280 / image.width)
-            image = image.resize((1280, height), Image.Resampling.LANCZOS)
-        image.save(webp_path, "WEBP", quality=82, method=6)
-        image.save(readme_path, "WEBP", quality=78, method=6)
+        full = image
+        full.save(webp_path, "WEBP", quality=85, method=6)
+
+        readme_max_width = 1400
+        readme_im = full
+        if full.width > readme_max_width:
+            height = int(full.height * readme_max_width / full.width)
+            readme_im = full.resize((readme_max_width, height), Image.Resampling.LANCZOS)
+        readme_im.save(readme_path, "WEBP", quality=88, method=6)
 
     png_path.unlink(missing_ok=True)
     print(f"Wrote {webp_path} and {readme_path}")
