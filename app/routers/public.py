@@ -50,6 +50,42 @@ PREVIEW_GRADIENTS = [
 ]
 
 
+def _event_as_dict(event: object) -> dict:
+    if isinstance(event, dict):
+        return event
+    to_dict_recursive = getattr(event, "to_dict_recursive", None)
+    if callable(to_dict_recursive):
+        try:
+            converted = to_dict_recursive()
+            if isinstance(converted, dict):
+                return converted
+            nested = getattr(converted, "to_dict_recursive", None)
+            if callable(nested):
+                converted_nested = nested()
+                if isinstance(converted_nested, dict):
+                    return converted_nested
+        except Exception:  # noqa: BLE001
+            pass
+    to_dict = getattr(event, "to_dict", None)
+    if callable(to_dict):
+        try:
+            converted = to_dict()
+            if isinstance(converted, dict):
+                return converted
+        except Exception:  # noqa: BLE001
+            pass
+    raw_data = getattr(event, "_data", None)
+    if isinstance(raw_data, dict):
+        return raw_data
+    try:
+        maybe = dict(event)  # type: ignore[arg-type]
+        if isinstance(maybe, dict):
+            return maybe
+    except Exception:  # noqa: BLE001
+        pass
+    return {}
+
+
 def _resolve_contacts_api_url() -> str:
     configured_url = (settings.consultops_contacts_api_url or "").strip()
     if configured_url:
@@ -721,7 +757,8 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     except (ValueError, stripe.error.SignatureVerificationError):
         return JSONResponse({"received": False}, status_code=400)
 
-    event_id = str(event.get("id", ""))
+    event_data = _event_as_dict(event)
+    event_id = str(event_data.get("id", ""))
     existing_event = db.scalar(select(StripeWebhookEvent).where(StripeWebhookEvent.event_id == event_id))
     if existing_event:
         return JSONResponse({"received": True, "duplicate": True})
@@ -729,15 +766,15 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     safe_event_id = event_id or f"unknown-{abs(hash(payload))}"
     webhook_log = StripeWebhookEvent(
         event_id=safe_event_id,
-        event_type=str(event.get("type", "unknown")),
+        event_type=str(event_data.get("type", "unknown")),
         payload=payload.decode("utf-8", errors="ignore"),
         status="received",
     )
     db.add(webhook_log)
     db.flush()
 
-    if event.get("type") == "checkout.session.completed":
-        session_data = event.get("data", {}).get("object", {})
+    if event_data.get("type") == "checkout.session.completed":
+        session_data = event_data.get("data", {}).get("object", {})
         if session_data.get("payment_status") == "paid":
             metadata = session_data.get("metadata", {})
             try:
