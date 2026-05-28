@@ -400,6 +400,22 @@ def contact_page(request: Request):
     )
 
 
+@router.get("/health/contact-config")
+def contact_config_health():
+    contacts_api_url = _resolve_contacts_api_url()
+    has_contacts_api_url = bool(contacts_api_url)
+    has_integration_api_key = bool((settings.integration_api_key or "").strip())
+
+    return JSONResponse(
+        status_code=200,
+        content={
+            "contact_form_ready": has_contacts_api_url and has_integration_api_key,
+            "has_contacts_api_url": has_contacts_api_url,
+            "has_integration_api_key": has_integration_api_key,
+        },
+    )
+
+
 @router.post("/api/contact")
 async def contact_submit(
     name: str = Form(...),

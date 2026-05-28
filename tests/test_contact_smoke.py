@@ -83,6 +83,46 @@ def test_contact_api_returns_503_when_not_configured():
     assert "not configured" in response.json()["detail"]
 
 
+def test_contact_config_health_reports_not_ready_without_api_key():
+    import app.routers.public as public_router
+
+    with (
+        patch.object(
+            public_router.settings,
+            "consultops_contacts_api_url",
+            "https://consultops.mateoconsultinginc.com/api/integrations/contacts",
+        ),
+        patch.object(public_router.settings, "integration_api_key", ""),
+    ):
+        response = client.get("/health/contact-config")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["contact_form_ready"] is False
+    assert body["has_contacts_api_url"] is True
+    assert body["has_integration_api_key"] is False
+
+
+def test_contact_config_health_reports_ready_when_fully_configured():
+    import app.routers.public as public_router
+
+    with (
+        patch.object(
+            public_router.settings,
+            "consultops_contacts_api_url",
+            "https://consultops.mateoconsultinginc.com/api/integrations/contacts",
+        ),
+        patch.object(public_router.settings, "integration_api_key", "test-key"),
+    ):
+        response = client.get("/health/contact-config")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["contact_form_ready"] is True
+    assert body["has_contacts_api_url"] is True
+    assert body["has_integration_api_key"] is True
+
+
 def test_contact_api_proxies_to_consultops_on_success():
     import app.routers.public as public_router
 
