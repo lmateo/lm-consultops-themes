@@ -2,6 +2,7 @@ import base64
 import hashlib
 import hmac
 import json
+import secrets
 import time
 
 
@@ -23,12 +24,14 @@ def create_download_token(
     template_slug: str,
     customer_email: str,
     expires_in_seconds: int = 3600,
+    nonce: str | None = None,
 ) -> str:
     payload = {
         "purchase_id": purchase_id,
         "template_slug": template_slug,
         "customer_email": customer_email.lower().strip(),
         "exp": int(time.time()) + expires_in_seconds,
+        "nonce": nonce or secrets.token_hex(8),
     }
     encoded_payload = _encode_payload(payload)
     signature = hmac.new(

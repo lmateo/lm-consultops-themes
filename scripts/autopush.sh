@@ -35,6 +35,20 @@ if [ -z "$BRANCH" ]; then
   exit 1
 fi
 
+run_pre_push_validations() {
+  echo "Running pre-push validations..."
+  if command -v py >/dev/null 2>&1; then
+    py scripts/audit_download_packages.py
+  elif command -v python >/dev/null 2>&1; then
+    python scripts/audit_download_packages.py
+  else
+    echo "Error: Python launcher not found. Install 'py' or 'python' and retry."
+    exit 1
+  fi
+}
+
+run_pre_push_validations
+
 echo "Current branch: $BRANCH"
 echo "Checking git status..."
 git status

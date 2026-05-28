@@ -1,6 +1,7 @@
 from app.models.entities import (
     Category,
     Customer,
+    DownloadGrant,
     Feature,
     FulfillmentEmail,
     Industry,
@@ -25,6 +26,7 @@ __all__ = [
     "Review",
     "Purchase",
     "Customer",
+    "DownloadGrant",
     "StripeWebhookEvent",
     "FulfillmentEmail",
     "Inquiry",

@@ -139,6 +139,7 @@ class Purchase(Base, TimestampMixin):
     customer: Mapped[Customer] = relationship(back_populates="purchases")
     webhook_events: Mapped[list["StripeWebhookEvent"]] = relationship(back_populates="purchase", cascade="all,delete")
     fulfillment_emails: Mapped[list["FulfillmentEmail"]] = relationship(back_populates="purchase", cascade="all,delete")
+    download_grants: Mapped[list["DownloadGrant"]] = relationship(back_populates="purchase", cascade="all,delete")
 
 
 class Inquiry(Base, TimestampMixin):
@@ -203,3 +204,18 @@ class FulfillmentEmail(Base, TimestampMixin):
     sent_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     purchase: Mapped["Purchase"] = relationship(back_populates="fulfillment_emails")
+
+
+class DownloadGrant(Base, TimestampMixin):
+    __tablename__ = "download_grants"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    purchase_id: Mapped[int] = mapped_column(ForeignKey("purchases.id"), nullable=False, index=True)
+    token_hash: Mapped[str] = mapped_column(String(128), unique=True, nullable=False, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, index=True)
+    max_downloads: Mapped[int] = mapped_column(Integer, default=5)
+    download_count: Mapped[int] = mapped_column(Integer, default=0)
+    status: Mapped[str] = mapped_column(String(50), default="active")
+    last_downloaded_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+    purchase: Mapped["Purchase"] = relationship(back_populates="download_grants")

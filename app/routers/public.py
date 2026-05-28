@@ -12,6 +12,7 @@ from app.core.config import get_settings
 from app.core.database import get_db
 from app.models import Customer, Purchase, StripeWebhookEvent, Template
 from app.services.fulfillment import send_purchase_fulfillment_email
+from app.services.download_access import issue_download_token_for_purchase, validate_download_token_access
 from app.services.marketplace import (
     TEMPLATE_SORTS,
     filtered_template_query,
@@ -31,7 +32,6 @@ from app.services.crafto_demos import DEMO_PAGES, get_crafto_demo_or_default
 from app.services.crafto_preview_wrap import load_wrapped_crafto_preview
 from app.services.preview_demos import list_template_search_hints
 from app.services.theme_packages import build_theme_zip_bytes
-from app.utils.download_tokens import create_download_token, verify_download_token
 from app.utils.query_params import OptionalFloatQuery
 from app.utils.templating import render
 
@@ -520,12 +520,11 @@ def my_downloads_page(request: Request, db: Session = Depends(get_db), email: st
                 reverse=True,
             )
             for purchase in paid_purchases:
-                token = create_download_token(
-                    secret_key=settings.secret_key,
-                    purchase_id=purchase.id,
-                    template_slug=purchase.template.slug,
-                    customer_email=customer.email,
-                    expires_in_seconds=7200,
+                token = issue_download_token_for_purchase(
+                    db,
+                    settings=settings,
+                    purchase=purchase,
+                    expires_in_seconds=settings.download_link_ttl_seconds,
                 )
                 purchases_with_tokens.append({"purchase": purchase, "download_token": token})
 
@@ -594,12 +593,11 @@ def purchase_page(request: Request, slug: str, db: Session = Depends(get_db)):
                 session_purchase_id = str(checkout_session.get("metadata", {}).get("purchase_id", ""))
                 if checkout_session.get("payment_status") == "paid" and session_purchase_id == str(purchase.id):
                     _mark_purchase_paid(db, purchase)
-                    download_token = create_download_token(
-                        secret_key=settings.secret_key,
-                        purchase_id=purchase.id,
-                        template_slug=template.slug,
-                        customer_email=purchase.customer.email,
-                        expires_in_seconds=7200,
+                    download_token = issue_download_token_for_purchase(
+                        db,
+                        settings=settings,
+                        purchase=purchase,
+                        expires_in_seconds=settings.download_link_ttl_seconds,
                     )
                     payment_verified = True
                 else:
@@ -767,23 +765,17 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/downloads/theme/{slug}")
 def download_theme_package(slug: str, token: str, db: Session = Depends(get_db)):
-    payload = verify_download_token(token, secret_key=get_settings().secret_key)
-    if not payload:
-        raise HTTPException(status_code=403, detail="Invalid or expired download token.")
-    if payload.get("template_slug") != slug:
-        raise HTTPException(status_code=403, detail="Download token does not match requested template.")
-
-    purchase_id = int(payload.get("purchase_id", 0))
-    customer_email = str(payload.get("customer_email", "")).strip().lower()
-    purchase = db.get(Purchase, purchase_id)
-    if not purchase:
-        raise HTTPException(status_code=404, detail="Purchase not found.")
-    if purchase.status != "paid":
-        raise HTTPException(status_code=403, detail="Purchase is not in paid status.")
-    if purchase.customer.email.lower().strip() != customer_email:
-        raise HTTPException(status_code=403, detail="Download token does not match this purchase.")
-    if purchase.template.slug != slug:
-        raise HTTPException(status_code=403, detail="Purchased template mismatch.")
+    try:
+        purchase = validate_download_token_access(
+            db,
+            settings=get_settings(),
+            template_slug=slug,
+            token=token,
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except (ValueError, PermissionError) as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
 
     zip_bytes, filename = build_theme_zip_bytes(purchase.template)
     content = StreamingResponse(iter([zip_bytes]), media_type="application/zip")

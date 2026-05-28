@@ -6,7 +6,7 @@
     {% if payment_verified and download_token %}
     <div class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-900">
         <p class="font-semibold">Payment successful.</p>
-        <p class="mt-1 text-sm">Your payment is confirmed. Use the secure link below to download the full theme package.</p>
+        <p class="mt-1 text-sm">Your payment is confirmed. Use the secure link below to download the full theme package (image assets intentionally excluded).</p>
         <div class="mt-3">
             <a
                 href="/downloads/theme/{{ template_item.slug }}?token={{ download_token }}"
@@ -15,6 +15,7 @@
                 Download {{ template_item.title }} Theme
             </a>
         </div>
+        <p class="mt-2 text-xs">This secure link expires and supports limited downloads. You can generate a new link from My Downloads.</p>
     </div>
     {% endif %}
     {% if payment_error %}
@@ -58,7 +59,7 @@
             <div class="mt-4"><label class="text-sm font-medium" for="email">Email</label><input id="email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
             <div class="mt-4"><label class="text-sm font-medium" for="company">Company (Optional)</label><input id="company" name="company" class="mt-1 w-full rounded-lg border border-brand-border px-3 py-2" /></div>
             <div class="mt-4 rounded-lg bg-slate-50 p-3 text-sm text-brand-muted">
-                Price shown for this theme is the final price. Includes full source files (home, about, services, pricing, contact), modern styling, and editable assets. You will be redirected to Stripe Checkout.
+                Price shown for this theme is the final price. Includes full source files (home, about, services, pricing, contact), modern styling, and editable code. Image assets are excluded so buyers can use their own licensed media. You will be redirected to Stripe Checkout.
             </div>
             <label class="mt-4 flex items-start gap-2 text-sm">
                 <input name="agree_terms" value="yes" type="checkbox" required class="mt-1" />
