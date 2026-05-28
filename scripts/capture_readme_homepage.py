@@ -1,6 +1,6 @@
 """Capture the marketplace homepage for README documentation (Playwright).
 
-Produces a sharp, cropped README image (viewport hero) plus an optional full-page archive.
+Writes a lossless README PNG for crisp text and a WebP archive crop.
 """
 
 from __future__ import annotations
@@ -8,33 +8,25 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import Image
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = ROOT / "docs" / "images"
 
 
-def _enhance_readme_image(image: Image.Image) -> Image.Image:
-    """Light cleanup for README legibility without over-sharpening."""
-    rgb = image.convert("RGB")
-    contrast = ImageEnhance.Contrast(rgb).enhance(1.06)
-    sharp = contrast.filter(ImageFilter.UnsharpMask(radius=0.8, percent=90, threshold=3))
-    return sharp
-
-
 def capture(
     base_url: str,
-    viewport_width: int = 1440,
-    viewport_height: int = 900,
-    device_scale_factor: float = 2.0,
+    viewport_width: int = 1600,
+    viewport_height: int = 1000,
+    device_scale_factor: float = 1.0,
     crop_height: int = 0,
 ) -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     viewport_png = OUT_DIR / "homepage-viewport.png"
     full_png = OUT_DIR / "homepage-full.png"
+    readme_png = OUT_DIR / "homepage-readme.png"
     webp_path = OUT_DIR / "homepage.webp"
-    readme_path = OUT_DIR / "homepage-readme.webp"
     readme_width = min(viewport_width, 1400)
 
     with sync_playwright() as playwright:
@@ -50,11 +42,10 @@ def capture(
         browser.close()
 
     with Image.open(viewport_png) as viewport_image:
-        # Downsample retina capture to display width (crisp, not upscaled).
+        # Keep README image lossless (PNG) for text clarity.
         target_h = int(viewport_image.height * readme_width / viewport_image.width)
         readme_im = viewport_image.resize((readme_width, target_h), Image.Resampling.LANCZOS)
-        readme_im = _enhance_readme_image(readme_im)
-        readme_im.save(readme_path, "WEBP", quality=90, method=6)
+        readme_im.save(readme_png, "PNG", optimize=True)
 
     with Image.open(full_png) as full_image:
         archive = full_image
@@ -63,12 +54,11 @@ def capture(
         if archive.width > readme_width:
             h = int(archive.height * readme_width / archive.width)
             archive = archive.resize((readme_width, h), Image.Resampling.LANCZOS)
-        archive = _enhance_readme_image(archive)
         archive.save(webp_path, "WEBP", quality=88, method=6)
 
     viewport_png.unlink(missing_ok=True)
     full_png.unlink(missing_ok=True)
-    print(f"Wrote {readme_path} ({readme_width}px wide, viewport crop)")
+    print(f"Wrote {readme_png} ({readme_width}px wide, viewport crop)")
     print(f"Wrote {webp_path} (top-of-page archive)")
 
 
@@ -79,9 +69,9 @@ def main() -> None:
         default="http://localhost:8010",
         help="App base URL (default: Docker port 8010)",
     )
-    parser.add_argument("--viewport-width", type=int, default=1440)
-    parser.add_argument("--viewport-height", type=int, default=900)
-    parser.add_argument("--device-scale-factor", type=float, default=2.0)
+    parser.add_argument("--viewport-width", type=int, default=1600)
+    parser.add_argument("--viewport-height", type=int, default=1000)
+    parser.add_argument("--device-scale-factor", type=float, default=1.0)
     parser.add_argument(
         "--crop-height",
         type=int,
