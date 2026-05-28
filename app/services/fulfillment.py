@@ -20,7 +20,6 @@ def _build_email_body(purchase: Purchase, download_url: str) -> str:
         f"Thank you for purchasing {purchase.template.title}.\n"
         "Your full website theme package is ready for download.\n\n"
         f"Download link (expires in 2 hours):\n{download_url}\n\n"
-        f"License: {purchase.license_type}\n"
         f"Amount: ${purchase.amount:.2f}\n\n"
         "If your link expires, visit My Downloads and request a new link using your purchase email.\n"
     )

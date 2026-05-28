@@ -117,7 +117,7 @@ Pixel-accurate capture of the marketplace homepage (`/`)—hero, template search
 | GET | `/preview/{slug}/{page}` | Live wrapped preview HTML |
 | GET | `/preview-site/{slug}` | Redirect to preview home |
 | GET | `/preview-site/{slug}/{page}` | Redirect to preview page |
-| GET | `/pricing` | Licensing and pricing |
+| GET | `/pricing` | Theme pricing and optional services |
 | GET | `/services/setup` | Setup services |
 | GET | `/contact` | Contact form |
 | POST | `/api/contact` | Proxy to ConsultOps contacts API |

@@ -39,7 +39,7 @@ router = APIRouter()
 settings = get_settings()
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-ALLOWED_LICENSE_TYPES = {"Standard", "Business", "Agency"}
+DEFAULT_PURCHASE_TYPE = "Theme"
 
 PREVIEW_GRADIENTS = [
     ("#10B981", "#047857"),
@@ -68,7 +68,6 @@ def _configure_stripe() -> None:
 
 def _mark_purchase_paid(db: Session, purchase: Purchase) -> None:
     if purchase.status == "paid":
-        send_purchase_fulfillment_email(db, purchase, settings)
         return
     purchase.status = "paid"
     purchase.template.sales_count += 1
@@ -370,8 +369,8 @@ def pricing_page(request: Request):
         "pages/pricing.html",
         request,
         {
-            "meta_title": "Licensing and Pricing",
-            "meta_description": "Compare template licensing tiers and services.",
+            "meta_title": "Theme Pricing",
+            "meta_description": "Compare template prices and optional launch services.",
         },
     )
 
@@ -489,7 +488,7 @@ def faq_page(request: Request):
     return render(
         "pages/faq.html",
         request,
-        {"meta_title": "Frequently Asked Questions", "meta_description": "Answers for templates, licensing, and services."},
+        {"meta_title": "Frequently Asked Questions", "meta_description": "Answers for templates, pricing, and services."},
     )
 
 
@@ -572,7 +571,7 @@ def purchase_page(request: Request, slug: str, db: Session = Depends(get_db)):
     if not template:
         raise HTTPException(status_code=404, detail="Template not found")
 
-    stripe_configured = bool(settings.stripe_secret_key and settings.stripe_publishable_key)
+    stripe_configured = bool(settings.stripe_secret_key)
     download_token = ""
     payment_verified = False
     payment_error = ""
@@ -633,7 +632,6 @@ def purchase_template(
     last_name: str = Form(...),
     email: str = Form(...),
     company: str = Form(""),
-    license_type: str = Form("Standard"),
     agree_terms: str | None = Form(default=None),
 ):
     template = get_template_by_slug(db, slug)
@@ -646,14 +644,11 @@ def purchase_template(
     normalized_last_name = last_name.strip()
     normalized_email = email.strip().lower()
     normalized_company = company.strip()
-    normalized_license_type = license_type.strip().title()
 
     if not normalized_first_name or not normalized_last_name:
         raise HTTPException(status_code=400, detail="First name and last name are required.")
     if not normalized_email or not EMAIL_REGEX.match(normalized_email):
         raise HTTPException(status_code=400, detail="A valid email address is required.")
-    if normalized_license_type not in ALLOWED_LICENSE_TYPES:
-        raise HTTPException(status_code=400, detail="Invalid license type selected.")
 
     # Validate Stripe credentials before writing pending purchase records.
     _configure_stripe()
@@ -673,7 +668,7 @@ def purchase_template(
         template_id=template.id,
         customer_id=customer.id,
         amount=template.price,
-        license_type=normalized_license_type,
+        license_type=DEFAULT_PURCHASE_TYPE,
         status="pending",
     )
     db.add(purchase)
@@ -690,7 +685,7 @@ def purchase_template(
                         "currency": "usd",
                         "unit_amount": int(round(template.price * 100)),
                         "product_data": {
-                            "name": f"{template.title} Theme License ({normalized_license_type})",
+                            "name": f"{template.title} Theme",
                             "description": template.description,
                         },
                     },

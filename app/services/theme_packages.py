@@ -189,7 +189,7 @@ Thanks for your purchase.
 - Category: {template.category.name}
 - Industry: {template.industry.name}
 - Version: {template.version}
-- License: Commercial purchase required
+- Purchase: Completed via Mateo ConsultOps Themes checkout
 """
 
     memory_file = BytesIO()

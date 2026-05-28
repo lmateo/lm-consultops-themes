@@ -132,7 +132,7 @@ class Purchase(Base, TimestampMixin):
     template_id: Mapped[int] = mapped_column(ForeignKey("templates.id"), nullable=False)
     customer_id: Mapped[int] = mapped_column(ForeignKey("customers.id"), nullable=False)
     amount: Mapped[float] = mapped_column(Float, nullable=False)
-    license_type: Mapped[str] = mapped_column(String(100), default="Standard")
+    license_type: Mapped[str] = mapped_column(String(100), default="Theme")
     status: Mapped[str] = mapped_column(String(50), default="paid")
 
     template: Mapped[Template] = relationship(back_populates="purchases")
