@@ -36,10 +36,10 @@ Marketplace homepage (`/`)—hero, template search, featured grid, best sellers 
 <img
   src="docs/images/homepage-readme.webp"
   alt="Mateo ConsultOps Themes marketplace homepage"
-  width="1200"
+  width="1400"
 />
 
-*To regenerate from the running app, see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md) (`py scripts/capture_readme_homepage.py`).*
+*Full-width desktop capture: `py scripts/capture_readme_homepage.py` — see [docs/figma-mcp-homepage-capture.md](docs/figma-mcp-homepage-capture.md).*
 
 | Layer | Technology |
 |-------|------------|
