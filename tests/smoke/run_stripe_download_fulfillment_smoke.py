@@ -41,6 +41,8 @@ from app.core.database import SessionLocal
 from app.main import app
 from app.models import FulfillmentEmail, Purchase, Template
 from app.routers import public
+from app.utils.http_ssl import httpx_verify_option
+from tests.smoke.purchase_zip_validation import validate_purchase_zip_bytes
 
 DOWNLOAD_LINK_RE = re.compile(r"/downloads/theme/([^?]+)\?token=([A-Za-z0-9_\-\.]+)")
 SESSION_ID_RE = re.compile(r"(cs_(?:test|live)_[A-Za-z0-9]+)")
@@ -103,6 +105,12 @@ def _select_template(slug: str) -> Template:
         return fallback
 
 
+def _assert_zip_product(zip_bytes: bytes, template: Template) -> None:
+    violations = validate_purchase_zip_bytes(zip_bytes, template)
+    if violations:
+        raise RuntimeError(f"purchase zip validation failed: {violations}")
+
+
 def _build_zip_manifest(zip_bytes: bytes) -> dict[str, object]:
     sha256 = hashlib.sha256(zip_bytes).hexdigest()
     # Use BytesIO via ZipFile constructor reading bytes without writing temp files.
@@ -140,7 +148,7 @@ def _retrieve_checkout_session_metadata(session_id: str, stripe_secret_key: str,
         f"https://api.stripe.com/v1/checkout/sessions/{session_id}",
         headers={"Authorization": f"Bearer {stripe_secret_key}"},
         timeout=45.0,
-        verify=not stripe_insecure,
+        verify=httpx_verify_option(insecure=stripe_insecure),
     )
     if response.status_code != 200:
         raise RuntimeError(f"Stripe session fetch failed ({response.status_code}): {response.text[:240]}")
@@ -251,6 +259,7 @@ def _run_mocked(template_slug: str, recipient_email: str, base_url_override: str
             return 1
         artifact_path = _write_artifact(artifact_dir, template.slug, purchase_id, download_response.content)
         manifest = _build_zip_manifest(download_response.content)
+        _assert_zip_product(download_response.content, template)
 
         with SessionLocal() as db:
             purchase = db.get(Purchase, purchase_id)
@@ -284,6 +293,7 @@ def _run_mocked(template_slug: str, recipient_email: str, base_url_override: str
         print(f"zip_file_count={manifest['file_count']}")
         print(f"zip_image_file_count={manifest['image_file_count']}")
         print(f"zip_sample_files={json.dumps(manifest['sample_files'])}")
+        print("purchase_zip_validation=pass")
         print(
             "note=download_url is valid only on the same app/database instance where this smoke created the purchase"
         )
@@ -417,6 +427,8 @@ def _run_live(
 
             artifact_path = _write_artifact(artifact_dir, session_template_slug, purchase_id, download_response.content)
             manifest = _build_zip_manifest(download_response.content)
+            validated_template = _select_template(session_template_slug)
+            _assert_zip_product(download_response.content, validated_template)
 
             print("STRIPE_DOWNLOAD_FULFILLMENT_SMOKE_PASS")
             print(f"mode=live")
@@ -430,6 +442,7 @@ def _run_live(
             print(f"zip_file_count={manifest['file_count']}")
             print(f"zip_image_file_count={manifest['image_file_count']}")
             print(f"zip_sample_files={json.dumps(manifest['sample_files'])}")
+            print("purchase_zip_validation=pass")
             return 0
     except Exception as exc:  # noqa: BLE001
         print(f"SMOKE_FAIL: {exc}")

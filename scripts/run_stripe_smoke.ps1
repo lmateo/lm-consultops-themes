@@ -1,8 +1,10 @@
 param(
-  [string]$AppUrl = "http://localhost:8000",
+  [string]$AppUrl = "http://localhost:8010",
   [string]$Slug = "cloudcare-it",
   [string]$LogFile = ".\artifacts\stripe-listen.log",
-  [int]$TailLines = 200
+  [int]$TailLines = 200,
+  [switch]$Auto,
+  [switch]$SyncDockerWebhookSecret
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,6 +24,20 @@ Write-Host "App URL: $AppUrl"
 Write-Host "Template slug: $Slug"
 Write-Host "Log file: $LogFile"
 Write-Host ""
+
+if ($Auto) {
+  $autoArgs = @(
+    "tests/smoke/run_stripe_cli_webhook_smoke.py",
+    "--base-url", $AppUrl,
+    "--template-slug", $Slug,
+    "--log-file", $LogFile
+  )
+  if ($SyncDockerWebhookSecret) {
+    $autoArgs += "--sync-docker-webhook-secret"
+  }
+  py @autoArgs
+  exit $LASTEXITCODE
+}
 
 if (-not (Test-CommandExists "stripe")) {
   Write-Host "Stripe CLI is not installed or not on PATH." -ForegroundColor Red

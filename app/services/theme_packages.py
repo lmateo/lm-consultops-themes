@@ -55,7 +55,7 @@ def _is_external_or_special(ref: str) -> bool:
     )
 
 
-def _resolve_local_ref(origin: Path, ref: str) -> Path | None:
+def _resolve_local_ref(origin: Path, ref: str, *, follow_html: bool = False) -> Path | None:
     if _is_external_or_special(ref):
         return None
     ref_path = ref.split("?", 1)[0].split("#", 1)[0].strip()
@@ -73,7 +73,10 @@ def _resolve_local_ref(origin: Path, ref: str) -> Path | None:
         return None
     if not resolved.is_file():
         return None
-    if resolved.suffix.lower() in _IMAGE_SUFFIXES:
+    suffix = resolved.suffix.lower()
+    if suffix in _IMAGE_SUFFIXES:
+        return None
+    if not follow_html and suffix in {".html", ".htm"}:
         return None
     return resolved
 
@@ -117,7 +120,7 @@ Thanks for your purchase.
 
 ## Quick Start
 1. Unzip this package.
-2. Open the included `demo-*.html` files in your browser.
+2. Open the included theme HTML pages in your browser (home page first).
 3. Replace image placeholders and update content for production.
 
 ## Theme Metadata
@@ -191,6 +194,7 @@ def collect_theme_package_files(template: Template) -> ThemePackageFiles:
     filename = f"{slug}-v{template.version}.zip"
     mapping = get_crafto_demo_or_default(template.slug)
     page_files = [mapping.pages[page] for page in ("home", "about", "services", "contact") if page in mapping.pages]
+    allowed_html_paths = set(page_files)
     page_paths = [CRAFTO_ROOT / file_name for file_name in page_files]
 
     queue: list[Path] = [path.resolve() for path in page_paths if path.is_file()]
@@ -209,6 +213,9 @@ def collect_theme_package_files(template: Template) -> ThemePackageFiles:
             continue
 
         rel_path = current.relative_to(CRAFTO_ROOT).as_posix()
+        if suffix in {".html", ".htm"} and rel_path not in allowed_html_paths:
+            continue
+
         if suffix in _TEXT_SUFFIXES:
             text = current.read_text(encoding="utf-8-sig", errors="replace")
             text = _rewrite_brand_mentions(text)

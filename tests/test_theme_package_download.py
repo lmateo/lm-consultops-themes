@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from app.core.database import SessionLocal
 from app.models import Template
+from app.services.crafto_demos import get_crafto_demo_or_default
 from app.services.theme_packages import build_theme_zip_bytes
 
 _IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".svg", ".ico", ".bmp", ".tiff")
@@ -81,3 +82,21 @@ def test_theme_zip_html_hrefs_resolve_to_packaged_html():
                     resolved = posixpath.normpath(posixpath.join(parent, href_path))
 
                 assert resolved in html_names, f"{name} has broken html href: {href}"
+
+
+def test_theme_zip_includes_only_purchased_html_pages():
+    with SessionLocal() as db:
+        template = db.scalar(select(Template).where(Template.slug == "wellness-local"))
+    assert template is not None
+
+    mapping = get_crafto_demo_or_default(template.slug)
+    expected_html = set(mapping.pages.values())
+    zip_bytes, _filename = build_theme_zip_bytes(template)
+
+    with ZipFile(BytesIO(zip_bytes)) as archive:
+        html_names = {
+            posixpath.basename(name)
+            for name in archive.namelist()
+            if name.lower().endswith((".html", ".htm"))
+        }
+        assert html_names == expected_html
