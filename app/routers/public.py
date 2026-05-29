@@ -12,7 +12,11 @@ from app.core.config import get_settings
 from app.core.database import get_db
 from app.models import Customer, Purchase, StripeWebhookEvent, Template
 from app.services.fulfillment import send_purchase_fulfillment_email
-from app.services.download_access import issue_download_token_for_purchase, validate_download_token_access
+from app.services.download_access import (
+    download_link_limits_ui_sentence,
+    issue_download_token_for_purchase,
+    validate_download_token_access,
+)
 from app.services.marketplace import (
     TEMPLATE_SORTS,
     filtered_template_query,
@@ -571,6 +575,7 @@ def my_downloads_page(request: Request, db: Session = Depends(get_db), email: st
             "query_email": normalized_email,
             "customer": customer,
             "purchases_with_tokens": purchases_with_tokens,
+            "download_link_limits_ui_sentence": download_link_limits_ui_sentence(settings),
             "meta_title": "My Downloads",
             "meta_description": "Access your paid template downloads.",
         },

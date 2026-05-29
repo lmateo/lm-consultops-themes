@@ -7,20 +7,21 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.models import FulfillmentEmail, Purchase
-from app.services.download_access import issue_download_token_for_purchase
+from app.services.download_access import download_link_limits_email_clause, issue_download_token_for_purchase
 
 
 def _build_download_url(settings: Settings, purchase: Purchase, token: str) -> str:
     return f"{settings.base_url}/downloads/theme/{purchase.template.slug}?token={token}"
 
 
-def _build_email_body(purchase: Purchase, download_url: str) -> str:
+def _build_email_body(purchase: Purchase, download_url: str, settings: Settings) -> str:
+    limits_clause = download_link_limits_email_clause(settings)
     return (
         f"Hello {purchase.customer.name},\n\n"
         f"Thank you for purchasing {purchase.template.title}.\n"
         "Your full website theme package is ready for download.\n"
         "This package intentionally excludes stock image assets so you can safely add your own licensed media.\n\n"
-        f"Download link (expires in 2 hours, limited uses):\n{download_url}\n\n"
+        f"Download link ({limits_clause}):\n{download_url}\n\n"
         f"Amount: ${purchase.amount:.2f}\n\n"
         "If your link expires, visit My Downloads and request a new link using your purchase email.\n"
     )
@@ -58,7 +59,7 @@ def send_purchase_fulfillment_email(
         expires_in_seconds=settings.download_link_ttl_seconds,
     )
     download_url = _build_download_url(settings, purchase, token)
-    body = _build_email_body(purchase, download_url)
+    body = _build_email_body(purchase, download_url, settings)
 
     email_log = db.scalar(
         select(FulfillmentEmail).where(

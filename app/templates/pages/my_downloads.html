@@ -2,7 +2,7 @@
 {% block content %}
 <section class="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
     <h1 class="text-3xl font-bold">My Downloads</h1>
-    <p class="mt-2 text-brand-muted">Enter your purchase email to access all paid theme downloads and resend fulfillment email links. Download links expire and have limited uses for security.</p>
+    <p class="mt-2 text-brand-muted">Enter your purchase email to access all paid theme downloads and resend fulfillment email links. Download links {{ download_link_limits_ui_sentence }} for security.</p>
 
     <form method="get" action="/downloads" class="mt-6 rounded-2xl border border-brand-border bg-white p-5 shadow-soft">
         <label for="email" class="text-sm font-medium">Purchase Email</label>
@@ -43,6 +43,7 @@
                     <a href="/downloads/theme/{{ item.purchase.template.slug }}?token={{ item.download_token }}" class="rounded-lg bg-brand-emerald px-4 py-2 text-center text-sm font-semibold text-white hover:bg-brand-dark">
                         Download Theme
                     </a>
+                    <p class="text-xs text-brand-muted">Links {{ download_link_limits_ui_sentence }}.</p>
                 </div>
             </div>
             <div class="mt-4 border-t border-brand-border pt-4">
@@ -52,7 +53,7 @@
                     <button type="submit" class="rounded-lg border border-brand-border px-4 py-2 text-sm font-semibold hover:bg-slate-50">
                         Resend Download Email
                     </button>
-                    <p class="text-xs text-brand-muted">Use this if your link expired or reached its download limit.</p>
+                    <p class="text-xs text-brand-muted">Resending issues a fresh link and invalidates previous download links for this purchase.</p>
                 </form>
             </div>
         </article>

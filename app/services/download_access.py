@@ -13,6 +13,46 @@ def _hash_token(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
+def format_download_link_ttl(seconds: int) -> str:
+    ttl_seconds = max(1, int(seconds))
+    if ttl_seconds >= 3600 and ttl_seconds % 3600 == 0:
+        hours = ttl_seconds // 3600
+        return "1 hour" if hours == 1 else f"{hours} hours"
+    if ttl_seconds >= 60 and ttl_seconds % 60 == 0:
+        minutes = ttl_seconds // 60
+        return "1 minute" if minutes == 1 else f"{minutes} minutes"
+    return "1 second" if ttl_seconds == 1 else f"{ttl_seconds} seconds"
+
+
+def download_link_limits_email_clause(settings: Settings) -> str:
+    max_uses = max(1, int(settings.download_link_max_downloads))
+    use_word = "use" if max_uses == 1 else "uses"
+    return f"expires in {format_download_link_ttl(settings.download_link_ttl_seconds)}, up to {max_uses} {use_word}"
+
+
+def download_link_limits_ui_sentence(settings: Settings) -> str:
+    max_downloads = max(1, int(settings.download_link_max_downloads))
+    download_word = "download" if max_downloads == 1 else "downloads"
+    return (
+        f"expire in {format_download_link_ttl(settings.download_link_ttl_seconds)} "
+        f"and allow up to {max_downloads} {download_word} each"
+    )
+
+
+def revoke_active_grants_for_purchase(db: Session, purchase_id: int) -> int:
+    grants = db.scalars(
+        select(DownloadGrant).where(
+            DownloadGrant.purchase_id == purchase_id,
+            DownloadGrant.status == "active",
+        )
+    ).all()
+    for grant in grants:
+        grant.status = "revoked"
+    if grants:
+        db.flush()
+    return len(grants)
+
+
 def issue_download_token_for_purchase(
     db: Session,
     *,
@@ -23,6 +63,7 @@ def issue_download_token_for_purchase(
 ) -> str:
     ttl_seconds = max(60, int(expires_in_seconds or settings.download_link_ttl_seconds))
     allowed_downloads = max(1, int(max_downloads or settings.download_link_max_downloads))
+    revoke_active_grants_for_purchase(db, purchase.id)
     token = create_download_token(
         secret_key=settings.secret_key,
         purchase_id=purchase.id,
