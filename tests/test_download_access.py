@@ -83,7 +83,11 @@ def test_fulfillment_email_body_reflects_settings():
         )
         assert purchase_db is not None
         body = _build_email_body(purchase_db, "http://testserver/downloads/theme/demo?token=abc", settings)
-    assert "Download link (expires in 1 hour, up to 3 uses):" in body
+    assert "Download link (expires in 1 hour, limited uses):" in body
+    assert "MESSAGE FROM" in body
+    assert "Mateo Consulting Tech" in body
+    assert "ConsultOps" in body
+    assert "http://testserver/downloads/theme/demo?token=abc" in body
 
 
 def test_issue_download_token_revokes_prior_active_grants():

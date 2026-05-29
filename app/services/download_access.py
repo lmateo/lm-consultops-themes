@@ -30,6 +30,11 @@ def download_link_limits_email_clause(settings: Settings) -> str:
     return f"expires in {format_download_link_ttl(settings.download_link_ttl_seconds)}, up to {max_uses} {use_word}"
 
 
+def download_link_limits_email_display(settings: Settings) -> str:
+    """Short limits label used in fulfillment email copy."""
+    return f"expires in {format_download_link_ttl(settings.download_link_ttl_seconds)}, limited uses"
+
+
 def download_link_limits_ui_sentence(settings: Settings) -> str:
     max_downloads = max(1, int(settings.download_link_max_downloads))
     download_word = "download" if max_downloads == 1 else "downloads"

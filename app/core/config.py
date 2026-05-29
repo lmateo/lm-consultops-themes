@@ -12,12 +12,15 @@ class Settings(BaseSettings):
     stripe_secret_key: str = ""
     stripe_publishable_key: str = ""
     stripe_webhook_secret: str = ""
+    resend_api_key: str = ""
+    resend_from_email: str = ""
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_username: str = ""
     smtp_password: str = ""
     smtp_use_tls: bool = True
     smtp_from_email: str = "no-reply@mateoconsultops.local"
+    fulfillment_support_email: str = "lmateo@mateoconsultinginc.com"
     download_link_ttl_seconds: int = 7200
     download_link_max_downloads: int = 5
     consultops_contacts_api_url: str = "https://consultops.mateoconsultinginc.com/api/integrations/contacts"

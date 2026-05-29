@@ -18,6 +18,7 @@ from datetime import datetime
 import hashlib
 import hmac
 import json
+import os
 import random
 import re
 import string
@@ -315,7 +316,8 @@ def _run_live(
     stripe_insecure: bool,
 ) -> int:
     target_base = base_url.strip().rstrip("/") if base_url.strip() else "http://localhost:8010"
-    if not recipient_email.strip():
+    resolved_email = recipient_email.strip() or os.getenv("SMOKE_TEST_CLIENT_EMAIL", "lmateo@mateoconsultinginc.com")
+    if not resolved_email:
         print("SMOKE_FAIL: --email is required in live mode.")
         return 1
 
@@ -333,7 +335,7 @@ def _run_live(
                 data={
                     "first_name": "Smoke",
                     "last_name": "Tester",
-                    "email": recipient_email.strip(),
+                    "email": resolved_email,
                     "company": "QA",
                     "agree_terms": "yes",
                 },
@@ -404,7 +406,7 @@ def _run_live(
 
             downloads_response = client.get(
                 f"{target_base}/downloads",
-                params={"email": recipient_email.strip()},
+                params={"email": resolved_email},
                 follow_redirects=True,
             )
             if downloads_response.status_code != 200:
@@ -435,7 +437,7 @@ def _run_live(
             print(f"payment_mark_method={'local_db_fallback' if used_local_payment_mark else 'webhook'}")
             print(f"template={session_template_slug}")
             print(f"purchase_id={purchase_id}")
-            print(f"email={recipient_email.strip()}")
+            print(f"email={resolved_email}")
             print(f"download_url={download_url}")
             print(f"zip_artifact={artifact_path.as_posix()}")
             print(f"zip_sha256={manifest['sha256']}")
