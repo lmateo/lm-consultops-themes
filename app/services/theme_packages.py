@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import posixpath
+from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path, PurePosixPath
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -23,6 +24,18 @@ _HREF_ATTR_RE = re.compile(r"""\bhref\s*=\s*(["'])([^"']+)\1""", re.IGNORECASE)
 _BRAND_CRAFTO_RE = re.compile(r"Crafto", re.IGNORECASE)
 _BRAND_THEMEZAA_RE = re.compile(r"ThemeZaa", re.IGNORECASE)
 _MATEO_DOWNLOAD_BRAND = "MateoConsultingTech"
+FAST_AUDIT_CANARY_SLUG = "community-impact"
+
+
+@dataclass(frozen=True)
+class ThemePackageFiles:
+    slug: str
+    root: str
+    filename: str
+    text_files: dict[str, str]
+    binary_files: dict[str, bytes]
+    readme: str
+    image_notice: str
 
 
 def _safe_template_name(value: str) -> str:
@@ -172,7 +185,7 @@ def _rewrite_html_links_for_packaged_targets(
     return _HREF_ATTR_RE.sub(_replace_href, html)
 
 
-def build_theme_zip_bytes(template: Template) -> tuple[bytes, str]:
+def collect_theme_package_files(template: Template) -> ThemePackageFiles:
     slug = _safe_template_name(template.slug)
     root = f"{slug}-theme/"
     filename = f"{slug}-v{template.version}.zip"
@@ -227,14 +240,26 @@ def build_theme_zip_bytes(template: Template) -> tuple[bytes, str]:
         "Image assets are intentionally excluded from this package.\n"
         f"Brand mentions are normalized to {_MATEO_DOWNLOAD_BRAND} in text materials.\n"
     )
+    return ThemePackageFiles(
+        slug=slug,
+        root=root,
+        filename=filename,
+        text_files=packaged_text,
+        binary_files=packaged_binary,
+        readme=readme,
+        image_notice=image_notice,
+    )
 
+
+def build_theme_zip_bytes(template: Template) -> tuple[bytes, str]:
+    package = collect_theme_package_files(template)
     memory_file = BytesIO()
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as archive:
-        for rel_path, text in sorted(packaged_text.items()):
-            archive.writestr(f"{root}{rel_path}", text)
-        for rel_path, payload in sorted(packaged_binary.items()):
-            archive.writestr(f"{root}{rel_path}", payload)
-        archive.writestr(f"{root}README.md", readme)
-        archive.writestr(f"{root}IMAGE_ASSETS_NOTICE.txt", image_notice)
+        for rel_path, text in sorted(package.text_files.items()):
+            archive.writestr(f"{package.root}{rel_path}", text)
+        for rel_path, payload in sorted(package.binary_files.items()):
+            archive.writestr(f"{package.root}{rel_path}", payload)
+        archive.writestr(f"{package.root}README.md", package.readme)
+        archive.writestr(f"{package.root}IMAGE_ASSETS_NOTICE.txt", package.image_notice)
 
-    return memory_file.getvalue(), filename
+    return memory_file.getvalue(), package.filename

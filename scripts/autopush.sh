@@ -38,13 +38,22 @@ fi
 run_pre_push_validations() {
   echo "Running pre-push validations..."
   if command -v py >/dev/null 2>&1; then
-    py scripts/audit_download_packages.py
+    PYTHON=py
   elif command -v python >/dev/null 2>&1; then
-    python scripts/audit_download_packages.py
+    PYTHON=python
   else
     echo "Error: Python launcher not found. Install 'py' or 'python' and retry."
     exit 1
   fi
+
+  echo "  compileall..."
+  $PYTHON -m compileall -q app tests scripts
+
+  echo "  pytest..."
+  $PYTHON -m pytest -q --tb=no
+
+  echo "  download package audit (fast)..."
+  $PYTHON scripts/audit_download_packages.py --mode fast
 }
 
 run_pre_push_validations

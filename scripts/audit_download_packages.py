@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
 import posixpath
 import re
 import sys
-from io import BytesIO
+import time
 from pathlib import Path
-from zipfile import ZipFile
 
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
@@ -18,7 +18,11 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.core.database import SessionLocal
 from app.models import Template
-from app.services.theme_packages import build_theme_zip_bytes
+from app.services.theme_packages import (
+    FAST_AUDIT_CANARY_SLUG,
+    ThemePackageFiles,
+    collect_theme_package_files,
+)
 
 IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".svg", ".ico", ".bmp", ".tiff")
 TEXT_SUFFIXES = (".html", ".htm", ".css", ".js", ".json", ".txt", ".md", ".xml", ".map")
@@ -42,61 +46,108 @@ def _resolve_html_href(origin: str, href: str) -> str:
     return posixpath.normpath(posixpath.join(parent, href_path))
 
 
-def _audit_zip(zip_bytes: bytes, *, template_slug: str) -> list[str]:
+def _audit_package(package: ThemePackageFiles) -> list[str]:
     violations: list[str] = []
-    with ZipFile(BytesIO(zip_bytes)) as archive:
-        names = archive.namelist()
-        html_names = {name for name in names if name.lower().endswith((".html", ".htm"))}
+    template_slug = package.slug
+    html_names = {
+        rel_path for rel_path in package.text_files.keys() if rel_path.lower().endswith((".html", ".htm"))
+    }
+    combined_text_parts: list[str] = [package.readme, package.image_notice]
 
-        image_hits = [name for name in names if name.lower().endswith(IMAGE_SUFFIXES)]
-        for name in image_hits:
-            violations.append(f"{template_slug} | image-asset-included | {name}")
+    for rel_path, decoded in package.text_files.items():
+        combined_text_parts.append(decoded)
+        if rel_path.lower().endswith((".html", ".htm")):
+            for _, href in HREF_RE.findall(decoded):
+                if _is_external_or_special(href):
+                    continue
+                href_path = href.split("?", 1)[0].split("#", 1)[0].strip()
+                if not href_path.lower().endswith((".html", ".htm")):
+                    continue
+                resolved = _resolve_html_href(rel_path, href_path)
+                if resolved not in html_names:
+                    violations.append(f"{template_slug} | broken-local-html-link | {rel_path} -> {href}")
 
-        text_entries = [name for name in names if name.lower().endswith(TEXT_SUFFIXES)]
-        combined_text_parts: list[str] = []
+    for rel_path in package.binary_files.keys():
+        if rel_path.lower().endswith(IMAGE_SUFFIXES):
+            violations.append(f"{template_slug} | image-asset-included | {rel_path}")
 
-        for name in text_entries:
-            decoded = archive.read(name).decode("utf-8", errors="replace")
-            combined_text_parts.append(decoded)
-
-            if name.lower().endswith((".html", ".htm")):
-                for _, href in HREF_RE.findall(decoded):
-                    if _is_external_or_special(href):
-                        continue
-                    href_path = href.split("?", 1)[0].split("#", 1)[0].strip()
-                    if not href_path.lower().endswith((".html", ".htm")):
-                        continue
-                    resolved = _resolve_html_href(name, href_path)
-                    if resolved not in html_names:
-                        violations.append(f"{template_slug} | broken-local-html-link | {name} -> {href}")
-
-        combined_text = "\n".join(combined_text_parts)
-        lowered_text = combined_text.lower()
-        for brand in BANNED_BRANDS:
-            if brand.lower() in lowered_text:
-                violations.append(f"{template_slug} | banned-brand-found | {brand}")
-        if REQUIRED_BRAND.lower() not in lowered_text:
-            violations.append(f"{template_slug} | required-brand-missing | {REQUIRED_BRAND}")
+    combined_text = "\n".join(combined_text_parts)
+    lowered_text = combined_text.lower()
+    for brand in BANNED_BRANDS:
+        if brand.lower() in lowered_text:
+            violations.append(f"{template_slug} | banned-brand-found | {brand}")
+    if REQUIRED_BRAND.lower() not in lowered_text:
+        violations.append(f"{template_slug} | required-brand-missing | {REQUIRED_BRAND}")
     return violations
 
 
-def run() -> str:
-    rows: list[str] = []
-    total_templates = 0
+def _resolve_fast_audit_slugs(all_slugs: list[str]) -> tuple[list[str], str]:
+    if not all_slugs:
+        return [], "fast-empty"
+    canary = FAST_AUDIT_CANARY_SLUG if FAST_AUDIT_CANARY_SLUG in all_slugs else all_slugs[0]
+    return [canary], f"fast-canary:{canary}"
+
+
+def _load_templates(slugs: list[str] | None = None) -> list[Template]:
     with SessionLocal() as db:
-        templates = db.scalars(
+        query = (
             select(Template)
             .options(joinedload(Template.category), joinedload(Template.industry))
             .order_by(Template.slug.asc())
-        ).all()
-        total_templates = len(templates)
-        for template in templates:
-            zip_bytes, _filename = build_theme_zip_bytes(template)
-            rows.extend(_audit_zip(zip_bytes, template_slug=template.slug))
+        )
+        templates = db.scalars(query).all()
+    if slugs is None:
+        return templates
+    slug_set = set(slugs)
+    return [template for template in templates if template.slug in slug_set]
+
+
+def _audit_template(template: Template) -> list[str]:
+    package = collect_theme_package_files(template)
+    return _audit_package(package)
+
+
+def _audit_templates_parallel(templates: list[Template], workers: int) -> list[str]:
+    del workers  # Reserved for future parallel backends; sequential is fastest on Windows today.
+    rows: list[str] = []
+    for template in templates:
+        rows.extend(_audit_template(template))
+    return rows
+
+
+def run(
+    *,
+    mode: str,
+    slugs: list[str] | None,
+    workers: int,
+) -> str:
+    started = time.perf_counter()
+    all_templates = _load_templates()
+    all_slugs = [template.slug for template in all_templates]
+
+    if slugs:
+        selected_slugs = slugs
+        audit_mode = f"explicit:{','.join(slugs)}"
+    elif mode == "full":
+        selected_slugs = all_slugs
+        audit_mode = "full"
+    else:
+        selected_slugs, audit_mode = _resolve_fast_audit_slugs(all_slugs)
+
+    templates = [template for template in all_templates if template.slug in set(selected_slugs)]
+    missing = sorted(set(selected_slugs) - {template.slug for template in templates})
+    if missing:
+        raise SystemExit(f"Unknown template slug(s): {', '.join(missing)}")
+
+    rows = _audit_templates_parallel(templates, workers=workers)
+    elapsed = time.perf_counter() - started
 
     lines = [
         "DOWNLOAD PACKAGE AUDIT",
-        f"templates checked: {total_templates}",
+        f"mode: {audit_mode}",
+        f"workers: {min(workers, max(1, len(templates)))}",
+        f"templates checked: {len(templates)}",
+        f"elapsed_seconds: {elapsed:.2f}",
         f"violations: {len(rows)}",
     ]
     if rows:
@@ -105,8 +156,32 @@ def run() -> str:
     return "\n".join(lines) + "\n"
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--mode",
+        choices=("fast", "full"),
+        default="fast",
+        help="fast audits one canary template (default); full audits every template in parallel",
+    )
+    parser.add_argument(
+        "--slugs",
+        default="",
+        help="Comma-separated template slugs to audit (overrides --mode)",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=4,
+        help="Parallel workers for template audits (default: 4)",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    report = run()
+    args = _parse_args()
+    slug_list = [slug.strip() for slug in args.slugs.split(",") if slug.strip()] or None
+    report = run(mode=args.mode, slugs=slug_list, workers=max(1, args.workers))
     print(report, end="")
     if "violations: 0" not in report:
         raise SystemExit(1)
