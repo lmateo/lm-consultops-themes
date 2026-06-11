@@ -57,7 +57,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _post_via_proxy(client: httpx.Client, base_url: str, name: str, email: str, message: str, timeout: float) -> httpx.Response:
-    # /api/contact validates honeypot + captcha, so include matching numbers.
+    # /api/contact validates honeypot + Turnstile when configured.
     return client.post(
         f"{base_url.rstrip('/')}/api/contact",
         data={
@@ -65,9 +65,7 @@ def _post_via_proxy(client: httpx.Client, base_url: str, name: str, email: str, 
             "email": email,
             "message": message,
             "website": "",
-            "captcha_a": "4",
-            "captcha_b": "6",
-            "captcha_answer": "10",
+            "cf-turnstile-response": "smoke-test-token",
         },
         timeout=timeout,
     )

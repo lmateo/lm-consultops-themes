@@ -27,6 +27,9 @@ def test_contact_form_posts_to_configured_contacts_api():
             "https://consultops.mateoconsultinginc.com/api/integrations/contacts",
         ),
         patch.object(public_router.settings, "integration_api_key", "smoke-test-key"),
+        patch.object(public_router.settings, "turnstile_site_key", "test-site-key"),
+        patch.object(public_router.settings, "turnstile_secret_key", "test-secret-key"),
+        patch("app.routers.public.verify_turnstile_token", new=AsyncMock(return_value=True)),
         patch("app.routers.public.httpx.AsyncClient", return_value=mock_http_client),
     ):
         response = client.post(
@@ -35,9 +38,7 @@ def test_contact_form_posts_to_configured_contacts_api():
                 "name": "Smoke Tester",
                 "email": "smoke@example.com",
                 "message": "Contact wiring smoke test",
-                "captcha_a": 3,
-                "captcha_b": 4,
-                "captcha_answer": "7",
+                "cf-turnstile-response": "valid-token",
             },
         )
 

@@ -1,5 +1,4 @@
 import json
-import random
 import re
 import httpx
 import stripe
@@ -36,6 +35,7 @@ from app.services.crafto_demos import DEMO_PAGES, get_crafto_demo_or_default
 from app.services.crafto_preview_wrap import load_wrapped_crafto_preview
 from app.services.preview_demos import list_template_search_hints
 from app.services.theme_packages import build_theme_zip_bytes
+from app.services.turnstile import turnstile_enabled, verify_turnstile_token
 from app.utils.query_params import OptionalFloatQuery
 from app.utils.templating import render
 
@@ -426,16 +426,13 @@ def setup_services(request: Request):
 
 @router.get("/contact")
 def contact_page(request: Request):
-    captcha_a = random.randint(1, 9)
-    captcha_b = random.randint(1, 9)
     return render(
         "pages/contact.html",
         request,
         {
             "meta_title": "Contact & Customization",
             "meta_description": "Request customization and consulting support.",
-            "captcha_a": captcha_a,
-            "captcha_b": captcha_b,
+            "turnstile_site_key": settings.turnstile_site_key if turnstile_enabled() else "",
         },
     )
 
@@ -445,41 +442,40 @@ def contact_config_health():
     contacts_api_url = _resolve_contacts_api_url()
     has_contacts_api_url = bool(contacts_api_url)
     has_integration_api_key = bool((settings.integration_api_key or "").strip())
+    has_turnstile = turnstile_enabled()
 
     return JSONResponse(
         status_code=200,
         content={
-            "contact_form_ready": has_contacts_api_url and has_integration_api_key,
+            "contact_form_ready": has_contacts_api_url and has_integration_api_key and has_turnstile,
             "has_contacts_api_url": has_contacts_api_url,
             "has_integration_api_key": has_integration_api_key,
+            "has_turnstile": has_turnstile,
         },
     )
 
 
 @router.post("/api/contact")
 async def contact_submit(
+    request: Request,
     name: str = Form(...),
     email: str = Form(...),
     message: str = Form(...),
     website: str = Form(""),
-    captcha_a: int = Form(...),
-    captcha_b: int = Form(...),
-    captcha_answer: str = Form(...),
+    cf_turnstile_response: str = Form("", alias="cf-turnstile-response"),
 ):
     """
     Receive contact form and proxy to ConsultOps integration API.
     Keeps INTEGRATION_API_KEY server-side only.
-    Uses honeypot + math question to reduce spam.
+    Uses honeypot + Cloudflare Turnstile to reduce spam.
     """
     if website and website.strip():
         raise HTTPException(status_code=400, detail="Invalid submission. Please try again or email us directly.")
 
-    try:
-        answer = int(captcha_answer.strip())
-    except (ValueError, AttributeError):
-        raise HTTPException(status_code=400, detail="Please answer the math question correctly.")
-    if answer != captcha_a + captcha_b:
-        raise HTTPException(status_code=400, detail="Please answer the math question correctly.")
+    if turnstile_enabled():
+        remote_ip = request.client.host if request.client else None
+        if not await verify_turnstile_token(cf_turnstile_response, remote_ip=remote_ip):
+            raise HTTPException(status_code=400, detail="Security verification failed. Please try again.")
 
     contacts_api_url = _resolve_contacts_api_url()
     if not contacts_api_url or not settings.integration_api_key:

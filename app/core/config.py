@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     consultops_contacts_api_url: str = "https://consultops.mateoconsultinginc.com/api/integrations/contacts"
     consultops_base_url: str = ""
     integration_api_key: str = ""
+    turnstile_site_key: str = ""
+    turnstile_secret_key: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

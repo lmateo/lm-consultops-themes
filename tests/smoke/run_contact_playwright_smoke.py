@@ -25,7 +25,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--timeout-ms",
         type=int,
-        default=30000,
+        default=60000,
         help="Timeout in milliseconds for page actions.",
     )
     parser.add_argument(
@@ -42,13 +42,18 @@ def run(base_url: str, timeout_ms: int, headed: bool) -> int:
         page = browser.new_page()
         try:
             page.goto(f"{base_url.rstrip('/')}/contact", wait_until="networkidle", timeout=timeout_ms)
-            captcha_a = int(page.locator('input[name="captcha_a"]').input_value())
-            captcha_b = int(page.locator('input[name="captcha_b"]').input_value())
 
             page.fill('input[name="name"]', "Playwright Smoke")
             page.fill('input[name="email"]', "playwright.smoke@example.com")
             page.fill("textarea[name=\"message\"]", "Playwright smoke test for contact form integration")
-            page.fill('input[name="captcha_answer"]', str(captcha_a + captcha_b))
+
+            turnstile = page.locator(".cf-turnstile")
+            if turnstile.count() > 0:
+                page.wait_for_function(
+                    "() => document.querySelector('input[name=\"cf-turnstile-response\"]')?.value",
+                    timeout=timeout_ms,
+                )
+
             page.click('button[type="submit"]')
 
             page.wait_for_selector("text=Thank you. Your message was sent successfully.", timeout=timeout_ms)
